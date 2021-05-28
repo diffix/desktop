@@ -5,12 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="CsvProvider.fs" />
-    <Compile Include="Anonymizer.fs" />
+    <Compile Include="Components.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DiffixReference\src\OpenDiffix.Core\OpenDiffix.Core.fsproj" />
+    <PackageReference Include="Feliz" Version="1.45.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OpenDiffix.Shared\OpenDiffix.Shared.fsproj" />
   </ItemGroup>
 

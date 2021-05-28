@@ -1,20 +1,34 @@
 module OpenDiffix.Publisher.Anonymizer
 
+open OpenDiffix
 open OpenDiffix.Core
 open OpenDiffix.Core.ParserTypes
+open OpenDiffix.Core.QueryEngine
+open OpenDiffix.Publisher.CsvProvider
 
-let anonymize dataProvider columns =
-  let columnExpressions = columns |> List.map(fun column -> Identifier (None, column.Name))
+let anonymize (data: Shared.Data) (columns: string array) =
+  let columnExpressions =
+    columns
+    |> Array.map(fun columnName -> Identifier (None, columnName))
+    |> Array.toList
   let countStar = Function("count", [Star])
-  let queryAst: SelectQuery = {
+  let queryAst = {
     SelectDistinct = false
-    Expressions = columnExpressions @ [countStar]
+    Expressions =
+      (columnExpressions @ [countStar])
+      |> List.map(fun expr -> As (expr, None))
     From = Table ("data", None)
     Where = None
     GroupBy = columnExpressions
     Having = None
   }
+  printfn $"%A{queryAst}"
   
+  let schema: Schema =
+    data.JsSchema
+    |> Array.map(fun jsTable -> {Name = jsTable.Name; Columns = jsTable.Columns |> Array.toList})
+    |> Array.toList
+    
   let evaluationContext = {
     AnonymizationParams = {
       TableSettings = Map.ofList ["data", {AidColumns = ["AID"]}]
@@ -25,9 +39,9 @@ let anonymize dataProvider columns =
       TopCount = {Lower = 2; Upper = 3}
       Noise = {StandardDev = 1.; Cutoff = 3.}
     }
-    DataProvider = dataProvider
+    DataProvider = CsvProvider(schema, data.Rows)
   }
   
-  match QueryEngine.run evaluationContext queryAst with
+  match run evaluationContext queryAst with
   | Ok result -> result
-  | Error errorMsg -> { Columns = ["Error"]; Rows = [[| Value.String errorMsg |]] }
+  | Error errorMsg -> ({ Columns = ["Error"]; Rows = [[| Value.String errorMsg |]] }: QueryResult)
