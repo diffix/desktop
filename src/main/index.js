@@ -11,6 +11,7 @@ function createMainWindow() {
 
   const window = new BrowserWindow({
     title: "Open Diffix Publisher",
+    titleBarStyle: "hiddenInset",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true
@@ -19,6 +20,7 @@ function createMainWindow() {
 
   ipcMain.on("loadFile", (event, filePath) => {
     const {readFile} = require("fs");
+    console.log(filePath);
 
     readFile(filePath, "utf-8", (err, csvContent) => {
       if (err) {

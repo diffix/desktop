@@ -14,7 +14,7 @@ export function CsvDropzone() {
   });
 
   return (
-    <div {...getRootProps()}>
+    <div className={` ${isDragActive ? "bg-gray-500 border-gray-100" : "bg-gray-900 border-gray-800" } rounded-lg p-2 mt-4 border-dashed border-4 `} {...getRootProps()}>
       <input {...getInputProps()} />
       {isDragActive
         ? <p>Drop the files here ...</p>
