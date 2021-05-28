@@ -8,7 +8,7 @@
     "build": "electron-snowpack build",
     "clean": "electron-snowpack clean",
     "dev:snowpack": "electron-snowpack dev",
-    "dev:fable": "dotnet fable watch src_dotnet/OpenDiffix.Publisher -o src/compiled --lang typescript --typedArrays false",
+    "dev:fable": "dotnet fable watch src_dotnet/OpenDiffix.Publisher -o src/renderer/compiled",
     "dev": "run-p -l -n -r dev:*",
     "dist": "electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",

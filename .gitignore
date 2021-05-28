@@ -1,6 +1,6 @@
 dist
 node_modules
 .idea
-src/compiled
+src/renderer/compiled
 src_dotnet/OpenDiffix.Publisher/obj
 src_dotnet/OpenDiffix.Publisher/bin
