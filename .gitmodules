@@ -1,0 +1,3 @@
+[submodule "DiffixReference"]
+	path = DiffixReference
+	url = git@github.com:diffix/reference.git
