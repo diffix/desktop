@@ -25,6 +25,8 @@ let ColumnSelector (columns: JsColumn list, columnsChanged: string list -> unit)
       prop.className "space-y-1 text-sm mt-4" 
       prop.children (
         columns
+        // The first column is the AID column. We skip it for the purposes of the UX
+        |> List.skip 1
         |> List.map(fun column ->
           Html.li [
             prop.key column.Name
