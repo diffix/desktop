@@ -24,7 +24,7 @@ let anonymize (data: CsvProvider.ParsedData) (columns: string list): OpenDiffix.
       Seed = 1
       MinimumAllowedAids = 2
       
-      OutlierCount = {Lower = 2; Upper = 3}
+      OutlierCount = {Lower = 1; Upper = 2}
       TopCount = {Lower = 2; Upper = 3}
       Noise = {StandardDev = 1.; Cutoff = 3.}
     }
