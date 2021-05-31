@@ -11,7 +11,6 @@ function createMainWindow() {
 
   const window = new BrowserWindow({
     title: "Open Diffix Publisher",
-    titleBarStyle: "hiddenInset",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true
