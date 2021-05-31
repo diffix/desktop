@@ -6,7 +6,7 @@ open OpenDiffix.Core.QueryEngine
 let button (title: string) action =
   Html.button [
     prop.text title
-    prop.className "rounded ml-2 border bg-gray-200 text-gray-900 text-xs px-1 py-0.5"
+    prop.className "rounded ml-2 border hover:bg-gray-100 bg-gray-200 text-gray-900 text-xs px-1 py-0.5"
     prop.onClick (fun _e -> action ())
   ]
   
@@ -22,7 +22,7 @@ let ColumnSelector (columns: string array, columnsChanged: string array -> unit)
   then React.fragment []
   else 
     Html.ul [
-      prop.className "space-y-1 text-sm mt-4 text-gray-200" 
+      prop.className "space-y-1 text-sm mt-4" 
       prop.children (
         columns
         |> Array.map(fun column ->
@@ -45,7 +45,7 @@ let AnonymizedResult (results: QueryResult option) =
   match results with
   | Some results ->
     Html.div [
-      prop.className "rounded bg-gray-800 p-2 mt-4"
+      prop.className "rounded bg-gray-50 p-2 mt-4"
       prop.children [
         Html.table [
           prop.className "w-full"
@@ -57,14 +57,17 @@ let AnonymizedResult (results: QueryResult option) =
               )
             ]
             
-            Html.tbody (
-              results.Rows
-              |> List.map(fun row ->
-                Html.tr (
-                  row |> Array.map(OpenDiffix.Core.Value.toString >> Html.td)
+            Html.tbody [
+              prop.className "border-t"
+              prop.children (
+                results.Rows
+                |> List.map(fun row ->
+                  Html.tr (
+                    row |> Array.map(OpenDiffix.Core.Value.toString >> Html.td)
+                  )
                 )
               )
-            )
+            ]
           ]
         ]
       ]

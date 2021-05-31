@@ -1,6 +1,6 @@
-Name;City;Country
-Sebastian;Berlin;Germany
-Felix;Berlin;Germany
-Paul;Kaiserslautern;Germany
-Cristian;Bucharest;Romania
-Edon;Pristina;Kosovo
+Name,City,Country
+Sebastian,Berlin,Germany
+Felix,Berlin,Germany
+Paul,Kaiserslautern,Germany
+Cristian,Bucharest,Romania
+Edon,Pristina,Kosovo
