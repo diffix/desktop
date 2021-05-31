@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { getAssetURL } from 'electron-snowpack';
-import { fromCsv } from "../compiled/CsvProvider";
+import { parseCsv, toFrontendTable } from "../compiled/CsvProvider";
 import { anonymize } from "../compiled/Anonymizer";
 
 let parsedData = undefined;
@@ -10,7 +10,6 @@ function createMainWindow() {
   console.log(path.join(__dirname, "preload.js"));
 
   const window = new BrowserWindow({
-    title: "Open Diffix Publisher",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true
@@ -27,9 +26,11 @@ function createMainWindow() {
         return;
       }
 
-      const data = fromCsv(csvContent, ",");
-      parsedData = data; // we are keeping a copy of the data so it doesn't do the RPC dance
-      event.reply('schemaLoaded', data.Columns);
+      const data = parseCsv(csvContent, ",");
+      // As the data can be quite large, and isn't needed in the UX,
+      // we keep it locally in the backend process exclusively
+      parsedData = data;
+      event.reply('schemaLoaded', toFrontendTable(data));
     });
   });
 

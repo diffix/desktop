@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="BackendTypes.fs" />
     <Compile Include="CsvProvider.fs" />
     <Compile Include="Anonymizer.fs" />
   </ItemGroup>

@@ -3,11 +3,11 @@ import { CsvDropzone } from './csvDropzone';
 import { ColumnSelector, AnonymizedResult } from "./../compiled/Components"
 
 export function App() {
-  const [ columns, setColumns ] = useState([]);
+  const [ frontendTable, setFrontendTable ] = useState({Columns: []});
   const [ anonymizedResult, setAnonymizedResult ] = useState(null);
 
   useEffect(() => {
-    window.electron.registerDataProvider(setColumns);
+    window.electron.registerDataProvider(setFrontendTable);
     window.electron.registerResultHandler(setAnonymizedResult);
   }, []);
 
@@ -25,7 +25,7 @@ export function App() {
         </span>
       </h1>
       <CsvDropzone />
-      <ColumnSelector columns={columns} columnsChanged={columnsChanged} />
+      <ColumnSelector columns={frontendTable.Columns} columnsChanged={columnsChanged} />
       <AnonymizedResult results={anonymizedResult} />
     </div>;
 }

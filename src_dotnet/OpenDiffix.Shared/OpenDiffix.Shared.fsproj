@@ -8,8 +8,4 @@
     <Compile Include="SharedTypes.fs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\DiffixReference\src\OpenDiffix.Core\OpenDiffix.Core.fsproj" />
-  </ItemGroup>
-
 </Project>

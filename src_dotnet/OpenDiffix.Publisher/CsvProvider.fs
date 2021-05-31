@@ -1,16 +1,26 @@
 ﻿module OpenDiffix.Publisher.CsvProvider
 
-open OpenDiffix
 open OpenDiffix.Core.CommonTypes
 
-let private tableName table = table.Name
+let tableName = "data"
 
-type CsvProvider (schema: Schema, data) =
+type ParsedData = {
+  Columns: Column list
+  Rows: Row seq
+}
+
+type CsvProvider (parsedData: ParsedData) =
   interface IDataProvider with
-    member this.OpenTable(_name) = data
-    member this.GetSchema() = schema
+    member this.OpenTable(_name) = parsedData.Rows
+    member this.GetSchema() =
+      [
+        {
+          Name = tableName
+          Columns = parsedData.Columns
+        }
+      ]
 
-let fromCsv (content: string, separator: char): Shared.Data =
+let parseCsv(content: string, separator: char): ParsedData =
   content.Split('\n')
   |> Array.map(fun line ->
     printfn $"Processing line: %s{line}"
@@ -20,25 +30,47 @@ let fromCsv (content: string, separator: char): Shared.Data =
   |> function
     | [] ->
       {
-        JsSchema = [||]
+        Columns = []
         Rows = [||]
-        Columns = Array.empty
       }
       
     | headers :: rows ->
       let providedHeaderColumns = headers |> List.map(fun header -> { Name = header; Type = StringType })
       let aidColumn = {Name = "AID"; Type = IntegerType}
-      let table: Shared.JsTable = {
-        Name = "data"
-        Columns = (aidColumn :: providedHeaderColumns) |> List.toArray
-      }
+      let columns = aidColumn :: providedHeaderColumns
+      
       let rows =
         rows
         |> List.mapi(fun index row -> Integer (int64 index) :: (row |> List.map String) |> List.toArray)
         |> List.toArray
       
       {
-        JsSchema = [| table |]
+        Columns = columns
         Rows = rows
-        Columns = table.Columns |> Array.map(fun column -> column.Name)
       }
+
+let toDataProvider (parsedData: ParsedData) =
+  CsvProvider(parsedData)
+  
+open OpenDiffix.Shared
+
+let toFrontendTable (parsedData: ParsedData): FrontendTable =
+  let sampleRows =
+    parsedData.Rows
+    |> Seq.truncate 10
+    |> Array.ofSeq
+    
+  {
+    Name = tableName
+    Columns =
+      parsedData.Columns
+      |> List.mapi(fun i column ->
+        {
+          Name = column.Name
+          SampleValues =
+            sampleRows
+            |> Array.map(Array.item i >> OpenDiffix.Core.Value.toString)
+            |> Array.toList
+        }
+      )
+  }

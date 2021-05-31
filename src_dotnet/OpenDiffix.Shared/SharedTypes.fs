@@ -1,11 +1,12 @@
 ﻿module OpenDiffix.Shared
 
-open OpenDiffix.Core.CommonTypes
+type JsColumn = {Name: string; SampleValues: string list}
 
-type JsTable = { Name: string; Columns: Column array }
+type FrontendTable = { Name: string; Columns: JsColumn list }
 
-type Data = {
-  JsSchema: JsTable array
-  Rows: Row array
-  Columns: string array
+type Row = string list
+
+type TableData = {
+  Headers: string list
+  Rows: Row list
 }

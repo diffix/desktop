@@ -1,7 +1,7 @@
 ﻿module OpenDiffix.WebInterface
 
 open Feliz
-open OpenDiffix.Core.QueryEngine
+open Shared
 
 let button (title: string) action =
   Html.button [
@@ -11,29 +11,29 @@ let button (title: string) action =
   ]
   
 [<ReactComponent>]
-let ColumnSelector (columns: string array, columnsChanged: string array -> unit) =
+let ColumnSelector (columns: JsColumn list, columnsChanged: string list -> unit) =
   let selected, setSelected = React.useState Set.empty
   
   let updateSet newSet =
     setSelected newSet
-    newSet |> Set.toArray |> columnsChanged 
+    newSet |> Set.toList |> columnsChanged 
   
-  if columns = Array.empty
-  then React.fragment []
-  else 
+  match columns with
+  | [] -> React.fragment []
+  | columns ->
     Html.ul [
       prop.className "space-y-1 text-sm mt-4" 
       prop.children (
         columns
-        |> Array.map(fun column ->
+        |> List.map(fun column ->
           Html.li [
-            prop.key column
+            prop.key column.Name
             prop.children [
-              Html.span column
+              Html.span column.Name
               
-              if Set.contains column selected
-              then button "Remove" (fun () -> updateSet (Set.remove column selected))
-              else button "Add" (fun () -> updateSet (Set.add column selected))
+              if Set.contains column.Name selected
+              then button "Remove" (fun () -> updateSet (Set.remove column.Name selected))
+              else button "Add" (fun () -> updateSet (Set.add column.Name selected))
             ]
           ]
         )
@@ -41,8 +41,10 @@ let ColumnSelector (columns: string array, columnsChanged: string array -> unit)
     ]
     
 [<ReactComponent>]
-let AnonymizedResult (results: QueryResult option) =
+let AnonymizedResult (results: TableData option) =
   match results with
+  | None -> React.fragment []
+    
   | Some results ->
     Html.div [
       prop.className "rounded bg-gray-50 p-2 mt-4"
@@ -51,10 +53,7 @@ let AnonymizedResult (results: QueryResult option) =
           prop.className "w-full"
           prop.children [
             Html.thead [
-              Html.tr (
-                results.Columns
-                |> List.map(Html.th)
-              )
+              Html.tr (results.Headers |> List.map Html.th)
             ]
             
             Html.tbody [
@@ -62,9 +61,7 @@ let AnonymizedResult (results: QueryResult option) =
               prop.children (
                 results.Rows
                 |> List.map(fun row ->
-                  Html.tr (
-                    row |> Array.map(OpenDiffix.Core.Value.toString >> Html.td)
-                  )
+                  Html.tr (row |> List.map Html.td)
                 )
               )
             ]
@@ -72,6 +69,3 @@ let AnonymizedResult (results: QueryResult option) =
         ]
       ]
     ]
-    
-    
-  | None -> React.fragment []
