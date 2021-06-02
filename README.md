@@ -8,5 +8,15 @@ Open Diffix Reference to anonymize data in Publish mode.
 
 ## Development
 
-Run `yarn dev` for development version of the app.
-Hot code reloading should work.
+Run `yarn setup` to install dependencies and to perform a first
+compilation of the F# React app.
+
+Following the setup, run `yarn dev` to start the development environment
+with hot code reloading.
+
+## Making a release
+
+`yarn make` will produce an executable.
+Electron forge is used for building. To add a new target,
+check out the [makers](https://www.electronforge.io/config/makers) documentation,
+and edit the [forge.config.js](forge.config.js) file.

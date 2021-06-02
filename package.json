@@ -5,6 +5,12 @@
   "description": "Desktop app for anonymizing data using Open Diffix Publish",
   "main": "./.webpack/main",
   "scripts": {
+    "asdf:install": "asdf install",
+    "setup:tools": "dotnet tool restore",
+    "setup:dotnet-packages": "dotnet restore",
+    "setup:yarn": "yarn install",
+    "setup": "run-s asdf:install setup:* make:fable",
+
     "dev:forge": "electron-forge start",
     "dev:fable": "dotnet fable watch OpenDiffix.Publisher -o src/compiled",
     "dev": "run-p dev:*",
