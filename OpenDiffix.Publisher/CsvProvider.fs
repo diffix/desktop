@@ -52,9 +52,7 @@ let parseCsv(content: string, separator: char): ParsedData =
 let toDataProvider (parsedData: ParsedData) =
   CsvProvider(parsedData)
   
-open OpenDiffix.Shared
-
-let toFrontendTable (parsedData: ParsedData): FrontendTable =
+let toFrontendTable (parsedData: ParsedData): SharedTypes.FrontendTable =
   let sampleRows =
     parsedData.Rows
     |> Seq.truncate 10

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { CsvDropzone } from './csvDropzone';
-import { ColumnSelector, AnonymizedResult } from "./../compiled/Components"
+import { CsvDropzone } from './CsvDropzone';
+import { AnonymizedResult } from "../compiled/AnonymizedResult"
+import { ColumnSelector } from "../compiled/ColumnSelector"
 
 export function App() {
   const [ frontendTable, setFrontendTable ] = useState({Columns: []});

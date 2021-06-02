@@ -1,8 +1,7 @@
-﻿module OpenDiffix.WebInterface
+module OpenDiffix.Publisher.ColumnSelector
 
 open Feliz
-open Shared
-
+ 
 let button (title: string) action =
   Html.button [
     prop.text title
@@ -11,7 +10,7 @@ let button (title: string) action =
   ]
   
 [<ReactComponent>]
-let ColumnSelector (columns: JsColumn list, columnsChanged: string list -> unit) =
+let ColumnSelector (columns: SharedTypes.JsColumn list, columnsChanged: string list -> unit) =
   let selected, setSelected = React.useState Set.empty
   
   let updateSet newSet =
@@ -40,34 +39,4 @@ let ColumnSelector (columns: JsColumn list, columnsChanged: string list -> unit)
           ]
         )
       )
-    ]
-    
-[<ReactComponent>]
-let AnonymizedResult (results: TableData option) =
-  match results with
-  | None -> React.fragment []
-    
-  | Some results ->
-    Html.div [
-      prop.className "rounded bg-gray-50 p-2 mt-4"
-      prop.children [
-        Html.table [
-          prop.className "w-full"
-          prop.children [
-            Html.thead [
-              Html.tr (results.Headers |> List.map Html.th)
-            ]
-            
-            Html.tbody [
-              prop.className "border-t"
-              prop.children (
-                results.Rows
-                |> List.map(fun row ->
-                  Html.tr (row |> List.map Html.td)
-                )
-              )
-            ]
-          ]
-        ]
-      ]
     ]

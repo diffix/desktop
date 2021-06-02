@@ -1,12 +1,8 @@
 dist
 node_modules
 .idea
+OpenDiffix.Publisher/obj
+OpenDiffix.Publisher/bin
 src/compiled
-src/renderer/compiled
-src_dotnet/OpenDiffix.Publisher/obj
-src_dotnet/OpenDiffix.Publisher/bin
-src_dotnet/OpenDiffix.WebInterface/obj
-src_dotnet/OpenDiffix.Shared/obj
-
 out/
 .webpack

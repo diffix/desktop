@@ -4,7 +4,7 @@ open OpenDiffix.Core
 open OpenDiffix.Core.ParserTypes
 open OpenDiffix.Core.QueryEngine
 
-let anonymize (data: CsvProvider.ParsedData) (columns: string list): OpenDiffix.Shared.TableData =
+let anonymize (data: CsvProvider.ParsedData) (columns: string list): SharedTypes.TableData =
   let columnExpressions = columns |> List.map(fun columnName -> Identifier (None, columnName))
   let countStar = Function("count", [Star])
   let queryAst = {

@@ -6,6 +6,7 @@
   "main": "./.webpack/main",
   "scripts": {
     "dev:forge": "electron-forge start",
+    "dev:fable": "dotnet fable watch OpenDiffix.Publisher -o src/compiled",
     "dev": "run-p dev:*",
     "package": "electron-forge package",
     "make": "electron-forge make"

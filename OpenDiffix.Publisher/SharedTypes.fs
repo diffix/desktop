@@ -1,4 +1,4 @@
-﻿module OpenDiffix.Shared
+﻿module OpenDiffix.Publisher.SharedTypes
 
 type JsColumn = {Name: string; SampleValues: string list}
 
