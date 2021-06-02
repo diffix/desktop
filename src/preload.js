@@ -1,22 +1,18 @@
 import { ipcRenderer, contextBridge } from "electron";
 
 contextBridge.exposeInMainWorld('electron', {
-  loadFile: (file) => {
-    ipcRenderer.send('loadFile', file);
-  },
-
+  // Actions
+  loadFile: (file) => ipcRenderer.send('loadFile', file),
   anonymizeForColumns: (columns) => ipcRenderer.send('anonymize', columns),
 
-  registerDataProvider: (callback) => {
-    ipcRenderer.on("schemaLoaded", (event, data) => {
-      console.log(`Got event schemaLoaded with ${data}`);
-      console.log(data);
+  // Callbacks
+  onSchemaChange: (callback) => {
+    ipcRenderer.on("onSchemaChange", (event, data) => {
       callback(data);
     });
   },
-
-  registerResultHandler: (callback) => {
-    ipcRenderer.on("resultsComputed", (event, data) => {
+  onAnonymizedResult: (callback) => {
+    ipcRenderer.on("onAnonymizedResult", (event, data) => {
       callback(data);
     });
   },

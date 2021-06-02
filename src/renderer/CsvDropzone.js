@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
-export function CsvDropzone() {
+export function CsvDropzone({loadCsv}) {
   const onDrop = useCallback(acceptedFiles => {
-    acceptedFiles.forEach((file) => {
-      window.electron.loadFile(file.path);
-    });
+    acceptedFiles.forEach((file) => loadCsv(file.path));
+    //   window.electron.loadFile(file.path);
+    // });
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

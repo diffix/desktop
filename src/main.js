@@ -69,11 +69,11 @@ ipcMain.on("loadFile", (event, filePath) => {
     // As the data can be quite large, and isn't needed in the UX,
     // we keep it locally in the backend process exclusively
     parsedData = data;
-    event.reply('schemaLoaded', toFrontendTable(data));
+    event.reply('onSchemaChange', toFrontendTable(data));
   });
 });
 
 ipcMain.on("anonymize", (event, columns) => {
   const result = anonymize(parsedData, columns);
-  event.reply('resultsComputed', result);
+  event.reply('onAnonymizedResult', result);
 });
