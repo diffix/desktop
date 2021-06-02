@@ -5,8 +5,9 @@ open Feliz.UseElmish
 open Elmish
 open OpenDiffix.Publisher.SharedTypes
 
-type Page =
+type Screen =
   | WelcomeScreen
+  | AnonymizeScreen
   
 type IPCResult<'a> =
   | NotRequested
@@ -20,7 +21,7 @@ type IPCResult<'a> =
     | other -> other
   
 type Msg =
-  | ChangePage of Page
+  | ChangeScreen of Screen
   | LoadedSchema of FrontendTable
   | AnonymizedResult of TableData
   | RequestAnonymization
@@ -30,7 +31,7 @@ type Msg =
   | RemoveColumn of string
 
 type State = {
-  Page: Page
+  Screen: Screen
   Schema: FrontendTable option
   AnonymizedResult: IPCResult<TableData>
   SelectedColumns: Set<string>
@@ -39,12 +40,11 @@ type State = {
 let init() =
   let cmd =
     Cmd.ofSub (fun dispatch ->
-      printfn "Creating subscription..."
       IPC.onSchemaChange(LoadedSchema >> dispatch)
       IPC.onAnonymizedResult(AnonymizedResult >> dispatch)
     )
   {
-    Page = WelcomeScreen
+    Screen = WelcomeScreen
     Schema = None
     AnonymizedResult = NotRequested
     SelectedColumns = Set.empty
@@ -52,11 +52,11 @@ let init() =
 
 let update msg state =
   match msg with
-  | ChangePage newPage -> { state with Page = newPage }, Cmd.none
+  | ChangeScreen newPage -> { state with Screen = newPage }, Cmd.none
   
   // IPC back from main app
   | LoadedSchema schema ->
-    { state with Schema = Some schema; SelectedColumns = Set.empty }, Cmd.none
+    { state with Schema = Some schema; SelectedColumns = Set.empty }, Cmd.ofMsg (ChangeScreen AnonymizeScreen)
   | AnonymizedResult result ->
     { state with AnonymizedResult = Returned result }, Cmd.none
   
@@ -81,38 +81,46 @@ let wordMark =
       ]
     ]
   ]
-
-let button (title: string) action =
-  Html.button [
-    prop.text title
-    prop.className "rounded ml-2 border hover:bg-gray-100 bg-gray-200 text-gray-900 text-xs px-1 py-0.5"
-    prop.onClick (fun _e -> action ())
-  ]
   
 [<ReactComponent>]
 let ColumnSelector state dispatch (columns: JsColumn list) =
   match columns with
   | [] -> React.fragment []
   | columns ->
-    Html.ul [
-      prop.className "space-y-1 text-sm mt-4" 
-      prop.children (
-        columns
-        // The first column is the AID column. We skip it for the purposes of the UX
-        |> List.skip 1
-        |> List.map(fun column ->
-          Html.li [
-            prop.key column.Name
-            prop.children [
-              Html.span column.Name
-              
-              if Set.contains column.Name state.SelectedColumns
-              then button "Remove" (fun () -> RemoveColumn column.Name |> dispatch)
-              else button "Add" (fun () -> SelectColumn column.Name |> dispatch)
-            ]
-          ]
-        )
-      )
+    Html.div [
+      prop.children [
+        Html.div [
+          prop.className "w-full bg-gray-200 text-sm px-1 py-0.5 text-gray-900"
+          prop.text "Dimension"
+        ]
+        Html.ul [
+          prop.className "space-y-2 text-sm mt-3 px-3" 
+          prop.children (
+            columns
+            // The first column is the AID column. We skip it for the purposes of the UX
+            |> List.skip 1
+            |> List.map(fun column ->
+              Html.li [
+                prop.className "flex"
+                prop.key column.Name
+                prop.children [
+                  let enabled = Set.contains column.Name state.SelectedColumns
+                  ImportedComponents.Toggle (enabled, fun setEnabled ->
+                    printfn $"Callback called with %A{setEnabled}"
+                    if setEnabled
+                    then dispatch <| SelectColumn column.Name
+                    else dispatch <| RemoveColumn column.Name
+                  )
+                  Html.span [
+                    prop.className "ml-2"
+                    prop.text column.Name
+                  ]
+                ]
+              ]
+            )
+          )
+        ]
+      ]
     ]
     
 [<ReactComponent>]
@@ -141,36 +149,53 @@ let AnonymizedResult (results: TableData) =
     ]
   ]
     
-let renderWelcomeScreen (state: State) dispatch =
+let renderWelcomeScreen =
   React.fragment [
     Html.h1 wordMark
-      
     ImportedComponents.CsvDropzone IPC.loadCsv
-    
-    match state.Schema with
-    | None -> React.fragment []
-    | Some schema -> ColumnSelector state dispatch schema.Columns 
-    
-    match state.AnonymizedResult with
-    | NotRequested -> React.fragment []
-    | Requested None ->
+  ]
+  
+let renderAnonymizeScreen (state: State) dispatch =
+  Html.div [
+    prop.className "flex flex-row-reverse"
+    prop.children [
       Html.div [
-        Html.span "Calculating results..."
-      ]
-    | Requested (Some previousResult) ->
-      Html.div [
+        prop.className "w-64 flex-grow-0 border-l border-gray-100 h-screen overflow-auto"
         prop.children [
-          Html.span "Calculating results..."
-          AnonymizedResult previousResult
+          match state.Schema with
+          | None -> React.fragment []
+          | Some schema -> ColumnSelector state dispatch schema.Columns 
         ]
       ]
-    | Returned result ->
-      AnonymizedResult result
+      
+      Html.div [
+        prop.className "flex-grow bg-white"
+        prop.children [
+          match state.AnonymizedResult with
+          | NotRequested -> React.fragment []
+          | Requested None ->
+            Html.div [
+              Html.span "Calculating results..."
+            ]
+          | Requested (Some previousResult) ->
+            Html.div [
+              prop.children [
+                Html.span "Calculating results..."
+                AnonymizedResult previousResult
+              ]
+            ]
+          | Returned result ->
+            AnonymizedResult result
+        ]
+      ]
+    ]
   ]
   
 [<ReactComponent>]
 let App() =
   let state, dispatch = React.useElmish(init, update, [| |])
+  React.useEffectOnce (fun () -> IPC.loadCsv "/Users/sebastian/work-projects/DiffixPublisher/sample.csv")
   
-  match state.Page with
-  | WelcomeScreen -> renderWelcomeScreen state dispatch
+  match state.Screen with
+  | WelcomeScreen -> renderWelcomeScreen 
+  | AnonymizeScreen -> renderAnonymizeScreen state dispatch

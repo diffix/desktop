@@ -10,7 +10,6 @@
     "setup:dotnet-packages": "dotnet restore",
     "setup:yarn": "yarn install",
     "setup": "run-s asdf:install setup:* make:fable",
-
     "dev:forge": "electron-forge start",
     "dev:fable": "dotnet fable watch OpenDiffix.Publisher -o src/compiled",
     "dev": "run-p dev:*",
@@ -29,6 +28,7 @@
   },
   "homepage": "https://github.com/diffix/publisher#readme",
   "dependencies": {
+    "@headlessui/react": "^1.2.0",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

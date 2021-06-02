@@ -3,6 +3,7 @@ module OpenDiffix.Publisher.Anonymizer
 open OpenDiffix.Core
 open OpenDiffix.Core.ParserTypes
 open OpenDiffix.Core.QueryEngine
+open OpenDiffix.Publisher
 
 let anonymize (data: CsvProvider.ParsedData) (columns: string list): SharedTypes.TableData =
   let columnExpressions = columns |> List.map(fun columnName -> Identifier (None, columnName))
