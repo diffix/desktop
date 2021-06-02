@@ -9,7 +9,9 @@
     "dev:fable": "dotnet fable watch OpenDiffix.Publisher -o src/compiled",
     "dev": "run-p dev:*",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make:fable": "dotnet fable OpenDiffix.Publisher -o src/compiled",
+    "make:forge": "electron-forge make",
+    "make": "run-s make:fable make:forge"
   },
   "repository": {
     "type": "git",
