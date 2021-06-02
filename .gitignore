@@ -7,3 +7,6 @@ src_dotnet/OpenDiffix.Publisher/obj
 src_dotnet/OpenDiffix.Publisher/bin
 src_dotnet/OpenDiffix.WebInterface/obj
 src_dotnet/OpenDiffix.Shared/obj
+
+out/
+.webpack
