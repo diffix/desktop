@@ -307,7 +307,6 @@ let renderAnonymizeScreen (state: AnonState) dispatch =
 [<ReactComponent>]
 let App() =
   let state, dispatch = React.useElmish(init, update, [| |])
-  React.useEffectOnce (fun () -> IPC.loadCsv "/Users/sebastian/work-projects/DiffixPublisher/sample.csv")
   
   match state.Screen with
   | WelcomeScreen -> renderWelcomeScreen dispatch
