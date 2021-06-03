@@ -63,12 +63,6 @@ let updateAnonState state fn =
   | _ ->
     Browser.Dom.console.error($"Attempting to update state related to anonymization screen while not there!")
     state
-    
-let onAnonState state fn =
-  updateAnonState state (fun anonState ->
-    fn anonState |> ignore
-    anonState
-  )
 
 let update msg state =
   match msg with
