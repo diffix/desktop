@@ -5,6 +5,10 @@ import { anonymize } from "./compiled/Anonymizer";
 let parsedData = null;
 let mainWindow = null;
 
+function isDev() {
+  return process.mainModule.filename.indexOf("app.asar") === -1;
+}
+
 function createMainWindow() {
   console.log(`Preload entry: ${MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY}`);
   console.log(`Main window webpack entry: ${MAIN_WINDOW_WEBPACK_ENTRY}`);
@@ -16,7 +20,7 @@ function createMainWindow() {
     }
   });
 
-  if (process.env.MODE !== 'production') {
+  if (isDev()) {
     window.webContents.openDevTools();
   }
 
