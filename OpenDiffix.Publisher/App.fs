@@ -152,7 +152,7 @@ let ColumnSelector state dispatch (columns: JsColumn list) =
 [<ReactComponent>]
 let AnonymizedResultTable (results: TableData) =
   Html.div [
-    prop.className "rounded bg-gray-50 p-2 mt-4"
+    prop.className "rounded bg-gray-50 p-4 mt-2"
     prop.children [
       Html.table [
         prop.className "w-full"
