@@ -199,9 +199,18 @@ let renderWelcomeScreen dispatch =
     ]
   ]
   
+let isAnonymizing (state: AnonState) =
+  match state.AnonymizedResult with
+  | Requested _ -> true
+  | _ -> false
+  
 let renderAnonymizeScreen (state: AnonState) dispatch =
+  let conditionalClasses =
+    if isAnonymizing state
+    then "animate-pulse"
+    else ""
   Html.div [
-    prop.className "flex flex-row-reverse text-gray-800 overflow-hidden"
+    prop.className $"flex flex-row-reverse text-gray-800 overflow-hidden %s{conditionalClasses}"
     prop.children [
       Html.div [
         prop.className "w-64 flex-grow-0 border-l bg-gray-100 h-screen flex flex-col"
