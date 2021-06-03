@@ -44,25 +44,30 @@ type Msg =
   // Column selection
   | SelectColumn of string
   | RemoveColumn of string
+  
+  // Misc
+  | IPCException of exn
 
 type State = {
   Screen: Screen
 }
 
 let init() =
-  let cmd =
+  let subscriptionCmd =
     Cmd.ofSub (fun dispatch ->
-      IPC.onSchemaChange(LoadedSchema >> dispatch)
-      IPC.onAnonymizedResult(AnonymizedResult >> dispatch)
+      IPC.onAnonymizedData(AnonymizedResult >> dispatch)
+      IPC.onSchemaLoaded(LoadedSchema >> dispatch)
     )
-  { Screen = WelcomeScreen }, cmd
+  { Screen = WelcomeScreen }, subscriptionCmd
   
 let updateAnonState state fn =
   match state.Screen with
-  | AnonymizeScreen anonState -> { state with Screen = AnonymizeScreen (fn anonState) }
+  | AnonymizeScreen anonState ->
+    let updatedState, cmd = fn anonState
+    { state with Screen = AnonymizeScreen updatedState }, cmd
   | _ ->
     Browser.Dom.console.error($"Attempting to update state related to anonymization screen while not there!")
-    state
+    state, Cmd.none
 
 let update msg state =
   match msg with
@@ -81,24 +86,33 @@ let update msg state =
   
   // IPC back from main app
   | LoadedSchema schema ->
-    updateAnonState state (fun anonState -> { anonState with Schema = Returned schema }), Cmd.ofMsg RequestAnonymization
+    updateAnonState state (fun anonState -> { anonState with Schema = Returned schema }, Cmd.ofMsg RequestAnonymization)
   | AnonymizedResult result ->
-    updateAnonState state (fun anonState -> { anonState with AnonymizedResult = Returned result }), Cmd.none
+    updateAnonState state (fun anonState -> { anonState with AnonymizedResult = Returned result }, Cmd.none)
     
   | RequestAnonymization ->
     updateAnonState state (fun anonState ->
-      let selectedColumns = Set.toList anonState.SelectedColumns
-      IPC.anonymizeForColumns selectedColumns
-      { anonState with AnonymizedResult = anonState.AnonymizedResult.SetRequested() }
-    ), Cmd.none
+      anonState.SelectedColumns
+      |> Set.toList
+      |> IPC.anonymizeForColumns
+      
+      { anonState with AnonymizedResult = anonState.AnonymizedResult.SetRequested() }, Cmd.none
+    )
   | SelectColumn columnName ->
     updateAnonState state (fun anonState ->
-      { anonState with SelectedColumns = Set.add columnName anonState.SelectedColumns }
-    ), Cmd.ofMsg RequestAnonymization
+      { anonState with SelectedColumns = Set.add columnName anonState.SelectedColumns }, Cmd.ofMsg RequestAnonymization
+    )
   | RemoveColumn columnName ->
     updateAnonState state (fun anonState ->
-      { anonState with SelectedColumns = Set.remove columnName anonState.SelectedColumns }
-    ), Cmd.ofMsg RequestAnonymization
+      { anonState with SelectedColumns = Set.remove columnName anonState.SelectedColumns }, Cmd.ofMsg RequestAnonymization
+    )
+    
+  // ----------------------------------------------------------------
+  // IPC
+  // ----------------------------------------------------------------
+  | IPCException exn ->
+    printfn $"Got an exception on the IPC call: %s{exn.Message}"
+    state, Cmd.none
     
 let wordmarkify (phrase: string) =
   Html.span [

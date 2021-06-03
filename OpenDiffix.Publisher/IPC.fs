@@ -3,14 +3,22 @@ module OpenDiffix.Publisher.IPC
 open Fable.Core
 open SharedTypes
 
+// -------------------------------------------------------------------
+// Actions
+// -------------------------------------------------------------------
+
 [<Emit("window.electron.loadFile($0)")>]
 let loadCsv (fileName: string): unit = jsNative
 
-[<Emit("window.electron.onSchemaChange($0)")>]
-let onSchemaChange (callback: FrontendTable -> unit): unit = jsNative
-
-[<Emit("window.electron.onAnonymizedResult($0)")>]
-let onAnonymizedResult (callback: TableData -> unit): unit = jsNative
-
 [<Emit("window.electron.anonymizeForColumns($0)")>]
 let anonymizeForColumns (columns: string list): unit = jsNative
+
+// -------------------------------------------------------------------
+// Callbacks
+// -------------------------------------------------------------------
+
+[<Emit("window.electron.onSchemaLoaded($0)")>]
+let onSchemaLoaded (callback: FrontendTable -> unit): unit = jsNative
+
+[<Emit("window.electron.onAnonymizedData($0)")>]
+let onAnonymizedData (callback: TableData -> unit): unit = jsNative

@@ -1,39 +1,46 @@
+"use strict";
 import { app, BrowserWindow, ipcMain } from 'electron';
-import { parseCsv, toFrontendTable } from "./compiled/CsvProvider";
-import { anonymize } from "./compiled/Anonymizer";
 
-let parsedData = null;
-let mainWindow = null;
+let mainWindow, workerWindow;
 
-function createMainWindow() {
-  console.log(`Preload entry: ${MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY}`);
-  console.log(`Main window webpack entry: ${MAIN_WINDOW_WEBPACK_ENTRY}`);
+function createWindows() {
+  workerWindow = new BrowserWindow({
+    show: !app.isPackaged,
+    webPreferences: {
+      preload: WORKER_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    }
+  });
 
-  const window = new BrowserWindow({
+  workerWindow.loadURL(WORKER_WINDOW_WEBPACK_ENTRY);
+
+
+  // Renderer
+
+  mainWindow = new BrowserWindow({
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       contextIsolation: true
     }
   });
 
-  if (! app.isPackaged) {
-    window.webContents.openDevTools();
-  }
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-
-  window.on('closed', () => {
+  mainWindow.on('closed', () => {
     mainWindow = null;
+    workerWindow = null;
   });
 
-  window.webContents.on('devtools-opened', () => {
-    window.focus();
+  mainWindow.webContents.on('devtools-opened', () => {
+    mainWindow.focus();
     setImmediate(() => {
-      window.focus();
+      mainWindow.focus();
     });
   });
 
-  return window;
+  if (! app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+    workerWindow.webContents.openDevTools();
+  }
 }
 
 // quit application when all windows are closed
@@ -47,33 +54,37 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // on macOS it is common to re-create a window even after all windows have been closed
   if (mainWindow === null) {
-    mainWindow = createMainWindow();
+    createWindows();
   }
 });
 
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
-  mainWindow = createMainWindow();
+  createWindows();
 });
 
-ipcMain.on("loadFile", (event, filePath) => {
-  const {readFile} = require("fs");
-
+ipcMain.on("forwardToWorker_loadFile", (event, filePath) => {
+  const { readFile } = require("fs");
   readFile(filePath, "utf-8", (err, csvContent) => {
     if (err) {
-      alert("An error ocurred reading the file :" + err.message);
-      return;
+      console.log("An error ocurred reading the file :" + err.message);
     }
-
-    const data = parseCsv(csvContent, ",");
-    // As the data can be quite large, and isn't needed in the UX,
-    // we keep it locally in the backend process exclusively
-    parsedData = data;
-    event.reply('onSchemaChange', toFrontendTable(data));
+    console.log("Successfully loaded CSV file. Forwarding content to worker.")
+    workerWindow.webContents.send("loadedFile", csvContent);
   });
 });
 
-ipcMain.on("anonymize", (event, columns) => {
-  const result = anonymize(parsedData, columns);
-  event.reply('onAnonymizedResult', result);
+ipcMain.on("forwardToWorker_anonymize", (event, columns) => {
+  console.log("Forwarding file load request to worker");
+  workerWindow.webContents.send("anonymize", columns);
+});
+
+ipcMain.on("forwardToFrontend_anonymizedResult", (event, result) => {
+  console.log("Forwarding anonymized result to renderer");
+  mainWindow.webContents.send("anonymizedData", result);
+});
+
+ipcMain.on("forwardToFrontend_frontendTable", (event, result) => {
+  console.log("Forwarding frontend table to renderer");
+  mainWindow.webContents.send("schemaLoaded", result);
 });

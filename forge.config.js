@@ -14,6 +14,13 @@ module.exports = {
             preload: {
               js: './src/preload.js',
             },
+          }, {
+            html: './src/worker/worker.html',
+            js: './src/worker/worker.js',
+            name: 'worker_window',
+            preload: {
+              js: './src/worker_preload.js',
+            },
           }]
         }
       }
