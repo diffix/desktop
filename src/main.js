@@ -1,6 +1,8 @@
 "use strict";
 import { app, BrowserWindow, ipcMain } from 'electron';
 
+if (require("electron-squirrel-startup")) app.quit();
+
 let mainWindow, workerWindow;
 
 function createWindows() {
