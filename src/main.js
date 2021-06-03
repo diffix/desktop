@@ -5,10 +5,6 @@ import { anonymize } from "./compiled/Anonymizer";
 let parsedData = null;
 let mainWindow = null;
 
-function isDev() {
-  return process.mainModule.filename.indexOf("app.asar") === -1;
-}
-
 function createMainWindow() {
   console.log(`Preload entry: ${MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY}`);
   console.log(`Main window webpack entry: ${MAIN_WINDOW_WEBPACK_ENTRY}`);
@@ -20,7 +16,8 @@ function createMainWindow() {
     }
   });
 
-  if (isDev()) {
+  const isDev = require("electron-is-dev");
+  if (isDev) {
     window.webContents.openDevTools();
   }
 
