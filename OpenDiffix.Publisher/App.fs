@@ -87,7 +87,7 @@ let update msg state =
   
   // IPC back from main app
   | LoadedSchema schema ->
-    updateAnonState state (fun anonState -> { anonState with Schema = Returned schema }), Cmd.none
+    updateAnonState state (fun anonState -> { anonState with Schema = Returned schema }), Cmd.ofMsg RequestAnonymization
   | AnonymizedResult result ->
     updateAnonState state (fun anonState -> { anonState with AnonymizedResult = Returned result }), Cmd.none
     
@@ -253,7 +253,12 @@ let renderAnonymizeScreen (state: AnonState) dispatch =
                   prop.children (wordmarkify "Easy Diffix")
                 ]
                 Html.p [
-                  prop.text "To get started, please select one or more dimensions from the right hand side menu."
+                  prop.className "mt-2"
+                  prop.text "The system is processing the data and getting ready for anonymization!"
+                ]
+                Html.p [
+                  prop.className "mt-2"
+                  prop.text "This might take a while. Please be patient or go get a cup of coffee."
                 ]
               ]
             ]
