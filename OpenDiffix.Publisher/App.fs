@@ -219,7 +219,7 @@ let renderAnonymizeScreen (state: AnonState) dispatch =
                   | NotRequested -> React.fragment []
                   | Requested _ ->
                     Html.div [
-                      prop.className "text-sm text-gray-500"
+                      prop.className "text-sm text-gray-500 mt-2"
                       prop.text "The dataset is being processed and the dimensions loaded. This operation might take a while."
                     ]
                   | Returned schema -> ColumnSelector state dispatch schema.Columns
