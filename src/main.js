@@ -16,8 +16,7 @@ function createMainWindow() {
     }
   });
 
-  const isDev = require("electron-is-dev");
-  if (isDev) {
+  if (! app.isPackaged) {
     window.webContents.openDevTools();
   }
 
