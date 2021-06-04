@@ -190,7 +190,9 @@ let renderWelcomeScreen dispatch =
           Html.div [
             prop.className "text-4xl flex-grow-0"
             prop.children [
-              Html.h1 (wordmarkify "Easy Diffix")
+              Html.h1 [
+                wordmarkify "Easy Diffix"
+              ]
             ]
           ]
           Html.div [
