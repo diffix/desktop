@@ -92,10 +92,7 @@ let update msg state =
     
   | RequestAnonymization ->
     updateAnonState state (fun anonState ->
-      anonState.SelectedColumns
-      |> Set.toList
-      |> IPC.anonymizeForColumns
-      
+      IPC.anonymizeForColumns (Set.toList anonState.SelectedColumns)
       { anonState with AnonymizedResult = anonState.AnonymizedResult.SetRequested() }, Cmd.none
     )
   | SelectColumn columnName ->

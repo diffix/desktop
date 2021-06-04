@@ -56,3 +56,16 @@ let anonymize (data: CsvProvider.ParsedData) (columns: string list): EncodedTabl
       }
   
   IPCCoder.pack queryResult
+
+let anonCache = ref Map.empty
+
+let cachedAnonymize (data: CsvProvider.ParsedData) (columns: string list) : EncodedTableData =
+  match Map.tryFind columns !anonCache with
+  | Some result -> result
+  | None ->
+    let result = anonymize data columns
+    anonCache := (Map.add columns result !anonCache)
+    result
+
+let resetAnonCache () =
+  anonCache := Map.empty
