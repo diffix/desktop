@@ -20,9 +20,17 @@ type CsvProvider (parsedData: ParsedData) =
         }
       ]
 
+module private DataCleaner =
+  let cleanColumnValue (columnValue: string) =
+    columnValue.Trim('"')
+  
 let parseCsv(content: string, separator: char): ParsedData =
   content.Split('\n')
-  |> Array.map(fun line -> line.Split separator |> Array.toList)
+  |> Array.map(fun line ->
+    line.Split separator
+    |> Array.toList
+    |> List.map DataCleaner.cleanColumnValue
+  )
   |> Array.toList
   |> function
     | [] ->
