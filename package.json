@@ -16,6 +16,7 @@
     "package": "electron-forge package",
     "make:fable": "dotnet fable OpenDiffix.Publisher -o src/compiled",
     "make:forge": "electron-forge make",
+    "make:forge:windows": "NODE_ENV=production electron-forge make -p win32",
     "make": "NODE_ENV=production run-s make:fable make:forge"
   },
   "repository": {
