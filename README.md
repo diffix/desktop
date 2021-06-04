@@ -45,3 +45,6 @@ exit
 
 Once the `make` operation completes you can exit the container.
 The build artefact should be in the `/out` folder.
+
+Note: the windows build solution is heavily inspired (taken) from
+https://gist.github.com/hackash/4c3c15151c2ba658d2b4f00cf463d711
