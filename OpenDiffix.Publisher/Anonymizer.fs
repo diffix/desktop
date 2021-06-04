@@ -4,8 +4,9 @@ open OpenDiffix.Core
 open OpenDiffix.Core.ParserTypes
 open OpenDiffix.Core.QueryEngine
 open OpenDiffix.Publisher
+open OpenDiffix.Publisher.SharedTypes
 
-let anonymize (data: CsvProvider.ParsedData) (columns: string list): SharedTypes.TableData =
+let anonymize (data: CsvProvider.ParsedData) (columns: string list): EncodedTableData =
   let columnExpressions = columns |> List.map(fun columnName -> Identifier (None, columnName))
   let countStar = Function("count", [Star])
   let queryAst = {
@@ -32,23 +33,26 @@ let anonymize (data: CsvProvider.ParsedData) (columns: string list): SharedTypes
     DataProvider = CsvProvider.toDataProvider data
   }
   
-  match run evaluationContext queryAst with
-  | Ok result ->
-    {
-      Headers = result.Columns
-      Rows =
-        result.Rows
-        |> List.map(fun row ->
-          row
-          |> Array.map(Value.toString)
-          |> List.ofArray
-        )
-    }
-    
-  | Error errorMsg ->
-    {
-      Headers = ["Error"]
-      Rows = [
-        [errorMsg]
-      ]
-    }
+  let queryResult: TableData =
+    match run evaluationContext queryAst with
+    | Ok result ->
+      {
+        Headers = result.Columns
+        Rows =
+          result.Rows
+          |> List.map(fun row ->
+            row
+            |> Array.map(Value.toString)
+            |> List.ofArray
+          )
+      }
+      
+    | Error errorMsg ->
+      {
+        Headers = ["Error"]
+        Rows = [
+          [errorMsg]
+        ]
+      }
+  
+  IPCCoder.pack queryResult

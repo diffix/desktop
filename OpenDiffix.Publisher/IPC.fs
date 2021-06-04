@@ -18,7 +18,7 @@ let anonymizeForColumns (columns: string list): unit = jsNative
 // -------------------------------------------------------------------
 
 [<Emit("window.electron.onSchemaLoaded($0)")>]
-let onSchemaLoaded (callback: FrontendTable -> unit): unit = jsNative
+let onSchemaLoaded (callback: EncodedFrontendTable -> unit): unit = jsNative
 
 [<Emit("window.electron.onAnonymizedData($0)")>]
-let onAnonymizedData (callback: TableData -> unit): unit = jsNative
+let onAnonymizedData (callback: EncodedTableData -> unit): unit = jsNative

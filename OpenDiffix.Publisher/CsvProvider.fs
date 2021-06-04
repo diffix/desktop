@@ -41,31 +41,36 @@ let parseCsv(content: string, separator: char): ParsedData =
         |> List.mapi(fun index row -> Integer (int64 index) :: (row |> List.map String) |> List.toArray)
         |> List.toArray
       
-      {
-        Columns = columns
-        Rows = rows
-      }
+      let tableData: ParsedData =
+        {
+          Columns = columns
+          Rows = rows
+        }
+      
+      tableData
 
 let toDataProvider (parsedData: ParsedData) =
   CsvProvider(parsedData)
   
-let toFrontendTable (parsedData: ParsedData): SharedTypes.FrontendTable =
+let toFrontendTable (parsedData: ParsedData): SharedTypes.EncodedTableData =
   let sampleRows =
     parsedData.Rows
     |> Seq.truncate 10
     |> Array.ofSeq
-    
-  {
-    Name = tableName
-    Columns =
-      parsedData.Columns
-      |> List.mapi(fun i column ->
-        {
-          Name = column.Name
-          SampleValues =
-            sampleRows
-            |> Array.map(Array.item i >> OpenDiffix.Core.Value.toString)
-            |> Array.toList
-        }
-      )
-  }
+  
+  let frontendTable: SharedTypes.FrontendTable = 
+    {
+      Name = tableName
+      Columns =
+        parsedData.Columns
+        |> List.mapi(fun i column ->
+          {
+            Name = column.Name
+            SampleValues =
+              sampleRows
+              |> Array.map(fun (row: Row) -> row |> Array.item i |> OpenDiffix.Core.Value.toString)
+              |> Array.toList
+          }
+        )
+    }
+  SharedTypes.IPCCoder.pack<SharedTypes.FrontendTable>(frontendTable)

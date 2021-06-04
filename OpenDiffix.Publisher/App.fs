@@ -55,8 +55,8 @@ type State = {
 let init() =
   let subscriptionCmd =
     Cmd.ofSub (fun dispatch ->
-      IPC.onAnonymizedData(AnonymizedResult >> dispatch)
-      IPC.onSchemaLoaded(LoadedSchema >> dispatch)
+      IPC.onAnonymizedData(IPCCoder.unpack<TableData> >> AnonymizedResult >> dispatch)
+      IPC.onSchemaLoaded(IPCCoder.unpack<FrontendTable> >> LoadedSchema >> dispatch)
     )
   { Screen = WelcomeScreen }, subscriptionCmd
   
