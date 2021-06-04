@@ -22,10 +22,7 @@ type CsvProvider (parsedData: ParsedData) =
 
 let parseCsv(content: string, separator: char): ParsedData =
   content.Split('\n')
-  |> Array.map(fun line ->
-    printfn $"Processing line: %s{line}"
-    line.Split separator |> Array.toList
-  )
+  |> Array.map(fun line -> line.Split separator |> Array.toList)
   |> Array.toList
   |> function
     | [] ->
