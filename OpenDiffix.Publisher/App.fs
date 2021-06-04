@@ -247,7 +247,7 @@ let renderAnonymizeScreen (state: AnonState) dispatch =
             prop.className "flex-grow-0 border-t mx-2 py-1 border-gray-50 text-gray-600"
             prop.children [
               Html.button [
-                prop.className "border rounded-lg px-2 py-1 w-full bg-gray-200 hover:bg-gray-300"
+                prop.className "border rounded-lg px-2 py-1 my-1 w-full bg-gray-200 hover:bg-gray-300"
                 prop.onClick (fun _ -> dispatch StartOver)
                 prop.text "Start over"
               ]
