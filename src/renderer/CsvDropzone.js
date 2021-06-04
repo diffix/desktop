@@ -8,7 +8,9 @@ export function CsvDropzone({loadCsv}) {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: "application/csv, text/csv"
+    accept: "application/csv, text/csv",
+    maxFiles: 1,
+    multiple: false,
   });
 
   return (
