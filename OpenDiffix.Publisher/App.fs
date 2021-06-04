@@ -177,6 +177,13 @@ let AnonymizedResultTable (results: TableData) =
           ]
         ]
       ]
+      
+      if results.Rows.Length = 0
+      then
+         Html.p [
+           prop.className "mx-auto text-center mt-4"
+           prop.text "All the data was anonymized away. Try selecting fewer, or different, dimensions."
+         ]
     ]
   ]
     
