@@ -2,7 +2,7 @@
   "name": "publisher",
   "productName": "publisher",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Desktop app for anonymizing data using Open Diffix Publish",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -14,7 +14,7 @@
     "prettier": "prettier --write src"
   },
   "keywords": [],
-  "license": "MIT",
+  "license": "",
   "config": {
     "forge": {
       "packagerConfig": {},
