@@ -26,7 +26,6 @@
  * ```
  */
 
-import './index.css'
-import { render } from './App'
+import { render } from './components/App'
 
 render()
