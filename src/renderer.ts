@@ -1,3 +1,3 @@
-import { render } from './components/App'
+import { render } from './components/App';
 
-render()
+render();
