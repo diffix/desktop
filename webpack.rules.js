@@ -2,16 +2,26 @@ module.exports = [
   // Add support for native node modules
   {
     test: /\.node$/,
-    use: "node-loader"
+    use: 'node-loader',
   },
   {
-    test: /\.jsx?$/,
+    test: /\.(m?js|node)$/,
+    parser: { amd: false },
     use: {
-      loader: 'babel-loader',
+      loader: '@vercel/webpack-asset-relocator-loader',
       options: {
-        exclude: /node_modules/,
-        presets: ['@babel/preset-react']
-      }
-    }
-  }
+        outputAssetBase: 'native_modules',
+      },
+    },
+  },
+  {
+    test: /\.tsx?$/,
+    exclude: /(node_modules|\.webpack)/,
+    use: {
+      loader: 'ts-loader',
+      options: {
+        transpileOnly: true,
+      },
+    },
+  },
 ];
