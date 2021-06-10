@@ -26,14 +26,13 @@ export type ResultColumn = {
 
 export type ResultColumnType = ColumnType | 'aggregate';
 
-export type ResultRow = {
-  values: Value[];
-  isLowCountFiltered: boolean;
-};
+export type ResultRow = { kind: 'anonymized'; values: AnonymizedValue[] } | { kind: 'low_count'; values: Value[] };
 
-export type Value = boolean | number | string | Aggregate | null;
+export type Value = boolean | number | string | null;
 
-export type Aggregate = {
+export type AnonymizedValue = Value | AnonymizedAggregate;
+
+export type AnonymizedAggregate = {
   realValue: number;
   anonValue: number | null;
 };
