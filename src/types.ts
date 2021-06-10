@@ -1,40 +1,45 @@
 // Schema
 
-export interface TableSchema {
+export type TableSchema = {
   fileName: string;
   columns: TableColumn[];
-}
+};
 
-export interface TableColumn {
+export type TableColumn = {
   name: string;
   type: ColumnType;
-}
+};
 
 export type ColumnType = 'boolean' | 'integer' | 'real' | 'string';
 
 // Results
 
-export interface QueryResult {
+export type QueryResult = {
   columns: ResultColumn[];
   rows: ResultRow[];
-}
+};
 
-export interface ResultColumn {
+export type ResultColumn = {
   name: string;
-  type: ColumnType;
-  tag: null | 'anon-count';
-}
+  type: ResultColumnType;
+};
 
-export interface ResultRow {
+export type ResultColumnType = ColumnType | 'aggregate';
+
+export type ResultRow = {
   values: Value[];
   isLowCountFiltered: boolean;
-  trueCount: number;
-}
+};
 
-export type Value = boolean | number | string | null;
+export type Value = boolean | number | string | Aggregate | null;
+
+export type Aggregate = {
+  realValue: number;
+  anonValue: number | null;
+};
 
 // API
 
-export interface Anonymizer {
+export type Anonymizer = {
   anonymize(schema: TableSchema, columns: string[]): Promise<QueryResult>;
-}
+};
