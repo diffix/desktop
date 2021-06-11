@@ -63,7 +63,11 @@ export function useQueryResult(schema: TableSchema, columns: TableColumn[]): Com
   useEffect(() => {
     // Simulate producing result...
     setResult({ state: 'in_progress' });
-    setResult({ state: 'completed', value: dummyResult(schema.columns) });
+    const id = setTimeout(() => {
+      setResult({ state: 'completed', value: dummyResult(schema.columns) });
+    }, 1000);
+    // useEffect allows returning a disposer in case of an unmount or re-run.
+    return () => clearTimeout(id);
   }, [schema, columns]);
 
   return result;
