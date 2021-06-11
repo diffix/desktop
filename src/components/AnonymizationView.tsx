@@ -6,10 +6,10 @@ export type Props = {
   schema: TableSchema;
 };
 
-export const AnonymizationView: FunctionComponent<Props> = (props: Props) => {
+export const AnonymizationView: FunctionComponent<Props> = ({ schema }: Props) => {
   // In this dummy implementation we are not yet using the setColumns
   const [columns] = useState([]);
-  const computedResult = useQueryResult(props.schema, columns);
+  const computedResult = useQueryResult(schema, columns);
 
   switch (computedResult.state) {
     case 'in_progress':
