@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import type { TableSchema } from '../types';
 import { useQueryResult } from '../state/hooks/queryResult';
 
-export const AnonymizationView: FunctionComponent<{ schema: TableSchema}> = ({ schema }) => {
+export const AnonymizationView: FunctionComponent<{ schema: TableSchema }> = ({ schema }) => {
   // In this dummy implementation we are not yet using the setColumns
   const [columns] = useState([]);
   const computedResult = useQueryResult(schema, columns);
