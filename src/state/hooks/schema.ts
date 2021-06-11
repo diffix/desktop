@@ -15,9 +15,11 @@ export function useSchema(fileName: string): ComputedData<TableSchema> {
   const [schema, setSchema] = useState<ComputedData<TableSchema>>({ state: 'not_initialized' });
 
   useEffect(() => {
-    // Simulate loading the schema...
     setSchema({ state: 'in_progress' });
-    setSchema({ state: 'completed', value: dummyData(fileName) });
+    const id = setTimeout(() => {
+      setSchema({ state: 'completed', value: dummyData(fileName) });
+    }, 1000);
+    return () => clearTimeout(id);
   }, [fileName]);
 
   return schema;
