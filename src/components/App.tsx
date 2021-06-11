@@ -2,12 +2,11 @@ import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { useSchema } from '../state/hooks/schema';
 import { AnonymizationView } from './AnonymizationView';
-import { TableSchema, ComputedData } from '../types';
 
 import './App.css';
 
 export const App: FunctionComponent = () => {
-  const computedSchema: ComputedData<TableSchema> = useSchema('my-file.csv');
+  const computedSchema = useSchema('my-file.csv');
 
   switch (computedSchema.state) {
     case 'in_progress':
