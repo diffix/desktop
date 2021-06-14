@@ -52,5 +52,6 @@ export type AnonymizedAggregate = {
 // API
 
 export type Anonymizer = {
-  anonymize(schema: TableSchema, columns: string[]): Promise<QueryResult>;
+  loadSchema(fileName: string): Promise<TableSchema>;
+  anonymize(schema: TableSchema, columns: TableColumn[]): Promise<QueryResult>;
 };

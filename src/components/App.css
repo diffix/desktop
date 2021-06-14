@@ -7,8 +7,3 @@ body {
 .App {
   padding: 16px;
 }
-
-.App--loading {
-  padding-top: 64px;
-  text-align: center;
-}
