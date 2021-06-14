@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
-import type { TableSchema } from '../types';
-import { useQueryResult } from '../state/hooks/queryResult';
+
+import { useQueryResult } from '../hooks';
+import { TableSchema } from '../types';
 
 export const AnonymizationView: FunctionComponent<{ schema: TableSchema }> = ({ schema }) => {
   // In this dummy implementation we are not yet using the setColumns
