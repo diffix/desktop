@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Table } from 'antd';
 
 import {
@@ -11,6 +11,7 @@ import {
   ResultRow,
   Value,
 } from '../types';
+import { DisplayModeSwitch } from './DisplayModeSwitch';
 import './QueryResultsTable.css';
 
 type TableRowData = {
@@ -143,11 +144,13 @@ const normalizeRow = (columns: ResultColumn[]) => (row: ResultRow, i: number) =>
 // Component
 
 export type QueryResultsTableProps = {
-  mode: DisplayMode;
+  loading: boolean;
   result: QueryResult;
 };
 
-export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ mode, result }) => {
+export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ loading, result }) => {
+  const [mode, setMode] = useState<DisplayMode>('anonymized');
+
   const render = columnRenderer(mode);
 
   const columns = result.columns.map((col, i) => ({
@@ -161,7 +164,13 @@ export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ m
 
   return (
     <div className={`QueryResultsTable QueryResultsTable--${mode}`}>
-      <Table columns={columns} dataSource={data} rowClassName={rowClassName} />
+      <Table
+        loading={loading}
+        columns={columns}
+        dataSource={data}
+        rowClassName={rowClassName}
+        footer={() => <DisplayModeSwitch value={mode} setValue={setMode} />}
+      />
     </div>
   );
 };
