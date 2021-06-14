@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
-import { useSchema } from '../state/hooks/schema';
+
+import { useSchema } from '../hooks';
 import { AnonymizationView } from './AnonymizationView';
 
 import './App.css';

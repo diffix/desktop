@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { ComputedData, TableSchema } from '../../types';
+
+import { ComputedData, TableSchema } from '../types';
 
 function dummyData(fileName: string): TableSchema {
   return {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import type {
+
+import {
   Value,
   ResultColumnType,
   ColumnType,
@@ -9,7 +10,7 @@ import type {
   ResultColumn,
   ResultRow,
   QueryResult,
-} from '../../types';
+} from '../types';
 
 function typeConversion(columnType: ColumnType): ResultColumnType {
   switch (columnType) {
