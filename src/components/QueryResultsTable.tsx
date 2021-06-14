@@ -46,8 +46,6 @@ function renderAnonymizedValue(v: AnonymizedValue, mode: DisplayMode) {
       case 'raw':
         return renderValue(v.realValue);
       case 'combined':
-        if (v.anonValue === v.realValue) return renderValue(v.anonValue);
-
         return (
           <>
             {renderValue(v.anonValue)} ({renderValue(v.realValue)})
