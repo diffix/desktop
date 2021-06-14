@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
+import { Result, Spin } from 'antd';
 
 import { useSchema } from '../hooks';
 import { AnonymizationView } from './AnonymizationView';
@@ -10,17 +11,30 @@ export const App: FunctionComponent = () => {
   const computedSchema = useSchema('my-file.csv');
 
   switch (computedSchema.state) {
-    case 'in_progress':
-      return <div>Computing schema</div>;
+    case 'completed':
+      return (
+        <div className="App App--completed">
+          <AnonymizationView schema={computedSchema.value} />
+        </div>
+      );
 
     case 'failed':
-      return <div>Failed to compute schema: {computedSchema.error}</div>;
+      return (
+        <div className="App App--failed">
+          <Result
+            status="error"
+            title="Schema discovery failed"
+            subTitle="Something went wrong while loading the schema."
+          />
+        </div>
+      );
 
-    case 'completed':
-      return <AnonymizationView schema={computedSchema.value} />;
-
-    case 'not_initialized':
-      return <div>Initializing...</div>;
+    default:
+      return (
+        <div className="App App--loading">
+          <Spin tip="Loading schema..." size="large" />
+        </div>
+      );
   }
 };
 

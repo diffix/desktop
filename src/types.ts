@@ -6,6 +6,10 @@ export type ComputedData<T> =
   | { state: 'failed'; error: string }
   | { state: 'completed'; value: T };
 
+// UI Types
+
+export type DisplayMode = 'anonymized' | 'raw' | 'combined';
+
 // Schema
 
 export type TableSchema = {
