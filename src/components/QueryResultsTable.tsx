@@ -169,7 +169,7 @@ export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ l
         columns={columns}
         dataSource={data}
         rowClassName={rowClassName}
-        footer={() => <DisplayModeSwitch value={mode} setValue={setMode} />}
+        footer={() => <DisplayModeSwitch value={mode} onChange={setMode} />}
       />
     </div>
   );
