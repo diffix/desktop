@@ -24,29 +24,34 @@ function typeConversion(columnType: ColumnType): ResultColumnType {
   }
 }
 
+const names = ['Alice', 'Bob', 'Charlotte', 'Daniel'];
+
 function dummyResult(tableColumns: TableColumn[]): QueryResult {
-  const fakeData = (column: TableColumn, index: number): Value => {
-    switch (column.type) {
-      case 'boolean':
-        return false;
-      case 'integer':
-        return index;
-      case 'real':
-        return 1.0 * index;
-      case 'string':
-        return `Bob the ${index}st/nd/rd/th`;
-    }
-  };
+  const fakeData =
+    (rowIndex: number) =>
+    (column: TableColumn, colIndex: number): Value => {
+      const seed = rowIndex + colIndex;
+      switch (column.type) {
+        case 'boolean':
+          return seed % 2 === 0 ? true : false;
+        case 'integer':
+          return 1 + seed;
+        case 'real':
+          return 1.5 * seed;
+        case 'string':
+          return `${names[seed % names.length]} ${1 + rowIndex}`;
+      }
+    };
 
   function mapToResultColumn(tc: TableColumn): ResultColumn {
     return { name: tc.name, type: typeConversion(tc.type) };
   }
 
   const rows: ResultRow[] = [
-    { kind: 'anonymized', values: [...tableColumns.map(fakeData), { realValue: 10, anonValue: 10 }] },
-    { kind: 'anonymized', values: [...tableColumns.map(fakeData), { realValue: 5, anonValue: null }] },
-    { kind: 'anonymized', values: [...tableColumns.map(fakeData), { realValue: 100, anonValue: 100 }] },
-    { kind: 'low_count', values: [...tableColumns.map(fakeData), 13] },
+    { kind: 'anonymized', values: [...tableColumns.map(fakeData(0)), { realValue: 10, anonValue: 10 }] },
+    { kind: 'anonymized', values: [...tableColumns.map(fakeData(1)), { realValue: 5, anonValue: null }] },
+    { kind: 'anonymized', values: [...tableColumns.map(fakeData(2)), { realValue: 100, anonValue: 99 }] },
+    { kind: 'low_count', values: [...tableColumns.map(fakeData(3)), 13] },
   ];
 
   const queryResult: QueryResult = {
