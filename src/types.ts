@@ -1,7 +1,6 @@
 // Generic API related utility types
 
 export type ComputedData<T> =
-  | { state: 'not_initialized' }
   | { state: 'in_progress' }
   | { state: 'failed'; error: string }
   | { state: 'completed'; value: T };

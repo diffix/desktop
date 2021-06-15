@@ -28,7 +28,7 @@ export const SchemaLoader: FunctionComponent = () => {
         </div>
       );
 
-    default:
+    case 'in_progress':
       return (
         <div className="SchemaLoader SchemaLoader--loading">
           <Spin tip="Loading schema..." size="large" />

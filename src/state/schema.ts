@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { ComputedData, TableSchema } from '../types';
 import { useAnonymizer } from './anonymizer';
+import { inProgressState } from './utils';
 
 export function useSchema(fileName: string): ComputedData<TableSchema> {
   const anonymizer = useAnonymizer();
-  const [schema, setSchema] = useState<ComputedData<TableSchema>>({ state: 'not_initialized' });
+  const [schema, setSchema] = useState<ComputedData<TableSchema>>(inProgressState);
 
   useEffect(() => {
-    setSchema({ state: 'in_progress' });
+    setSchema(inProgressState);
 
     let canceled = false;
     anonymizer
