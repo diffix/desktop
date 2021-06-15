@@ -34,7 +34,7 @@ export const AnonymizationView: FunctionComponent<{ schema: TableSchema }> = ({ 
   switch (resultState) {
     case 'failed':
       return (
-        <div className="AnonymizationView AnonymizationView--failed">
+        <div className="AnonymizationView failed">
           <Result status="error" title="Anonymization failed" subTitle="Something went wrong." />
           {demoUtils}
         </div>
@@ -43,7 +43,7 @@ export const AnonymizationView: FunctionComponent<{ schema: TableSchema }> = ({ 
     default: {
       const loaded = computedResult.state === 'completed';
       return (
-        <div className={`AnonymizationView AnonymizationView--${loaded ? 'completed' : 'loading'}`}>
+        <div className={`AnonymizationView ${loaded ? 'completed' : 'loading'}`}>
           <QueryResultsTable loading={!loaded} result={cachedResult} />
           {demoUtils}
         </div>

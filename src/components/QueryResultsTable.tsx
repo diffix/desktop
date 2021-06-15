@@ -25,9 +25,9 @@ type TableRowData = {
 
 function rowClassName({ kind }: TableRowData) {
   if (kind === 'anonymized') {
-    return 'QueryResultsTable__row';
+    return 'QueryResultsTable-row';
   } else {
-    return 'QueryResultsTable__row QueryResultsTable__row--low-count';
+    return 'QueryResultsTable-row low-count';
   }
 }
 
@@ -162,7 +162,7 @@ export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ l
   const data = filterRows(mode, result.rows).map(normalizeRow(result.columns));
 
   return (
-    <div className={`QueryResultsTable QueryResultsTable--${mode}`}>
+    <div className={`QueryResultsTable ${mode}`}>
       <Table
         loading={loading}
         columns={columns}
