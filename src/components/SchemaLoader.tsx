@@ -12,14 +12,14 @@ export const SchemaLoader: FunctionComponent = () => {
   switch (computedSchema.state) {
     case 'completed':
       return (
-        <div className="SchemaLoader SchemaLoader--completed">
+        <div className="SchemaLoader completed">
           <AnonymizationView schema={computedSchema.value} />
         </div>
       );
 
     case 'failed':
       return (
-        <div className="SchemaLoader SchemaLoader--failed">
+        <div className="SchemaLoader failed">
           <Result
             status="error"
             title="Schema discovery failed"
@@ -30,7 +30,7 @@ export const SchemaLoader: FunctionComponent = () => {
 
     case 'in_progress':
       return (
-        <div className="SchemaLoader SchemaLoader--loading">
+        <div className="SchemaLoader loading">
           <Spin tip="Loading schema..." size="large" />
         </div>
       );
