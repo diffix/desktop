@@ -12,6 +12,7 @@ import {
   Value,
 } from '../types';
 import { DisplayModeSwitch } from './DisplayModeSwitch';
+
 import './QueryResultsTable.css';
 
 type TableRowData = {

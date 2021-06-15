@@ -1,17 +1,16 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Result } from 'antd';
 
-import { QueryResultsTable } from './QueryResultsTable';
-import { useCachedData, useQueryResult } from '../hooks';
+import { useCachedData, useQuery } from '../state';
 import { QueryResult, TableSchema } from '../types';
-import './AnonymizationView.css';
+import { QueryResultsTable } from './QueryResultsTable';
 
 const emptyQueryResult: QueryResult = { columns: [], rows: [] };
 
 export const AnonymizationView: FunctionComponent<{ schema: TableSchema }> = ({ schema }) => {
   // In this dummy implementation we are not yet using the setColumns
   const [columns, setColumns] = useState([]);
-  const computedResult = useQueryResult(schema, columns);
+  const computedResult = useQuery(schema, columns);
   const cachedResult = useCachedData(computedResult, emptyQueryResult);
   let resultState = computedResult.state;
 

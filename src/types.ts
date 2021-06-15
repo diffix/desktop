@@ -1,7 +1,6 @@
 // Generic API related utility types
 
 export type ComputedData<T> =
-  | { state: 'not_initialized' }
   | { state: 'in_progress' }
   | { state: 'failed'; error: string }
   | { state: 'completed'; value: T };
@@ -52,5 +51,6 @@ export type AnonymizedAggregate = {
 // API
 
 export type Anonymizer = {
-  anonymize(schema: TableSchema, columns: string[]): Promise<QueryResult>;
+  loadSchema(fileName: string): Promise<TableSchema>;
+  anonymize(schema: TableSchema, columns: TableColumn[]): Promise<QueryResult>;
 };
