@@ -55,9 +55,21 @@ class FakeAnonymizer implements Anonymizer {
   }
 }
 
+class DiffixAnonymizer implements Anonymizer {
+  async loadSchema(_fileName: string): Promise<TableSchema> {
+    throw new Error('Not implemented');
+  }
+
+  async anonymize(_schema: TableSchema, _columns: TableColumn[]): Promise<QueryResult> {
+    throw new Error('Not implemented');
+  }
+}
+
 export const fakeAnonymizer = new FakeAnonymizer();
 
-export const AnonymizerContext = createContext<Anonymizer>(fakeAnonymizer);
+export const anonymizer = new DiffixAnonymizer();
+
+export const AnonymizerContext = createContext<Anonymizer>(anonymizer);
 
 export function useAnonymizer(): Anonymizer {
   return useContext(AnonymizerContext);
