@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Upload } from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
+import { FileOutlined } from '@ant-design/icons';
 
 import { File } from '../types';
 
@@ -29,7 +29,7 @@ export const CsvFilePicker: FunctionComponent<CsvFilePickerProps> = ({ children 
         showUploadList={false}
       >
         <p className="ant-upload-drag-icon">
-          <InboxOutlined />
+          <FileOutlined />
         </p>
         <p className="ant-upload-text">Click or drag file to this area to upload</p>
         <p className="ant-upload-hint">Upload hint about CSV files here.</p>

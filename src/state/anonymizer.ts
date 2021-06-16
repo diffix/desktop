@@ -9,7 +9,7 @@ class FakeAnonymizer implements Anonymizer {
 
     // Small chance for failure
     if (Math.random() < 0.2) {
-      throw new Error('Could not anonymize data');
+      throw new Error('Could not load schema');
     }
 
     return {
