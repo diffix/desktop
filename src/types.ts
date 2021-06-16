@@ -1,3 +1,5 @@
+import { RcFile } from 'antd/lib/upload';
+
 // Generic API related utility types
 
 export type ComputedData<T> =
@@ -54,3 +56,5 @@ export type Anonymizer = {
   loadSchema(fileName: string): Promise<TableSchema>;
   anonymize(schema: TableSchema, columns: TableColumn[]): Promise<QueryResult>;
 };
+
+export type File = RcFile;

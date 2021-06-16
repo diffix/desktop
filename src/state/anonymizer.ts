@@ -7,6 +7,11 @@ class FakeAnonymizer implements Anonymizer {
     // Simulate loading
     await delay(1000);
 
+    // Small chance for failure
+    if (Math.random() < 0.2) {
+      throw new Error('Could not anonymize data');
+    }
+
     return {
       fileName,
       columns: [
@@ -19,6 +24,11 @@ class FakeAnonymizer implements Anonymizer {
   async anonymize(schema: TableSchema, _columns: TableColumn[]): Promise<QueryResult> {
     // Simulate loading
     await delay(1000);
+
+    // Small chance for failure
+    if (Math.random() < 0.2) {
+      throw new Error('Could not anonymize data');
+    }
 
     const tableColumns = schema.columns;
     const names = ['Alice', 'Bob', 'Charlotte', 'Daniel'];
