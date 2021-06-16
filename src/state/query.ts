@@ -11,8 +11,9 @@ export function useQuery(schema: TableSchema, columns: TableColumn[]): ComputedD
     setResult(inProgressState);
 
     let canceled = false;
-    anonymizer
-      .anonymize(schema, columns)
+    const task = anonymizer.anonymize(schema, columns);
+
+    task.result
       .then((queryResult) => {
         if (!canceled) {
           setResult({ state: 'completed', value: queryResult });
@@ -25,8 +26,8 @@ export function useQuery(schema: TableSchema, columns: TableColumn[]): ComputedD
       });
 
     return () => {
-      // Todo: the anonymizer needs to return a cancellable handle in order to terminate child processes / other resources.
       canceled = true;
+      task.cancel();
     };
   }, [anonymizer, schema, columns]);
 
