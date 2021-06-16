@@ -1,21 +1,30 @@
-import React, { FunctionComponent } from 'react';
-import { Result, Spin } from 'antd';
+import React, { FunctionComponent, useEffect } from 'react';
+import { Button, message, Result, Space, Spin, Typography } from 'antd';
 
 import { useSchema } from '../state';
-import { AnonymizationView } from './AnonymizationView';
+import { File, TableSchema } from '../types';
 
 import './SchemaLoader.css';
 
-export const SchemaLoader: FunctionComponent = () => {
-  const computedSchema = useSchema('my-file.csv');
+const { Text } = Typography;
 
-  switch (computedSchema.state) {
+export type SchemaLoaderProps = {
+  file: File;
+  removeFile: () => void;
+  children: (schema: TableSchema) => React.ReactNode;
+};
+
+export const SchemaLoader: FunctionComponent<SchemaLoaderProps> = ({ children, file, removeFile }) => {
+  const schema = useSchema(file.path);
+  useEffect(() => {
+    if (schema.state === 'completed') {
+      message.success(`Loaded ${file.name}`);
+    }
+  }, [schema.state, file.name]);
+
+  switch (schema.state) {
     case 'completed':
-      return (
-        <div className="SchemaLoader completed">
-          <AnonymizationView schema={computedSchema.value} />
-        </div>
-      );
+      return <div className="SchemaLoader completed">{children(schema.value)}</div>;
 
     case 'failed':
       return (
@@ -24,6 +33,11 @@ export const SchemaLoader: FunctionComponent = () => {
             status="error"
             title="Schema discovery failed"
             subTitle="Something went wrong while loading the schema."
+            extra={
+              <Button type="primary" onClick={removeFile}>
+                Choose another file
+              </Button>
+            }
           />
         </div>
       );
@@ -31,7 +45,13 @@ export const SchemaLoader: FunctionComponent = () => {
     case 'in_progress':
       return (
         <div className="SchemaLoader loading">
-          <Spin tip="Loading schema..." size="large" />
+          <Space direction="vertical">
+            <Spin size="large" />
+            <Text type="secondary">Loading schema</Text>
+            <Button type="ghost" onClick={removeFile}>
+              Cancel
+            </Button>
+          </Space>
         </div>
       );
   }
