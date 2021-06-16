@@ -1,13 +1,11 @@
 import { RcFile } from 'antd/lib/upload';
 
-// Generic API related utility types
+// UI State
 
 export type ComputedData<T> =
   | { state: 'in_progress' }
   | { state: 'failed'; error: string }
   | { state: 'completed'; value: T };
-
-// UI Types
 
 export type DisplayMode = 'anonymized' | 'raw' | 'combined';
 
@@ -52,9 +50,14 @@ export type AnonymizedAggregate = {
 
 // API
 
+export type File = RcFile;
+
 export type Anonymizer = {
-  loadSchema(fileName: string): Promise<TableSchema>;
-  anonymize(schema: TableSchema, columns: TableColumn[]): Promise<QueryResult>;
+  loadSchema(fileName: string): Task<TableSchema>;
+  anonymize(schema: TableSchema, columns: TableColumn[]): Task<QueryResult>;
 };
 
-export type File = RcFile;
+export type Task<T> = {
+  cancel(): void;
+  result: Promise<T>;
+};

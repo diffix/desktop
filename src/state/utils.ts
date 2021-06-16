@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ComputedData } from '../types';
+import { ComputedData, Task } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const inProgressState: ComputedData<any> = { state: 'in_progress' };
@@ -18,4 +18,13 @@ export function useCachedData<T>(resultData: ComputedData<T>, initialData: T): T
   }, [resultData]);
 
   return cached;
+}
+
+export function toTask<T>(func: () => Promise<T>): Task<T> {
+  return {
+    cancel() {
+      /* no-op */
+    },
+    result: func(),
+  };
 }

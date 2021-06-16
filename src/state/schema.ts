@@ -11,8 +11,9 @@ export function useSchema(fileName: string): ComputedData<TableSchema> {
     setSchema(inProgressState);
 
     let canceled = false;
-    anonymizer
-      .loadSchema(fileName)
+    const task = anonymizer.loadSchema(fileName);
+
+    task.result
       .then((schema) => {
         if (!canceled) {
           setSchema({ state: 'completed', value: schema });
@@ -25,8 +26,8 @@ export function useSchema(fileName: string): ComputedData<TableSchema> {
       });
 
     return () => {
-      // Todo: the anonymizer needs to return a cancellable handle in order to terminate child processes / other resources.
       canceled = true;
+      task.cancel();
     };
   }, [anonymizer, fileName]);
 
