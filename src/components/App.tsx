@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
 
+import { AnonymizationView, SchemaLoader } from '.';
 import { AnonymizerContext, fakeAnonymizer } from '../state';
-import { SchemaLoader } from './SchemaLoader';
 
 import './App.css';
 

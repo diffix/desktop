@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Result } from 'antd';
 
+import { QueryResultsTable } from '.';
 import { useCachedData, useQuery } from '../state';
 import { QueryResult, TableSchema } from '../types';
-import { QueryResultsTable } from './QueryResultsTable';
 
 const emptyQueryResult: QueryResult = { columns: [], rows: [] };
 
