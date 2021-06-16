@@ -1,13 +1,18 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Result } from 'antd';
 
+import { QueryResultsTable } from '.';
 import { useCachedData, useQuery } from '../state';
 import { QueryResult, TableSchema } from '../types';
-import { QueryResultsTable } from './QueryResultsTable';
 
 const emptyQueryResult: QueryResult = { columns: [], rows: [] };
 
-export const AnonymizationView: FunctionComponent<{ schema: TableSchema }> = ({ schema }) => {
+export type AnonymizationViewProps = {
+  schema: TableSchema;
+  removeFile: () => void;
+};
+
+export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ schema, removeFile }) => {
   // In this dummy implementation we are not yet using the setColumns
   const [columns, setColumns] = useState([]);
   const computedResult = useQuery(schema, columns);
@@ -28,6 +33,7 @@ export const AnonymizationView: FunctionComponent<{ schema: TableSchema }> = ({ 
         Simulate new query
       </Button>
       <Button onClick={() => setError(true)}>Simulate error</Button>
+      <Button onClick={removeFile}>Remove file</Button>
     </>
   );
 

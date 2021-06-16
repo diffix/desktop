@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Table } from 'antd';
 
+import { DisplayModeSwitch } from '.';
 import {
   AnonymizedAggregate,
   AnonymizedValue,
@@ -11,7 +12,6 @@ import {
   ResultRow,
   Value,
 } from '../types';
-import { DisplayModeSwitch } from './DisplayModeSwitch';
 
 import './QueryResultsTable.css';
 
