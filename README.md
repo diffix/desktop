@@ -5,6 +5,7 @@ Desktop application to anonymize data with Open Diffix Publish.
 ## Development
 
 Run `npm install` to install dependencies.
+Run `git submodule update --init && npm run build` to get and build the anonymizer.
 
 Following the setup, run `npm start` to start the development environment with hot code reloading.
 
