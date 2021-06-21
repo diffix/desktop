@@ -37,7 +37,7 @@ export type ResultColumn = {
 
 export type ResultColumnType = ColumnType | 'aggregate';
 
-export type ResultRow = { kind: 'anonymized'; values: AnonymizedValue[] } | { kind: 'low_count'; values: Value[] };
+export type ResultRow = { lowCount: boolean; values: AnonymizedValue[] };
 
 export type Value = boolean | number | string | null;
 

@@ -53,10 +53,10 @@ class FakeAnonymizer implements Anonymizer {
         };
 
       const rows: ResultRow[] = [
-        { kind: 'anonymized', values: [...tableColumns.map(fakeData(0)), { realValue: 10, anonValue: 10 }] },
-        { kind: 'anonymized', values: [...tableColumns.map(fakeData(1)), { realValue: 5, anonValue: null }] },
-        { kind: 'anonymized', values: [...tableColumns.map(fakeData(2)), { realValue: 100, anonValue: 99 }] },
-        { kind: 'low_count', values: [...tableColumns.map(fakeData(3)), 13] },
+        { lowCount: false, values: [...tableColumns.map(fakeData(0)), { realValue: 10, anonValue: 10 }] },
+        { lowCount: false, values: [...tableColumns.map(fakeData(1)), { realValue: 5, anonValue: null }] },
+        { lowCount: false, values: [...tableColumns.map(fakeData(2)), { realValue: 100, anonValue: 99 }] },
+        { lowCount: true, values: [...tableColumns.map(fakeData(3)), 13] },
       ];
 
       const queryResult: QueryResult = {
@@ -92,7 +92,7 @@ class DiffixAnonymizer implements Anonymizer {
       }
       const result = await window.executeQuery(schema.fileName, statement);
       const data = JSON.parse(result);
-      const rows: ResultRow[] = data.rows.map((values: Value[]) => ({ kind: 'low_count', values }));
+      const rows: ResultRow[] = data.rows.map((values: Value[]) => ({ lowCount: true, values }));
       return { columns: data.columns, rows };
     });
   }

@@ -17,18 +17,14 @@ import './QueryResultsTable.css';
 
 type TableRowData = {
   key: number;
-  kind: ResultRow['kind'];
+  lowCount: ResultRow['lowCount'];
   [index: number]: AnonymizedValue;
 };
 
 // Rendering
 
-function rowClassName({ kind }: TableRowData) {
-  if (kind === 'anonymized') {
-    return 'QueryResultsTable-row';
-  } else {
-    return 'QueryResultsTable-row low-count';
-  }
+function rowClassName({ lowCount }: TableRowData) {
+  return 'QueryResultsTable-row' + (lowCount ? ' low-count' : '');
 }
 
 function renderValue(v: Value) {
@@ -116,7 +112,7 @@ const columnSorter =
 
 function filterRows(mode: DisplayMode, rows: ResultRow[]) {
   if (mode === 'anonymized') {
-    return rows.filter((r) => r.kind === 'anonymized');
+    return rows.filter((r) => !r.lowCount);
   } else {
     return rows;
   }
@@ -125,12 +121,12 @@ function filterRows(mode: DisplayMode, rows: ResultRow[]) {
 const normalizeRow = (columns: ResultColumn[]) => (row: ResultRow, i: number) => {
   const result: TableRowData = {
     key: i,
-    kind: row.kind,
+    lowCount: row.lowCount,
   };
 
   const values = row.values;
   for (let i = 0; i < values.length; i++) {
-    if (row.kind === 'low_count' && columns[i].type === 'aggregate') {
+    if (!row.lowCount && columns[i].type === 'aggregate') {
       result[i] = { realValue: values[i] as number, anonValue: null };
     } else {
       result[i] = values[i];
