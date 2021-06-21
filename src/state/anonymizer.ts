@@ -77,19 +77,14 @@ class DiffixAnonymizer implements Anonymizer {
     return toTask(async () => {
       const result = await window.executeQuery(fileName, 'SELECT * FROM table');
       const data = JSON.parse(result);
-      return { fileName, columns: data.columns };
+      return { fileName, columns: data.columns.slice(1) }; // Drop row index column from schema.
     });
   }
 
   anonymize(schema: TableSchema, columns: TableColumn[]): Task<QueryResult> {
     return toTask(async () => {
-      let statement: string;
-      if (columns.length > 0) {
-        const selectTarget = columns.map((column) => column.name).join(',');
-        statement = `SELECT ${selectTarget} FROM table`;
-      } else {
-        statement = 'SELECT * FROM table';
-      }
+      const columnsString = columns.map((column) => column.name).join(', ');
+      const statement = `SELECT ${columnsString} FROM table`;
       const result = await window.executeQuery(schema.fileName, statement);
       const data = JSON.parse(result);
       const rows: ResultRow[] = data.rows.map((values: Value[]) => ({ lowCount: true, values }));
