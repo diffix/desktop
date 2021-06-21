@@ -73,12 +73,28 @@ class FakeAnonymizer implements Anonymizer {
 }
 
 class DiffixAnonymizer implements Anonymizer {
-  loadSchema(_fileName: string): Task<TableSchema> {
-    throw new Error('Not implemented');
+  loadSchema(fileName: string): Task<TableSchema> {
+    return toTask(async () => {
+      const result = await window.execute_query(fileName, 'SELECT * FROM table');
+      const data = JSON.parse(result);
+      return { fileName, columns: data.columns };
+    });
   }
 
-  anonymize(_schema: TableSchema, _columns: TableColumn[]): Task<QueryResult> {
-    throw new Error('Not implemented');
+  anonymize(schema: TableSchema, columns: TableColumn[]): Task<QueryResult> {
+    return toTask(async () => {
+      let statement: string;
+      if (columns.length > 0) {
+        const selectTarget = columns.map((column) => column.name).join(',');
+        statement = `SELECT ${selectTarget} FROM table`;
+      } else {
+        statement = 'SELECT * FROM table';
+      }
+      const result = await window.execute_query(schema.fileName, statement);
+      const data = JSON.parse(result);
+      const rows: ResultRow[] = data.rows.map((values: Value[]) => ({ kind: 'low_count', values }));
+      return { columns: data.columns, rows };
+    });
   }
 }
 
