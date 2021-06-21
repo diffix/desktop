@@ -75,7 +75,7 @@ class FakeAnonymizer implements Anonymizer {
 class DiffixAnonymizer implements Anonymizer {
   loadSchema(fileName: string): Task<TableSchema> {
     return toTask(async () => {
-      const result = await window.execute_query(fileName, 'SELECT * FROM table');
+      const result = await window.executeQuery(fileName, 'SELECT * FROM table');
       const data = JSON.parse(result);
       return { fileName, columns: data.columns };
     });
@@ -90,7 +90,7 @@ class DiffixAnonymizer implements Anonymizer {
       } else {
         statement = 'SELECT * FROM table';
       }
-      const result = await window.execute_query(schema.fileName, statement);
+      const result = await window.executeQuery(schema.fileName, statement);
       const data = JSON.parse(result);
       const rows: ResultRow[] = data.rows.map((values: Value[]) => ({ kind: 'low_count', values }));
       return { columns: data.columns, rows };

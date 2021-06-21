@@ -65,6 +65,6 @@ export type Task<T> = {
 export {};
 declare global {
   interface Window {
-    execute_query(fileName: string, statement: string): Promise<string>;
+    executeQuery(fileName: string, statement: string): Promise<string>;
   }
 }
