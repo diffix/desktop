@@ -56,7 +56,7 @@ class FakeAnonymizer implements Anonymizer {
         { lowCount: false, values: [...tableColumns.map(fakeData(0)), { realValue: 10, anonValue: 10 }] },
         { lowCount: false, values: [...tableColumns.map(fakeData(1)), { realValue: 5, anonValue: null }] },
         { lowCount: false, values: [...tableColumns.map(fakeData(2)), { realValue: 100, anonValue: 99 }] },
-        { lowCount: true, values: [...tableColumns.map(fakeData(3)), 13] },
+        { lowCount: true, values: [...tableColumns.map(fakeData(3)), { realValue: 13, anonValue: null }] },
       ];
 
       const queryResult: QueryResult = {

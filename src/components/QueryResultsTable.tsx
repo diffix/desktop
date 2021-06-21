@@ -7,7 +7,6 @@ import {
   AnonymizedValue,
   DisplayMode,
   QueryResult,
-  ResultColumn,
   ResultColumnType,
   ResultRow,
   Value,
@@ -118,21 +117,12 @@ function filterRows(mode: DisplayMode, rows: ResultRow[]) {
   }
 }
 
-const normalizeRow = (columns: ResultColumn[]) => (row: ResultRow, i: number) => {
+const rowDataMapper = (row: ResultRow, i: number) => {
   const result: TableRowData = {
     key: i,
     lowCount: row.lowCount,
+    ...row.values,
   };
-
-  const values = row.values;
-  for (let i = 0; i < values.length; i++) {
-    if (!row.lowCount && columns[i].type === 'aggregate') {
-      result[i] = { realValue: values[i] as number, anonValue: null };
-    } else {
-      result[i] = values[i];
-    }
-  }
-
   return result;
 };
 
@@ -155,7 +145,7 @@ export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ l
     sorter: columnSorter(mode, col.type, i),
   }));
 
-  const data = filterRows(mode, result.rows).map(normalizeRow(result.columns));
+  const data = filterRows(mode, result.rows).map(rowDataMapper);
 
   return (
     <div className={`QueryResultsTable ${mode}`}>
