@@ -5,6 +5,7 @@
   "description": "Desktop app for anonymizing data using Open Diffix Publish",
   "main": ".webpack/main",
   "scripts": {
+    "build": "dotnet publish -o ./bin/ -c Release ./reference/src/OpenDiffix.CLI/",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
@@ -51,6 +52,9 @@
                 {
                   "html": "./src/index.html",
                   "js": "./src/renderer.ts",
+                  "preload": {
+                    "js": "./src/preload.ts"
+                  },
                   "name": "main_window"
                 }
               ]

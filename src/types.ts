@@ -61,3 +61,10 @@ export type Task<T> = {
   cancel(): void;
   result: Promise<T>;
 };
+
+export {};
+declare global {
+  interface Window {
+    executeQuery(fileName: string, statement: string): Promise<string>;
+  }
+}

@@ -2,13 +2,13 @@ import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AnonymizationView, CsvFilePicker, SchemaLoader } from '.';
-import { AnonymizerContext, fakeAnonymizer } from '../state';
+import { AnonymizerContext, anonymizer } from '../state';
 
 import './App.css';
 
 export const App: FunctionComponent = () => {
   return (
-    <AnonymizerContext.Provider value={fakeAnonymizer}>
+    <AnonymizerContext.Provider value={anonymizer}>
       <div className="App">
         <CsvFilePicker>
           {(file, removeFile) => (
