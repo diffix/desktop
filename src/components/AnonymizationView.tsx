@@ -14,7 +14,7 @@ export type AnonymizationViewProps = {
 
 export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ schema, removeFile }) => {
   // In this dummy implementation we are not yet using the setColumns
-  const [columns, setColumns] = useState([]);
+  const [columns, setColumns] = useState(schema.columns);
   const computedResult = useQuery(schema, columns);
   const cachedResult = useCachedData(computedResult, emptyQueryResult);
   let resultState = computedResult.state;
