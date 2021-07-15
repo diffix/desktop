@@ -19,6 +19,7 @@ class FakeAnonymizer implements Anonymizer {
           { name: 'Name', type: 'string' },
           { name: 'Age', type: 'integer' },
         ],
+        salt: '0',
       };
     });
   }
@@ -73,11 +74,21 @@ class FakeAnonymizer implements Anonymizer {
 }
 
 class DiffixAnonymizer implements Anonymizer {
+  private async computeSaltFromFile(fileName: string) {
+    const hash = await window.hashFile(fileName);
+    return BigInt('0x' + hash.substring(0, 16)).toString(10); // Return a 64-bit decimal string.
+  }
+
   loadSchema(fileName: string): Task<TableSchema> {
     return toTask(async () => {
-      const result = await window.executeQuery(fileName, 'SELECT * FROM table');
+      const result = await window.executeQuery(fileName, '0', 'SELECT * FROM table');
       const data = JSON.parse(result);
-      return { fileName, columns: data.columns.slice(1) }; // Drop row index column from schema.
+      const salt = await this.computeSaltFromFile(fileName);
+      return {
+        fileName,
+        columns: data.columns.slice(1), // Drop row index column from schema.
+        salt,
+      };
     });
   }
 
@@ -85,7 +96,7 @@ class DiffixAnonymizer implements Anonymizer {
     return toTask(async () => {
       const columnsString = columns.map((column) => column.name).join(', ');
       const statement = `SELECT ${columnsString} FROM table`;
-      const result = await window.executeQuery(schema.fileName, statement);
+      const result = await window.executeQuery(schema.fileName, schema.salt, statement);
       const data = JSON.parse(result);
       const rows: ResultRow[] = data.rows.map((values: Value[]) => ({ lowCount: true, values }));
       return { columns: data.columns, rows };

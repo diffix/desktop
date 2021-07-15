@@ -1,8 +1,12 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { execFile } from 'child_process';
 import util from 'util';
+import fs from 'fs';
+import crypto from 'crypto';
+import stream from 'stream';
 
 const asyncExecFile = util.promisify(execFile);
+const asyncPipeline = util.promisify(stream.pipeline);
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -44,14 +48,21 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.handle('execute_query', async (_event, fileName: string, statement: string) => {
+ipcMain.handle('execute_query', async (_event, fileName: string, salt: string, statement: string) => {
   console.log('Executing query: ' + statement);
   const diffixPath = './bin/OpenDiffix.CLI.exe';
-  const diffixArgs = ['--json', '-f', fileName, '-q', statement];
+  const diffixArgs = ['--json', '-f', fileName, '-s', salt, '-q', statement];
   // Throws stderr output on error.
   const { stdout } = await asyncExecFile(diffixPath, diffixArgs, {
     maxBuffer: 100 * 1024 * 1024,
     windowsHide: true,
   });
   return stdout;
+});
+
+ipcMain.handle('hash_file', async (_event, fileName: string) => {
+  const hash = crypto.createHash('md5');
+  const stream = fs.createReadStream(fileName);
+  await asyncPipeline(stream, hash);
+  return hash.digest('hex');
 });
