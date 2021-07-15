@@ -14,6 +14,7 @@ export type DisplayMode = 'anonymized' | 'raw' | 'combined';
 export type TableSchema = {
   fileName: string;
   columns: TableColumn[];
+  salt: string;
 };
 
 export type TableColumn = {
@@ -65,6 +66,7 @@ export type Task<T> = {
 export {};
 declare global {
   interface Window {
-    executeQuery(fileName: string, statement: string): Promise<string>;
+    executeQuery(fileName: string, salt: string, statement: string): Promise<string>;
+    hashFile(fileName: string): Promise<string>;
   }
 }
