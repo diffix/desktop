@@ -74,7 +74,7 @@ class FakeAnonymizer implements Anonymizer {
 }
 
 class DiffixAnonymizer implements Anonymizer {
-  async computeSaltFromFile(fileName: string) {
+  private async computeSaltFromFile(fileName: string) {
     const hash = await window.hashFile(fileName);
     return BigInt('0x' + hash.substring(0, 16)).toString(10); // Return a 64-bit decimal string.
   }
