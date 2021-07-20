@@ -48,9 +48,10 @@ app.on('activate', () => {
   }
 });
 
+const diffixPath = './bin/OpenDiffix.CLI' + (process.platform === 'win32' ? '.exe' : '');
+
 ipcMain.handle('execute_query', async (_event, fileName: string, salt: string, statement: string) => {
   console.log('Executing query: ' + statement);
-  const diffixPath = './bin/OpenDiffix.CLI.exe';
   const diffixArgs = ['--json', '-f', fileName, '-s', salt, '-q', statement];
   // Throws stderr output on error.
   const { stdout } = await asyncExecFile(diffixPath, diffixArgs, {
