@@ -55,7 +55,7 @@ export type File = RcFile;
 
 export type Anonymizer = {
   loadSchema(fileName: string): Task<TableSchema>;
-  anonymize(schema: TableSchema, columns: TableColumn[]): Task<QueryResult>;
+  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult>;
 };
 
 export type Task<T> = {

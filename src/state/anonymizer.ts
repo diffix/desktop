@@ -94,6 +94,7 @@ class DiffixAnonymizer implements Anonymizer {
 
   anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult> {
     return toTask(async () => {
+      if (bucketColumns.length === 0) return { columns: [], rows: [] };
       const bucketColumnsString = bucketColumns.map((column) => column.name).join(', ');
       const statement = `
           SELECT
