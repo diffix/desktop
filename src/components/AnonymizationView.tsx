@@ -13,7 +13,7 @@ export type AnonymizationViewProps = {
 };
 
 export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ schema, removeFile }) => {
-  const [selectedColumns, setSelectedColumns] = useState(() => schema.columns.map(() => true));
+  const [selectedColumns, setSelectedColumns] = useState(() => Array(schema.columns.length).fill(true));
   const computedResult = useQuery(schema, selectedColumns);
   const cachedResult = useCachedData(computedResult, emptyQueryResult);
 

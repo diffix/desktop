@@ -12,8 +12,8 @@ export function useQuery(schema: TableSchema, selectedColumns: boolean[]): Compu
 
     let canceled = false;
 
-    const columns = schema.columns.filter((_column, i) => selectedColumns[i]);
-    const task = anonymizer.anonymize(schema, columns);
+    const bucketColumns = schema.columns.filter((_column, i) => selectedColumns[i]);
+    const task = anonymizer.anonymize(schema, bucketColumns);
 
     task.result
       .then((queryResult) => {
