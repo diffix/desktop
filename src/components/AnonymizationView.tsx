@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Button, Result } from 'antd';
+import { Result } from 'antd';
 
-import { QueryResultsTable } from '.';
+import { ColumnSelector, QueryResultsTable } from '.';
 import { useCachedData, useQuery } from '../state';
 import { QueryResult, TableSchema } from '../types';
 
@@ -12,37 +12,16 @@ export type AnonymizationViewProps = {
   removeFile: () => void;
 };
 
-export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ schema, removeFile }) => {
-  // In this dummy implementation we are not yet using the setColumns
-  const [columns, setColumns] = useState(schema.columns);
-  const computedResult = useQuery(schema, columns);
+export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ schema }) => {
+  const [selectedColumns, setSelectedColumns] = useState(() => schema.columns.map(() => true));
+  const computedResult = useQuery(schema, selectedColumns);
   const cachedResult = useCachedData(computedResult, emptyQueryResult);
-  let resultState = computedResult.state;
 
-  // Demo only
-  const [isError, setError] = useState(false);
-  if (isError) resultState = 'failed';
-  const demoUtils = (
-    <>
-      <Button
-        onClick={() => {
-          setError(false);
-          setColumns([]);
-        }}
-      >
-        Simulate new query
-      </Button>
-      <Button onClick={() => setError(true)}>Simulate error</Button>
-      <Button onClick={removeFile}>Remove file</Button>
-    </>
-  );
-
-  switch (resultState) {
+  switch (computedResult.state) {
     case 'failed':
       return (
         <div className="AnonymizationView failed">
           <Result status="error" title="Anonymization failed" subTitle="Something went wrong." />
-          {demoUtils}
         </div>
       );
 
@@ -51,7 +30,7 @@ export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ s
       return (
         <div className={`AnonymizationView ${loaded ? 'completed' : 'loading'}`}>
           <QueryResultsTable loading={!loaded} result={cachedResult} />
-          {demoUtils}
+          <ColumnSelector schema={schema} selectedColumns={selectedColumns} onChange={setSelectedColumns} />
         </div>
       );
     }
