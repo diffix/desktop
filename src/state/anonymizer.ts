@@ -92,17 +92,17 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  anonymize(schema: TableSchema, bucketValues: TableColumn[]): Task<QueryResult> {
+  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult> {
     return toTask(async () => {
-      const bucketValuesString = bucketValues.map((column) => column.name).join(', ');
+      const bucketColumnsString = bucketColumns.map((column) => column.name).join(', ');
       const statement = `
           SELECT
             diffix_low_count(RowIndex),
             count(*),
             diffix_count(RowIndex),
-            ${bucketValuesString}
+            ${bucketColumnsString}
           FROM table
-          GROUP BY ${bucketValuesString}
+          GROUP BY ${bucketColumnsString}
       `;
       const result = await window.executeQuery(schema.fileName, schema.salt, statement);
       const data = JSON.parse(result);
