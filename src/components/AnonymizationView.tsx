@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Result } from 'antd';
+import { Button, Result } from 'antd';
 
 import { ColumnSelector, QueryResultsTable } from '.';
 import { useCachedData, useQuery } from '../state';
@@ -12,7 +12,7 @@ export type AnonymizationViewProps = {
   removeFile: () => void;
 };
 
-export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ schema }) => {
+export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ schema, removeFile }) => {
   const [selectedColumns, setSelectedColumns] = useState(() => schema.columns.map(() => true));
   const computedResult = useQuery(schema, selectedColumns);
   const cachedResult = useCachedData(computedResult, emptyQueryResult);
@@ -31,6 +31,7 @@ export const AnonymizationView: FunctionComponent<AnonymizationViewProps> = ({ s
         <div className={`AnonymizationView ${loaded ? 'completed' : 'loading'}`}>
           <QueryResultsTable loading={!loaded} result={cachedResult} />
           <ColumnSelector schema={schema} selectedColumns={selectedColumns} onChange={setSelectedColumns} />
+          <Button onClick={removeFile}>Choose another file</Button>
         </div>
       );
     }
