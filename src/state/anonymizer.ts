@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { Anonymizer, QueryResult, ResultRow, TableColumn, TableSchema, Task, Value } from '../types';
+import { Anonymizer, QueryResult, ResultColumn, ResultRow, TableColumn, TableSchema, Task, Value } from '../types';
 import { delay, toTask } from './utils';
 
 class FakeAnonymizer implements Anonymizer {
@@ -92,16 +92,27 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  anonymize(schema: TableSchema, columns: TableColumn[]): Task<QueryResult> {
+  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult> {
     return toTask(async () => {
-      if (columns.length === 0) return { columns: [], rows: [] };
-
-      const columnsString = columns.map((column) => column.name).join(', ');
-      const statement = `SELECT ${columnsString} FROM table`;
+      if (bucketColumns.length === 0) return { columns: [], rows: [] };
+      const bucketColumnsString = bucketColumns.map((column) => column.name).join(', ');
+      const statement = `
+          SELECT
+            diffix_low_count(RowIndex),
+            count(*),
+            diffix_count(RowIndex),
+            ${bucketColumnsString}
+          FROM table
+          GROUP BY ${bucketColumnsString}
+      `;
       const result = await window.executeQuery(schema.fileName, schema.salt, statement);
       const data = JSON.parse(result);
-      const rows: ResultRow[] = data.rows.map((values: Value[]) => ({ lowCount: true, values }));
-      return { columns: data.columns, rows };
+      const rows: ResultRow[] = data.rows.map((values: Value[]) => ({
+        lowCount: values[0],
+        values: [...values.slice(3), { realValue: values[1], anonValue: values[2] }],
+      }));
+      const columns: ResultColumn[] = [...data.columns.slice(3), { name: 'Count', type: 'aggregate' }];
+      return { columns, rows };
     });
   }
 }
