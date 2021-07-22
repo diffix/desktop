@@ -18,12 +18,12 @@ export type SchemaLoadStepData = {
 };
 
 export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ children, file }) => {
-  const schema = useSchema(file.path);
+  const schema = useSchema(file);
   useEffect(() => {
     if (schema.state === 'completed') {
-      message.success(`Loaded ${file.name}`);
+      message.success(`Loaded ${schema.value.file.name}`);
     }
-  }, [schema.state, file.name]);
+  }, [schema]);
 
   switch (schema.state) {
     case 'completed':
