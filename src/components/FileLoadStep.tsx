@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
-import { Upload } from 'antd';
+import { Divider, Upload } from 'antd';
 import { FileOutlined } from '@ant-design/icons';
 
 import { File } from '../types';
@@ -37,12 +37,17 @@ export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children })
           <p className="ant-upload-drag-icon">
             <FileOutlined />
           </p>
-          <p className="ant-upload-text">Click or drag file to this area to upload</p>
-          <p className="ant-upload-hint">Upload hint about CSV files here.</p>
+          <p className="ant-upload-text">Import data from CSV file</p>
+          <p className="ant-upload-hint">Click or drag file to this area to import</p>
         </Dragger>
       </div>
       {/* Render next step */}
-      {file && children({ file, removeFile })}
+      {file && (
+        <>
+          <Divider />
+          {children({ file, removeFile })}
+        </>
+      )}
     </>
   );
 };

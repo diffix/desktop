@@ -23,7 +23,7 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ c
       return (
         <div className="AnonymizationStep notebook-step completed">
           <QueryResultsTable loading={!loaded} result={cachedResult} />
-          <Button type="primary" block disabled={!loaded}>
+          <Button type="primary" block disabled={!loaded || !cachedResult.rows.length}>
             Export to CSV
           </Button>
         </div>

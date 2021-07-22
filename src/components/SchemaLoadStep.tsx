@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect } from 'react';
-import { message, Result, Space, Spin, Typography } from 'antd';
+import { Divider, message, Result, Space, Spin, Typography } from 'antd';
 
 import { useSchema } from '../state';
 import { File, TableSchema } from '../types';
@@ -33,6 +33,7 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
             <h2>{file.name}</h2>
           </div>
           {/* Render next step */}
+          <Divider />
           {children({ schema: schema.value })}
         </>
       );

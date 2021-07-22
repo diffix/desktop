@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { List, Switch } from 'antd';
+import { Divider, List, Switch } from 'antd';
 
 import { TableSchema } from '../types';
 
@@ -43,6 +43,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
         />
       </div>
       {/* Render next step */}
+      <Divider />
       {children({ columns })}
     </>
   );
