@@ -1,1 +1,26 @@
 @import '~antd/dist/antd.css';
+
+body {
+  background: #ececec;
+  overflow-x: hidden;
+}
+
+.App {
+  margin-right: calc(100% - 100vw);
+  padding: 32px 16px 64px 16px;
+}
+
+.App-container {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.App-tab-bar {
+  z-index: 1;
+  margin: 0;
+  transition: background-color 150ms linear;
+}
+
+.App-tab-bar.sticky {
+  background: #ffffff;
+}
