@@ -81,7 +81,7 @@ class DiffixAnonymizer implements Anonymizer {
 
   loadSchema(fileName: string): Task<TableSchema> {
     return toTask(async () => {
-      const result = await window.executeQuery(fileName, '0', 'SELECT * FROM table');
+      const result = await window.executeQuery(fileName, '0', 'SELECT * FROM table LIMIT 10000');
       const data = JSON.parse(result);
       const salt = await this.computeSaltFromFile(fileName);
       return {
@@ -95,7 +95,7 @@ class DiffixAnonymizer implements Anonymizer {
   anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult> {
     return toTask(async () => {
       if (bucketColumns.length === 0) return { columns: [], rows: [] };
-      const bucketColumnsString = bucketColumns.map((column) => column.name).join(', ');
+      const bucketColumnsString = bucketColumns.map((column) => `"${column.name}"`).join(', ');
       const statement = `
           SELECT
             diffix_low_count(RowIndex),
@@ -104,6 +104,7 @@ class DiffixAnonymizer implements Anonymizer {
             ${bucketColumnsString}
           FROM table
           GROUP BY ${bucketColumnsString}
+          LIMIT 10000
       `;
       const result = await window.executeQuery(schema.fileName, schema.salt, statement);
       const data = JSON.parse(result);
