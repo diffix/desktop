@@ -1,9 +1,13 @@
 import React, { FunctionComponent } from 'react';
-import { Button, Result } from 'antd';
+import { Button, Result, Typography } from 'antd';
 
 import { QueryResultsTable } from '.';
 import { useCachedData, useQuery } from '../state';
 import { QueryResult, TableSchema } from '../types';
+
+import './AnonymizationStep.css';
+
+const { Title } = Typography;
 
 const emptyQueryResult: QueryResult = { columns: [], rows: [] };
 
@@ -22,8 +26,14 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ c
       const loaded = computedResult.state === 'completed';
       return (
         <div className="AnonymizationStep notebook-step completed">
+          <Title level={3}>Anonymized data</Title>
           <QueryResultsTable loading={!loaded} result={cachedResult} />
-          <Button type="primary" block disabled={!loaded || !cachedResult.rows.length}>
+          <Button
+            className="AnonymizationStep-export-button"
+            type="primary"
+            size="large"
+            disabled={!loaded || !cachedResult.rows.length}
+          >
             Export to CSV
           </Button>
         </div>

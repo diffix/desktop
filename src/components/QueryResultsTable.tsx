@@ -150,6 +150,7 @@ export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ l
   return (
     <div className={`QueryResultsTable ${mode}`}>
       <Table
+        bordered
         loading={loading}
         columns={columns}
         dataSource={data}

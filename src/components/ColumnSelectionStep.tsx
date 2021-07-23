@@ -1,7 +1,11 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Divider, List, Switch } from 'antd';
+import { Divider, List, Switch, Typography } from 'antd';
 
 import { TableSchema } from '../types';
+
+import './ColumnSelectionStep.css';
+
+const { Title } = Typography;
 
 function updateArray<T>(array: T[], index: number, value: T): T[] {
   if (array[index] === value) return array;
@@ -25,7 +29,9 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
   return (
     <>
       <div className="ColumnSelectionStep notebook-step">
+        <Title level={3}>Select columns for anonymization</Title>
         <List
+          className="ColumnSelectionStep-list"
           dataSource={schema.columns}
           renderItem={(column, index) => (
             <List.Item

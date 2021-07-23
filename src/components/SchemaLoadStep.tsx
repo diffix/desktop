@@ -6,7 +6,7 @@ import { File, TableSchema } from '../types';
 
 import './SchemaLoadStep.css';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 export type SchemaLoadStepProps = {
   file: File;
@@ -30,7 +30,8 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
       return (
         <>
           <div className="SchemaLoadStep notebook-step completed">
-            <h2>{file.name}</h2>
+            <Title level={3}>Successfully imported {schema.value.file.name}</Title>
+            <Text>Here is what the data looks like:</Text>
           </div>
           {/* Render next step */}
           <Divider />

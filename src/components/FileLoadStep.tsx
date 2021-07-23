@@ -1,10 +1,11 @@
 import React, { FunctionComponent, useCallback, useState } from 'react';
-import { Divider, Upload } from 'antd';
+import { Divider, Typography, Upload } from 'antd';
 import { FileOutlined } from '@ant-design/icons';
 
 import { File } from '../types';
 
 const { Dragger } = Upload;
+const { Title } = Typography;
 
 export type FileLoadStepProps = {
   children: (data: FileLoadStepData) => React.ReactNode;
@@ -22,6 +23,7 @@ export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children })
   return (
     <>
       <div className="FileLoadStep notebook-step">
+        <Title level={3}>Import data to anonymize</Title>
         <Dragger
           accept=".csv"
           fileList={[]}
