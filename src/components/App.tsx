@@ -42,15 +42,35 @@ function renderTabBar(
 
 export const App: FunctionComponent = () => {
   const [notebooks, setNotebooks] = useState(initialNotebook);
+  const [activeNotebook, setActiveNotebook] = useState<string>(() => notebooks[0].id);
 
   function onEdit(targetKey: unknown, action: 'add' | 'remove'): void {
     switch (action) {
-      case 'add':
-        setNotebooks([...notebooks, newNotebook()]);
+      case 'add': {
+        const addedNotebook = newNotebook();
+        setNotebooks([...notebooks, addedNotebook]);
+        setActiveNotebook(addedNotebook.id);
         return;
-      case 'remove':
-        setNotebooks(notebooks.filter((n) => n.id !== targetKey));
+      }
+      case 'remove': {
+        let index = 0;
+        const filteredNotebooks = notebooks.filter((n, i) => {
+          if (n.id === targetKey) {
+            index = i;
+            return false;
+          } else {
+            return true;
+          }
+        });
+
+        setNotebooks(filteredNotebooks);
+
+        if (targetKey === activeNotebook && filteredNotebooks.length !== 0) {
+          setActiveNotebook(filteredNotebooks[index].id);
+        }
+
         return;
+      }
     }
   }
 
@@ -64,7 +84,13 @@ export const App: FunctionComponent = () => {
         <div className="App-container">
           <StickyContainer>
             {notebooks.length !== 0 ? (
-              <Tabs type="editable-card" renderTabBar={renderTabBar} onEdit={onEdit}>
+              <Tabs
+                type="editable-card"
+                activeKey={activeNotebook}
+                onChange={setActiveNotebook}
+                onEdit={onEdit}
+                renderTabBar={renderTabBar}
+              >
                 {notebooks.map((notebook) => (
                   <TabPane tab={notebook.title} key={notebook.id}>
                     <Notebook onTitleChange={(title) => setTitle(notebook.id, title)} />
