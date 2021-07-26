@@ -8,6 +8,7 @@ const { Dragger } = Upload;
 const { Title } = Typography;
 
 export type FileLoadStepProps = {
+  onLoad: (file: File) => void;
   children: (data: FileLoadStepData) => React.ReactNode;
 };
 
@@ -16,7 +17,7 @@ export type FileLoadStepData = {
   removeFile: () => void;
 };
 
-export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children }) => {
+export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children, onLoad }) => {
   const [file, setFile] = useState<File | null>(null);
   const removeFile = useCallback(() => setFile(null), []);
 
@@ -31,6 +32,7 @@ export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children })
             // Uploader is mid state update. We push the op to next frame to avoid react warning.
             setTimeout(() => {
               setFile(file);
+              onLoad(file);
             }, 0);
             return false;
           }}

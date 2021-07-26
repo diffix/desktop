@@ -24,3 +24,7 @@ body {
 .App-tab-bar.sticky {
   background: #ffffff;
 }
+
+.App-empty {
+  margin-top: 64px;
+}

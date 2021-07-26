@@ -4,10 +4,14 @@ import { FileLoadStep, SchemaLoadStep, ColumnSelectionStep, AnonymizationStep } 
 
 import './Notebook.css';
 
-export const Notebook: FunctionComponent = () => {
+export type NotebookProps = {
+  onTitleChange: (title: string) => void;
+};
+
+export const Notebook: FunctionComponent<NotebookProps> = ({ onTitleChange }) => {
   return (
     <div className="Notebook">
-      <FileLoadStep>
+      <FileLoadStep onLoad={(file) => onTitleChange(file.name)}>
         {({ file }) => (
           <SchemaLoadStep file={file}>
             {({ schema }) => (
