@@ -24,7 +24,7 @@ export type ColumnSelectionStepData = {
 };
 
 export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema }) => {
-  const [columns, setColumns] = useState(() => Array(schema.columns.length).fill(true));
+  const [columns, setColumns] = useState(() => Array(schema.columns.length).fill(false));
 
   return (
     <>
