@@ -66,7 +66,7 @@ export const App: FunctionComponent = () => {
         setNotebooks(filteredNotebooks);
 
         if (targetKey === activeNotebook && filteredNotebooks.length !== 0) {
-          setActiveNotebook(filteredNotebooks[index].id);
+          setActiveNotebook(filteredNotebooks[Math.min(index, filteredNotebooks.length - 1)].id);
         }
 
         return;
