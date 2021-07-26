@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Button, Result, Typography } from 'antd';
 
-import { QueryResultsTable } from '.';
+import { AnonymizedResultsTable } from '.';
 import { useCachedData, useQuery } from '../state';
 import { QueryResult, TableSchema } from '../types';
 
@@ -27,7 +27,7 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ c
       return (
         <div className="AnonymizationStep notebook-step completed">
           <Title level={3}>Anonymized data</Title>
-          <QueryResultsTable loading={!loaded} result={cachedResult} />
+          <AnonymizedResultsTable loading={!loaded} result={cachedResult} />
           <Button
             className="AnonymizationStep-export-button"
             type="primary"

@@ -12,7 +12,7 @@ import {
   Value,
 } from '../types';
 
-import './QueryResultsTable.css';
+import './AnonymizedResultsTable.css';
 
 type TableRowData = {
   key: number;
@@ -23,7 +23,7 @@ type TableRowData = {
 // Rendering
 
 function rowClassName({ lowCount }: TableRowData) {
-  return 'QueryResultsTable-row' + (lowCount ? ' low-count' : '');
+  return 'AnonymizedResultsTable-row' + (lowCount ? ' low-count' : '');
 }
 
 function renderValue(v: Value) {
@@ -128,12 +128,12 @@ const rowDataMapper = (row: ResultRow, i: number) => {
 
 // Component
 
-export type QueryResultsTableProps = {
+export type AnonymizedResultsTableProps = {
   loading: boolean;
   result: QueryResult;
 };
 
-export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ loading, result }) => {
+export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTableProps> = ({ loading, result }) => {
   const [mode, setMode] = useState<DisplayMode>('anonymized');
 
   const render = columnRenderer(mode);
@@ -148,7 +148,7 @@ export const QueryResultsTable: FunctionComponent<QueryResultsTableProps> = ({ l
   const data = filterRows(mode, result.rows).map(rowDataMapper);
 
   return (
-    <div className={`QueryResultsTable ${mode}`}>
+    <div className={`AnonymizedResultsTable ${mode}`}>
       <Table
         bordered
         loading={loading}
