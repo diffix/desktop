@@ -1,0 +1,9 @@
+.Notebook {
+  background: #ffffff;
+  border-radius: 0 4px 4px 4px;
+  padding: 8px 32px;
+}
+
+.Notebook .notebook-step {
+  margin: 32px 0;
+}

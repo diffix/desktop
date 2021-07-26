@@ -11,8 +11,10 @@ export type DisplayMode = 'anonymized' | 'raw' | 'combined';
 
 // Schema
 
+export type File = RcFile;
+
 export type TableSchema = {
-  fileName: string;
+  file: File;
   columns: TableColumn[];
   salt: string;
 };
@@ -51,10 +53,8 @@ export type AnonymizedAggregate = {
 
 // API
 
-export type File = RcFile;
-
 export type Anonymizer = {
-  loadSchema(fileName: string): Task<TableSchema>;
+  loadSchema(file: File): Task<TableSchema>;
   anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult>;
 };
 

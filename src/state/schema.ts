@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ComputedData, TableSchema } from '../types';
+import { ComputedData, File, TableSchema } from '../types';
 import { useAnonymizer } from './anonymizer';
 import { inProgressState } from './utils';
 
-export function useSchema(fileName: string): ComputedData<TableSchema> {
+export function useSchema(file: File): ComputedData<TableSchema> {
   const anonymizer = useAnonymizer();
   const [schema, setSchema] = useState<ComputedData<TableSchema>>(inProgressState);
 
@@ -11,7 +11,7 @@ export function useSchema(fileName: string): ComputedData<TableSchema> {
     setSchema(inProgressState);
 
     let canceled = false;
-    const task = anonymizer.loadSchema(fileName);
+    const task = anonymizer.loadSchema(file);
 
     task.result
       .then((schema) => {
@@ -29,7 +29,7 @@ export function useSchema(fileName: string): ComputedData<TableSchema> {
       canceled = true;
       task.cancel();
     };
-  }, [anonymizer, fileName]);
+  }, [anonymizer, file]);
 
   return schema;
 }
