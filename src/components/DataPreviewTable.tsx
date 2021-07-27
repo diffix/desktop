@@ -3,7 +3,7 @@ import { Table } from 'antd';
 
 import { TableSchema } from '../types';
 
-type DataPreviewTableProps = {
+export type DataPreviewTableProps = {
   schema: TableSchema;
 };
 
