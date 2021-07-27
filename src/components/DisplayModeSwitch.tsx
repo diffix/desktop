@@ -3,7 +3,7 @@ import { Radio } from 'antd';
 
 import { DisplayMode } from '../types';
 
-type DisplayModeSwitchProps = {
+export type DisplayModeSwitchProps = {
   value: DisplayMode;
   onChange: (mode: DisplayMode) => void;
 };

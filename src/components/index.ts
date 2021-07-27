@@ -2,6 +2,7 @@ export * from './AnonymizationStep';
 export * from './AnonymizedResultsTable';
 export * from './App';
 export * from './ColumnSelectionStep';
+export * from './DataPreviewTable';
 export * from './DisplayModeSwitch';
 export * from './FileLoadStep';
 export * from './Notebook';

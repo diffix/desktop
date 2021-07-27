@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { Divider, message, Result, Space, Spin, Typography } from 'antd';
 
+import { DataPreviewTable } from '.';
 import { useSchema } from '../state';
 import { File, TableSchema } from '../types';
 
@@ -32,6 +33,7 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
           <div className="SchemaLoadStep notebook-step completed">
             <Title level={3}>Successfully imported {schema.value.file.name}</Title>
             <Text>Here is what the data looks like:</Text>
+            <DataPreviewTable schema={schema.value} />
           </div>
           {/* Render next step */}
           <Divider />

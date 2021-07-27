@@ -4,11 +4,11 @@ import { Table } from 'antd';
 import { DisplayModeSwitch } from '.';
 import {
   AnonymizedAggregate,
+  AnonymizedColumnType,
+  AnonymizedQueryResult,
+  AnonymizedResultRow,
   AnonymizedValue,
   DisplayMode,
-  QueryResult,
-  ResultColumnType,
-  ResultRow,
   Value,
 } from '../types';
 
@@ -16,7 +16,7 @@ import './AnonymizedResultsTable.css';
 
 type TableRowData = {
   key: number;
-  lowCount: ResultRow['lowCount'];
+  lowCount: AnonymizedResultRow['lowCount'];
   [index: number]: AnonymizedValue;
 };
 
@@ -69,7 +69,7 @@ function compareNumbers(a: number | null, b: number | null) {
 }
 
 const columnSorter =
-  (mode: DisplayMode, type: ResultColumnType, index: number) => (rowA: TableRowData, rowB: TableRowData) => {
+  (mode: DisplayMode, type: AnonymizedColumnType, index: number) => (rowA: TableRowData, rowB: TableRowData) => {
     const a = rowA[index];
     const b = rowB[index];
 
@@ -109,7 +109,7 @@ const columnSorter =
 
 // Data preprocessing
 
-function filterRows(mode: DisplayMode, rows: ResultRow[]) {
+function filterRows(mode: DisplayMode, rows: AnonymizedResultRow[]) {
   if (mode === 'anonymized') {
     return rows.filter((r) => !r.lowCount);
   } else {
@@ -117,7 +117,7 @@ function filterRows(mode: DisplayMode, rows: ResultRow[]) {
   }
 }
 
-const rowDataMapper = (row: ResultRow, i: number) => {
+const rowDataMapper = (row: AnonymizedResultRow, i: number) => {
   const result: TableRowData = {
     key: i,
     lowCount: row.lowCount,
@@ -130,7 +130,7 @@ const rowDataMapper = (row: ResultRow, i: number) => {
 
 export type AnonymizedResultsTableProps = {
   loading: boolean;
-  result: QueryResult;
+  result: AnonymizedQueryResult;
 };
 
 export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTableProps> = ({ loading, result }) => {
