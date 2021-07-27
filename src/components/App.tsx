@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Empty, Tabs } from 'antd';
-import { StickyContainer, Sticky } from 'react-sticky';
 
 import { Notebook } from '.';
 import { AnonymizerContext, anonymizer } from '../state';
@@ -22,23 +21,6 @@ function newNotebook(): NotebookInfo {
 }
 
 const initialNotebook = [newNotebook()];
-
-function renderTabBar(
-  props: Record<string, unknown>,
-  DefaultTabBar: React.ComponentType<React.HTMLAttributes<HTMLElement>>,
-): React.ReactElement {
-  return (
-    <Sticky>
-      {({ isSticky, style }) => (
-        <DefaultTabBar
-          {...props}
-          className={isSticky ? 'App-tab-bar sticky' : 'App-tab-bar'}
-          style={{ ...style, margin: 0 }}
-        />
-      )}
-    </Sticky>
-  );
-}
 
 export const App: FunctionComponent = () => {
   const [notebooks, setNotebooks] = useState(initialNotebook);
@@ -81,31 +63,21 @@ export const App: FunctionComponent = () => {
   return (
     <AnonymizerContext.Provider value={anonymizer}>
       <div className="App">
-        <div className="App-container">
-          <StickyContainer>
-            {notebooks.length !== 0 ? (
-              <Tabs
-                type="editable-card"
-                activeKey={activeNotebook}
-                onChange={setActiveNotebook}
-                onEdit={onEdit}
-                renderTabBar={renderTabBar}
-              >
-                {notebooks.map((notebook) => (
-                  <TabPane tab={notebook.title} key={notebook.id}>
-                    <Notebook onTitleChange={(title) => setTitle(notebook.id, title)} />
-                  </TabPane>
-                ))}
-              </Tabs>
-            ) : (
-              <Empty className="App-empty" description="No open notebooks">
-                <Button type="primary" onClick={() => onEdit(null, 'add')}>
-                  Create New
-                </Button>
-              </Empty>
-            )}
-          </StickyContainer>
-        </div>
+        {notebooks.length !== 0 ? (
+          <Tabs type="editable-card" activeKey={activeNotebook} onChange={setActiveNotebook} onEdit={onEdit}>
+            {notebooks.map((notebook) => (
+              <TabPane tab={notebook.title} key={notebook.id}>
+                <Notebook onTitleChange={(title) => setTitle(notebook.id, title)} />
+              </TabPane>
+            ))}
+          </Tabs>
+        ) : (
+          <Empty className="App-empty" description="No open notebooks">
+            <Button type="primary" onClick={() => onEdit(null, 'add')}>
+              Create New
+            </Button>
+          </Empty>
+        )}
       </div>
     </AnonymizerContext.Provider>
   );
