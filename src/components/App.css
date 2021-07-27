@@ -7,22 +7,17 @@ body {
 
 .App {
   margin-right: calc(100% - 100vw);
-  padding: 32px 16px 64px 16px;
+  padding-top: 40px;
 }
 
-.App-container {
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-.App-tab-bar {
-  z-index: 1;
+.App .ant-tabs-nav {
   margin: 0;
-  transition: background-color 150ms linear;
-}
-
-.App-tab-bar.sticky {
+  position: fixed;
   background: #ffffff;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
 }
 
 .App-empty {
