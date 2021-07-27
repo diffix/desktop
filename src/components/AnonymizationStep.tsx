@@ -3,13 +3,13 @@ import { Button, Result, Typography } from 'antd';
 
 import { AnonymizedResultsTable } from '.';
 import { useCachedData, useQuery } from '../state';
-import { QueryResult, TableSchema } from '../types';
+import { AnonymizedQueryResult, TableSchema } from '../types';
 
 import './AnonymizationStep.css';
 
 const { Title } = Typography;
 
-const emptyQueryResult: QueryResult = { columns: [], rows: [] };
+const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [] };
 
 export type AnonymizationStepProps = {
   columns: boolean[];

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ComputedData, QueryResult, TableSchema } from '../types';
+import { AnonymizedQueryResult, ComputedData, TableSchema } from '../types';
 import { useAnonymizer } from './anonymizer';
 import { inProgressState } from './utils';
 
-export function useQuery(schema: TableSchema, selectedColumns: boolean[]): ComputedData<QueryResult> {
+export function useQuery(schema: TableSchema, selectedColumns: boolean[]): ComputedData<AnonymizedQueryResult> {
   const anonymizer = useAnonymizer();
-  const [result, setResult] = useState<ComputedData<QueryResult>>(inProgressState);
+  const [result, setResult] = useState<ComputedData<AnonymizedQueryResult>>(inProgressState);
 
   useEffect(() => {
     setResult(inProgressState);

@@ -16,6 +16,7 @@ export type File = RcFile;
 export type TableSchema = {
   file: File;
   columns: TableColumn[];
+  rowsPreview: ResultRow[];
   salt: string;
 };
 
@@ -26,7 +27,7 @@ export type TableColumn = {
 
 export type ColumnType = 'boolean' | 'integer' | 'real' | 'string';
 
-// Results
+// Query results
 
 export type QueryResult = {
   columns: ResultColumn[];
@@ -35,14 +36,28 @@ export type QueryResult = {
 
 export type ResultColumn = {
   name: string;
-  type: ResultColumnType;
+  type: ColumnType;
 };
 
-export type ResultColumnType = ColumnType | 'aggregate';
-
-export type ResultRow = { lowCount: boolean; values: AnonymizedValue[] };
+export type ResultRow = Value[];
 
 export type Value = boolean | number | string | null;
+
+// Anonymized query results
+
+export type AnonymizedQueryResult = {
+  columns: AnonymizedResultColumn[];
+  rows: AnonymizedResultRow[];
+};
+
+export type AnonymizedResultColumn = {
+  name: string;
+  type: AnonymizedColumnType;
+};
+
+export type AnonymizedColumnType = ColumnType | 'aggregate';
+
+export type AnonymizedResultRow = { lowCount: boolean; values: AnonymizedValue[] };
 
 export type AnonymizedValue = Value | AnonymizedAggregate;
 
@@ -55,7 +70,7 @@ export type AnonymizedAggregate = {
 
 export type Anonymizer = {
   loadSchema(file: File): Task<TableSchema>;
-  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult>;
+  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<AnonymizedQueryResult>;
 };
 
 export type Task<T> = {
@@ -66,7 +81,7 @@ export type Task<T> = {
 export {};
 declare global {
   interface Window {
-    executeQuery(fileName: string, salt: string, statement: string): Promise<string>;
+    executeQuery(fileName: string, salt: string, statement: string): Promise<QueryResult>;
     hashFile(fileName: string): Promise<string>;
   }
 }

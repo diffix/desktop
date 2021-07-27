@@ -1,7 +1,8 @@
 import { ipcRenderer } from 'electron';
 
-window.executeQuery = (fileName: string, salt: string, statement: string) => {
-  return ipcRenderer.invoke('execute_query', fileName, salt, statement);
+window.executeQuery = async (fileName: string, salt: string, statement: string) => {
+  const json: string = await ipcRenderer.invoke('execute_query', fileName, salt, statement);
+  return JSON.parse(json);
 };
 
 window.hashFile = (fileName: string) => {

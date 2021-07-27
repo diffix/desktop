@@ -1,14 +1,13 @@
 import { createContext, useContext } from 'react';
 import {
+  AnonymizedQueryResult,
+  AnonymizedResultColumn,
+  AnonymizedResultRow,
   Anonymizer,
   File,
-  QueryResult,
-  ResultColumn,
-  ResultRow,
   TableColumn,
   TableSchema,
   Task,
-  Value,
 } from '../types';
 import { toTask } from './utils';
 
@@ -22,37 +21,36 @@ class DiffixAnonymizer implements Anonymizer {
     return toTask(async () => {
       const fileName = file.path;
       const result = await window.executeQuery(fileName, '0', 'SELECT * FROM table LIMIT 10000');
-      const data = JSON.parse(result);
       const salt = await this.computeSaltFromFile(fileName);
       return {
         file,
-        columns: data.columns.slice(1), // Drop row index column from schema.
+        columns: result.columns.slice(1), // Drop row index column from schema.
+        rowsPreview: result.rows.map((row) => row.slice(1)),
         salt,
       };
     });
   }
 
-  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<QueryResult> {
+  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<AnonymizedQueryResult> {
     return toTask(async () => {
       if (bucketColumns.length === 0) return { columns: [], rows: [] };
       const bucketColumnsString = bucketColumns.map((column) => `"${column.name}"`).join(', ');
       const statement = `
-          SELECT
-            diffix_low_count(RowIndex),
-            count(*),
-            diffix_count(RowIndex),
-            ${bucketColumnsString}
-          FROM table
-          GROUP BY ${bucketColumnsString}
-          LIMIT 10000
+        SELECT
+          diffix_low_count(RowIndex),
+          count(*),
+          diffix_count(RowIndex),
+          ${bucketColumnsString}
+        FROM table
+        GROUP BY ${bucketColumnsString}
+        LIMIT 10000
       `;
       const result = await window.executeQuery(schema.file.path, schema.salt, statement);
-      const data = JSON.parse(result);
-      const rows: ResultRow[] = data.rows.map((values: Value[]) => ({
-        lowCount: values[0],
-        values: [...values.slice(3), { realValue: values[1], anonValue: values[2] }],
+      const rows: AnonymizedResultRow[] = result.rows.map((row) => ({
+        lowCount: row[0] as boolean,
+        values: [...row.slice(3), { realValue: row[1] as number, anonValue: row[2] as number | null }],
       }));
-      const columns: ResultColumn[] = [...data.columns.slice(3), { name: 'Count', type: 'aggregate' }];
+      const columns: AnonymizedResultColumn[] = [...result.columns.slice(3), { name: 'Count', type: 'aggregate' }];
       return { columns, rows };
     });
   }
