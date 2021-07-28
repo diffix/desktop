@@ -9,6 +9,8 @@ export type ComputedData<T> =
 
 export type DisplayMode = 'anonymized' | 'raw' | 'combined';
 
+export type RowData = { [index: number]: Value };
+
 // Schema
 
 export type File = RcFile;
