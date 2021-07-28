@@ -27,7 +27,7 @@ export type TableColumn = {
   type: ColumnType;
 };
 
-export type ColumnType = 'boolean' | 'integer' | 'real' | 'string';
+export type ColumnType = 'boolean' | 'integer' | 'real' | 'text';
 
 // Query results
 

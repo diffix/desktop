@@ -42,11 +42,11 @@ class DiffixAnonymizer implements Anonymizer {
     }
 
     return typesInfo.map((info) => {
-      if (info.isEmpty) return 'string';
+      if (info.isEmpty) return 'text';
       if (info.isBoolean) return 'boolean';
       if (info.isInteger) return 'integer';
       if (info.isReal) return 'real';
-      return 'string';
+      return 'text';
     });
   }
 

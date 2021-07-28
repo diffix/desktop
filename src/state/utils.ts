@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ColumnType, ComputedData, RowData, Task } from '../types';
+import { ColumnType, ComputedData, RowData, Task, Value } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const inProgressState: ComputedData<any> = { state: 'in_progress' };
@@ -29,23 +29,46 @@ export function toTask<T>(func: () => Promise<T>): Task<T> {
   };
 }
 
+function isNull(value: Value) {
+  return value === '' || value === null;
+}
+
+function toBoolean(value: Value) {
+  if (typeof value === 'string') value = value.toLowerCase();
+  switch (value) {
+    case '':
+    case null:
+      return null;
+    case false:
+    case 'false':
+    case '0':
+    case 0:
+      return false;
+    default:
+      return true;
+  }
+}
+
 export const columnSorter =
   (type: ColumnType, index: number) =>
   (rowA: RowData, rowB: RowData): number => {
-    const a = rowA[index];
-    const b = rowB[index];
+    let a = rowA[index];
+    let b = rowB[index];
 
-    if (a === null && b === null) return 0;
-    if (a === null) return -1;
-    if (b === null) return 1;
+    if (isNull(a) && isNull(b)) return 0;
+    if (isNull(a)) return -1;
+    if (isNull(b)) return 1;
 
     switch (type) {
-      case 'boolean':
+      case 'boolean': {
+        a = toBoolean(a);
+        b = toBoolean(b);
         return a === b ? 0 : a ? 1 : -1;
+      }
       case 'integer':
       case 'real':
         return (a as number) - (b as number);
-      case 'string':
+      case 'text':
         return (a as string).localeCompare(b as string);
     }
   };
