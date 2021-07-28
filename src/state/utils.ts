@@ -49,7 +49,7 @@ export const columnSorter =
       case 'integer':
       case 'real':
         return (a as number) - (b as number);
-      case 'string':
+      case 'text':
         return (a as string).localeCompare(b as string);
     }
   };
