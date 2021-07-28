@@ -40,6 +40,8 @@ function toBoolean(value: Value) {
     case 'false':
     case '0':
     case 0:
+    case '':
+    case null:
       return false;
     default:
       return true;
