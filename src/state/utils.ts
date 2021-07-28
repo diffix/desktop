@@ -33,19 +33,35 @@ function isNull(value: Value) {
   return value === '' || value === null;
 }
 
+function toBoolean(value: Value) {
+  if (typeof value === 'string') value = value.toLowerCase();
+  switch (value) {
+    case false:
+    case 'false':
+    case '0':
+    case 0:
+      return false;
+    default:
+      return true;
+  }
+}
+
 export const columnSorter =
   (type: ColumnType, index: number) =>
   (rowA: RowData, rowB: RowData): number => {
-    const a = rowA[index];
-    const b = rowB[index];
+    let a = rowA[index];
+    let b = rowB[index];
 
     if (isNull(a) && isNull(b)) return 0;
     if (isNull(a)) return -1;
     if (isNull(b)) return 1;
 
     switch (type) {
-      case 'boolean':
+      case 'boolean': {
+        a = toBoolean(a);
+        b = toBoolean(b);
         return a === b ? 0 : a ? 1 : -1;
+      }
       case 'integer':
       case 'real':
         return (a as number) - (b as number);
