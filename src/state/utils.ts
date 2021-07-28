@@ -36,12 +36,13 @@ function isNull(value: Value) {
 function toBoolean(value: Value) {
   if (typeof value === 'string') value = value.toLowerCase();
   switch (value) {
+    case '':
+    case null:
+      return null;
     case false:
     case 'false':
     case '0':
     case 0:
-    case '':
-    case null:
       return false;
     default:
       return true;
