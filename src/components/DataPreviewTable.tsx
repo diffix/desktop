@@ -22,7 +22,7 @@ export const DataPreviewTable: FunctionComponent<DataPreviewTableProps> = ({ sch
 
   return (
     <div className="DataPreviewTable">
-      <Table bordered columns={columns} dataSource={rows} />
+      <Table bordered scroll={{ x: true }} columns={columns} dataSource={rows} />
     </div>
   );
 };
