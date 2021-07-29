@@ -83,7 +83,7 @@ export type Task<T> = {
 export {};
 declare global {
   interface Window {
-    executeQuery(fileName: string, salt: string, statement: string): Promise<QueryResult>;
-    hashFile(fileName: string): Promise<string>;
+    executeQuery(fileName: string, salt: string, statement: string, signal: AbortSignal): Promise<QueryResult>;
+    hashFile(fileName: string, signal: AbortSignal): Promise<string>;
   }
 }

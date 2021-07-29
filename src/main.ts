@@ -48,24 +48,58 @@ app.on('activate', () => {
   }
 });
 
-const diffixBinLocation = app.isPackaged ? 'resources' : '.'
-const diffixName = 'OpenDiffix.CLI' + (process.platform === 'win32' ? '.exe' : '')
+const diffixBinLocation = app.isPackaged ? 'resources' : '.';
+const diffixName = 'OpenDiffix.CLI' + (process.platform === 'win32' ? '.exe' : '');
 const diffixPath = path.join(diffixBinLocation, 'bin', diffixName);
 
-ipcMain.handle('execute_query', async (_event, fileName: string, salt: string, statement: string) => {
-  console.log('Executing query: ' + statement);
-  const diffixArgs = ['--json', '-f', fileName, '-s', salt, '-q', statement];
-  // Throws stderr output on error.
-  const { stdout } = await asyncExecFile(diffixPath, diffixArgs, {
-    maxBuffer: 100 * 1024 * 1024,
-    windowsHide: true,
-  });
-  return stdout;
+const activeTasks = new Map<string, AbortController>();
+
+async function runTask<T>(taskId: string, runner: (signal: AbortSignal) => Promise<T>): Promise<T> {
+  if (activeTasks.has(taskId)) throw new Error(`Duplicate task ID ${taskId}.`);
+
+  const abortController = new AbortController();
+  activeTasks.set(taskId, abortController);
+  try {
+    return await runner(abortController.signal);
+  } finally {
+    activeTasks.delete(taskId);
+  }
+}
+
+ipcMain.handle('cancel_task', async (_event, taskId: string) => {
+  console.log(`Cancelling task ${taskId}.`);
+  const controller = activeTasks.get(taskId);
+  if (controller) {
+    controller.abort();
+    activeTasks.delete(taskId);
+  } else {
+    console.log(`Task ${taskId} not found.`);
+  }
 });
 
-ipcMain.handle('hash_file', async (_event, fileName: string) => {
-  const hash = crypto.createHash('md5');
-  const stream = fs.createReadStream(fileName);
-  await asyncPipeline(stream, hash);
-  return hash.digest('hex');
-});
+ipcMain.handle('execute_query', (_event, taskId: string, fileName: string, salt: string, statement: string) =>
+  runTask(taskId, async (signal) => {
+    console.log(`(${taskId}) Executing query: ${statement}`);
+
+    const diffixArgs = ['--json', '-f', fileName, '-s', salt, '-q', statement];
+    // Throws stderr output on error.
+    const { stdout } = await asyncExecFile(diffixPath, diffixArgs, {
+      maxBuffer: 100 * 1024 * 1024,
+      windowsHide: true,
+      signal,
+    });
+    return stdout;
+  }),
+);
+
+ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
+  runTask(taskId, async (signal) => {
+    console.log(`(${taskId}) Hashing file ${fileName}`);
+
+    const fileStream = stream.addAbortSignal(signal, fs.createReadStream(fileName));
+    const hash = crypto.createHash('md5');
+
+    await asyncPipeline(fileStream, hash);
+    return hash.digest('hex');
+  }),
+);
