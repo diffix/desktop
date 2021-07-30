@@ -3,6 +3,7 @@ import { execFile } from 'child_process';
 import util from 'util';
 import fs from 'fs';
 import crypto from 'crypto';
+import path from 'path';
 import stream from 'stream';
 
 const asyncExecFile = util.promisify(execFile);
@@ -18,8 +19,8 @@ if (require('electron-squirrel-startup')) {
 
 const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 1600,
+    height: 800,
+    width: 1400,
     webPreferences: {
       contextIsolation: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
@@ -28,7 +29,6 @@ const createWindow = (): void => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.webContents.openDevTools();
   if (!app.isPackaged) {
     mainWindow.webContents.openDevTools();
   }
@@ -48,7 +48,9 @@ app.on('activate', () => {
   }
 });
 
-const diffixPath = './bin/OpenDiffix.CLI' + (process.platform === 'win32' ? '.exe' : '');
+const diffixBinLocation = app.isPackaged ? 'resources' : '.'
+const diffixName = 'OpenDiffix.CLI' + (process.platform === 'win32' ? '.exe' : '')
+const diffixPath = path.join(diffixBinLocation, 'bin', diffixName);
 
 ipcMain.handle('execute_query', async (_event, fileName: string, salt: string, statement: string) => {
   console.log('Executing query: ' + statement);

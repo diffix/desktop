@@ -1,8 +1,9 @@
 {
   "name": "publisher",
-  "productName": "publisher",
-  "version": "0.1.0",
-  "description": "Desktop app for anonymizing data using Open Diffix Publish",
+  "productName": "Easy Diffix",
+  "author": "Open Diffix",
+  "version": "0.1.0-alpha",
+  "description": "Desktop app for anonymizing data using Open Diffix Elm",
   "main": ".webpack/main",
   "scripts": {
     "build": "dotnet publish -o ./bin/ -c Release ./reference/src/OpenDiffix.CLI/",
@@ -18,12 +19,14 @@
   "license": "",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "extraResource": "bin"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "publisher"
+            "frameworkVersion": "net5.0"
           }
         },
         {
@@ -39,6 +42,18 @@
         {
           "name": "@electron-forge/maker-rpm",
           "config": {}
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "diffix",
+              "name": "publisher"
+            },
+            "prerelease": true
+          }
         }
       ],
       "plugins": [
@@ -71,6 +86,7 @@
     "@electron-forge/maker-squirrel": "6.0.0-beta.59",
     "@electron-forge/maker-zip": "6.0.0-beta.59",
     "@electron-forge/plugin-webpack": "6.0.0-beta.59",
+    "@electron-forge/publisher-github": "^6.0.0-beta.59",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
     "@types/node": "^16.4.6",
     "@types/react": "^17.0.15",
