@@ -3,6 +3,7 @@ import { execFile } from 'child_process';
 import util from 'util';
 import fs from 'fs';
 import crypto from 'crypto';
+import path from 'path';
 import stream from 'stream';
 
 const asyncExecFile = util.promisify(execFile);
@@ -47,9 +48,9 @@ app.on('activate', () => {
   }
 });
 
-const diffixPrefix = app.isPackaged ? './resources/' : ''
-const diffixSuffix = process.platform === 'win32' ? '.exe' : ''
-const diffixPath = diffixPrefix + './bin/OpenDiffix.CLI' + diffixSuffix;
+const diffixBinLocation = app.isPackaged ? 'resources' : '.'
+const diffixName = 'OpenDiffix.CLI' + (process.platform === 'win32' ? '.exe' : '')
+const diffixPath = path.join(diffixBinLocation, 'bin', diffixName);
 
 ipcMain.handle('execute_query', async (_event, fileName: string, salt: string, statement: string) => {
   console.log('Executing query: ' + statement);
