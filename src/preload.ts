@@ -10,7 +10,7 @@ async function newTask<T>(signal: AbortSignal, runner: (taskId: string) => Promi
 
   signal.addEventListener('abort', () => {
     if (!taskDone) {
-      ipcRenderer.invoke('cancel_task', taskId);
+      ipcRenderer.send('cancel_task', taskId);
     }
   });
 
