@@ -20,12 +20,14 @@ export function useCachedData<T>(resultData: ComputedData<T>, initialData: T): T
   return cached;
 }
 
-export function toTask<T>(func: () => Promise<T>): Task<T> {
+export function runTask<T>(func: (signal: AbortSignal) => Promise<T>): Task<T> {
+  const controller = new AbortController();
+
   return {
     cancel() {
-      /* no-op */
+      controller.abort();
     },
-    result: func(),
+    result: func(controller.signal),
   };
 }
 
