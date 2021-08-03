@@ -12,8 +12,8 @@ export const DisplayModeSwitch: FunctionComponent<DisplayModeSwitchProps> = ({ v
   return (
     <Radio.Group className="DisplayModeSwitch" value={value} onChange={(e) => onChange(e.target.value)}>
       <Radio.Button value="anonymized">Anonymized</Radio.Button>
-      <Radio.Button value="raw">Raw results</Radio.Button>
       <Radio.Button value="combined">Combined view</Radio.Button>
+      <Radio.Button value="raw">Raw results</Radio.Button>
     </Radio.Group>
   );
 };

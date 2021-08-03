@@ -52,10 +52,10 @@ function toBoolean(value: Value) {
 }
 
 export const columnSorter =
-  (type: ColumnType, index: number) =>
+  (type: ColumnType, dataIndex: number | string) =>
   (rowA: RowData, rowB: RowData): number => {
-    let a = rowA[index];
-    let b = rowB[index];
+    let a = rowA[dataIndex];
+    let b = rowB[dataIndex];
 
     if (isNull(a) && isNull(b)) return 0;
     if (isNull(a)) return -1;
