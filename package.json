@@ -1,5 +1,5 @@
 {
-  "name": "publisher",
+  "name": "easy_diffix",
   "productName": "Easy Diffix",
   "author": "Open Diffix",
   "version": "0.1.0",
@@ -16,11 +16,12 @@
     "prettier": "prettier --write src"
   },
   "keywords": [],
-  "license": "",
+  "license": "UNLICENSED",
   "config": {
     "forge": {
       "packagerConfig": {
-        "extraResource": "bin"
+        "extraResource": "bin",
+        "name": "easy_diffix"
       },
       "makers": [
         {
