@@ -7,9 +7,11 @@ export type ComputedData<T> =
   | { state: 'failed'; error: string }
   | { state: 'completed'; value: T };
 
-export type DisplayMode = 'anonymized' | 'raw' | 'combined';
+export type DisplayMode = 'anonymized' | 'combined';
 
-export type RowData = { [index: number]: Value };
+export type RowData = {
+  [dataIndex in number | string]: Value;
+};
 
 // Schema
 

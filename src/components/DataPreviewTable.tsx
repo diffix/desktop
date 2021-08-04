@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Table } from 'antd';
 
-import { TableSchema } from '../types';
+import { TableSchema, Value } from '../types';
 import { columnSorter } from '../state';
 
 export type DataPreviewTableProps = {
@@ -17,7 +17,7 @@ export const DataPreviewTable: FunctionComponent<DataPreviewTableProps> = ({ sch
 
   const rows = schema.rowsPreview.map((row, i) => ({
     key: i,
-    ...row,
+    ...(row as Record<number, Value>),
   }));
 
   return (
