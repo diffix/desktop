@@ -39,20 +39,18 @@ function makeColumnData(title: string, dataIndex: string, type: ColumnType) {
   };
 }
 
-const AGG_TYPE = 'real';
+const AGG_COLUMN_TYPE = 'real';
 
 const mapColumn = (mode: DisplayMode) => (column: AnonymizedResultColumn, i: number) => {
   if (column.type === 'aggregate') {
     switch (mode) {
       case 'anonymized':
-        return [makeColumnData(column.name, i + '_anon', AGG_TYPE)];
+        return [makeColumnData(column.name, i + '_anon', AGG_COLUMN_TYPE)];
       case 'combined':
         return [
-          makeColumnData(column.name + ' (anonymized)', i + '_anon', AGG_TYPE),
-          makeColumnData(column.name + ' (true value)', i + '_real', AGG_TYPE),
+          makeColumnData(column.name + ' (anonymized)', i + '_anon', AGG_COLUMN_TYPE),
+          makeColumnData(column.name + ' (original)', i + '_real', AGG_COLUMN_TYPE),
         ];
-      case 'raw':
-        return [makeColumnData(column.name, i + '_real', AGG_TYPE)];
     }
   }
 

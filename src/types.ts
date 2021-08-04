@@ -7,7 +7,7 @@ export type ComputedData<T> =
   | { state: 'failed'; error: string }
   | { state: 'completed'; value: T };
 
-export type DisplayMode = 'anonymized' | 'combined' | 'raw';
+export type DisplayMode = 'anonymized' | 'combined';
 
 export type RowData = {
   [dataIndex in number | string]: Value;
