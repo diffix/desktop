@@ -1,0 +1,21 @@
+name: build
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - name: install dependencies
+        run: npm install
+      - run: mkdir bin
+      - name: build
+        run: npm run package
+      - name: run linter
+        run: npm run lint
+      - name: check format
+        run: npm run check-format
