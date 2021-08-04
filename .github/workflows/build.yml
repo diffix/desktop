@@ -10,12 +10,12 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: 16
-      - name: install dependencies
+      - name: Install dependencies
         run: npm install
-      - name: check format
+      - name: Check format
         run: npm run check-format
-      - name: run linter
+      - name: Run linter
         run: npm run lint
       - run: mkdir bin
-      - name: build
+      - name: Build
         run: npm run package
