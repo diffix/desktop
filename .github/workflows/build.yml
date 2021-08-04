@@ -12,10 +12,10 @@ jobs:
           node-version: 16
       - name: install dependencies
         run: npm install
+      - name: check format
+        run: npm run check-format
+      - name: run linter
+        run: npm run lint
       - run: mkdir bin
       - name: build
         run: npm run package
-      - name: run linter
-        run: npm run lint
-      - name: check format
-        run: npm run check-format
