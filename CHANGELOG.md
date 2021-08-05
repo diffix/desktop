@@ -2,6 +2,7 @@
 
 - Keep detected column types in anonymization output.
 - Include .NET libraries in deployment.
+- Added anonymization summary to notebooks.
 
 ### Version 0.1.2
 

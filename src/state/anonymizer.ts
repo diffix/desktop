@@ -1,5 +1,7 @@
 import { createContext, useContext } from 'react';
 import {
+  AnonymizationStats,
+  AnonymizedAggregate,
   AnonymizedQueryResult,
   AnonymizedResultColumn,
   AnonymizedResultRow,
@@ -90,6 +92,40 @@ class DiffixAnonymizer implements Anonymizer {
       return { columns, rows };
     });
   }
+}
+
+export function computeAnonymizationStats(result: AnonymizedQueryResult): AnonymizationStats {
+  const totalBuckets = result.rows.length;
+  let suppressedBuckets = 0;
+  let averageDistortion = 0;
+  let maximumDistortion = 0;
+
+  for (let i = 0; i < totalBuckets; i++) {
+    const row = result.rows[i];
+    if (row.lowCount) {
+      suppressedBuckets++;
+      continue;
+    }
+
+    const count = row.values[row.values.length - 1] as AnonymizedAggregate;
+    const distortion = Math.abs(count.realValue - (count.anonValue || 0)) / count.realValue;
+    maximumDistortion = Math.max(distortion, maximumDistortion);
+    averageDistortion += distortion;
+  }
+
+  const anonymizedBuckets = totalBuckets - suppressedBuckets;
+
+  if (anonymizedBuckets > 0) {
+    averageDistortion /= anonymizedBuckets;
+  }
+
+  return {
+    anonymizedBuckets,
+    suppressedBuckets,
+    totalBuckets,
+    averageDistortion,
+    maximumDistortion,
+  };
 }
 
 export const anonymizer = new DiffixAnonymizer();

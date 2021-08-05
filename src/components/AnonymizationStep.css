@@ -1,3 +1,26 @@
-.AnonymizationStep-export-button {
+.AnonymizationSummary {
+  max-width: 800px;
+}
+
+.AnonymizationSummary .ant-descriptions-bordered .ant-descriptions-view > table {
+  table-layout: fixed;
+}
+
+.AnonymizationResults-export-button {
   margin: 16px 0;
+}
+
+.TextPlaceholder {
+  display: inline-block;
+  vertical-align: middle;
+  width: 120px;
+  height: 1em;
+  background: linear-gradient(
+    90deg,
+    rgba(190, 190, 190, 0.2) 25%,
+    rgba(129, 129, 129, 0.24) 37%,
+    rgba(190, 190, 190, 0.2) 63%
+  );
+  background-size: 400% 100%;
+  animation: ant-skeleton-loading 1.4s ease infinite;
 }
