@@ -1,8 +1,8 @@
 {
-  "name": "publisher",
+  "name": "easy_diffix",
   "productName": "Easy Diffix",
   "author": "Open Diffix",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0",
   "description": "Desktop app for anonymizing data using Open Diffix Elm",
   "main": ".webpack/main",
   "scripts": {
@@ -16,11 +16,12 @@
     "prettier": "prettier --write src"
   },
   "keywords": [],
-  "license": "",
+  "license": "UNLICENSED",
   "config": {
     "forge": {
       "packagerConfig": {
-        "extraResource": "bin"
+        "extraResource": "bin",
+        "name": "easy_diffix"
       },
       "makers": [
         {

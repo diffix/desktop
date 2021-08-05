@@ -1,6 +1,6 @@
-# Open Diffix Publisher
+# Easy Diffix
 
-Desktop application to anonymize data with Open Diffix Publish.
+Desktop application to anonymize data with Open Diffix Elm.
 
 ## Development
 
@@ -13,7 +13,12 @@ Before committing, make sure to lint and format your code with `npm run lint` an
 
 ## Making a release
 
-`npm run make` will produce an executable.
-Electron forge is used for building. To add a new target,
-check out the [makers](https://www.electronforge.io/config/makers) documentation,
-and edit the forge config in `package.json`.
+1. Bump the program version and create a new version tag on GitHub. A draft release will be created automatically.
+
+For example:
+```
+npm version minor
+git push --follow-tags
+```
+
+2. After making sure the generated assets are OK, the release can be published manually in the GitHub UI.
