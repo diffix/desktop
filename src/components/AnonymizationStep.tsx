@@ -28,9 +28,7 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ c
         <div className="AnonymizationStep notebook-step completed">
           <Title level={3}>Anonymized data</Title>
           <Text>Here is what the result looks like:</Text>
-          { cachedResult.rows.length === 1000 && (
-            <Text><small> (only the first 1000 rows are shown)</small></Text>
-          )}
+          {cachedResult.rows.length === 1000 && <Text type="secondary"> (only the first 1000 rows are shown)</Text>}
           <AnonymizedResultsTable loading={!loaded} result={cachedResult} />
           <Button
             className="AnonymizationStep-export-button"
