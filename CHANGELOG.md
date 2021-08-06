@@ -1,5 +1,6 @@
 ## Version 0.2.1
 
+- Added application icon.
 - Made path resolution for reference CLI absolute in production builds.
 - Dropped noise magnitude limiting.
 - Noisy `count` aggregator doesn't return `NULL` anymore on insufficient data.

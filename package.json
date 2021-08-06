@@ -21,13 +21,15 @@
     "forge": {
       "packagerConfig": {
         "extraResource": "bin",
-        "name": "easy_diffix"
+        "name": "easy_diffix",
+        "icon": "assets/icon"
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "frameworkVersion": "net5.0"
+            "frameworkVersion": "net5.0",
+            "setupIcon": "assets/icon.ico"
           }
         },
         {
