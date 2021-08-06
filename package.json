@@ -6,7 +6,7 @@
   "description": "Desktop app for anonymizing data using Open Diffix Elm",
   "main": ".webpack/main",
   "scripts": {
-    "build": "dotnet publish -o ./bin/ -c Release ./reference/src/OpenDiffix.CLI/",
+    "build": "dotnet publish -o ./bin/ -c Release ./reference/src/OpenDiffix.CLI/ -p:UseAppHost=True",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",

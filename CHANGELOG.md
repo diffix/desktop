@@ -1,5 +1,9 @@
 ## Version 0.1.1
 
+- Fix `reference` CLI executable binary generation on MacOS.
+
+## Version 0.1.1
+
 - Added application icon.
 - Made path resolution for reference CLI absolute in production builds.
 - Dropped noise magnitude limiting.
