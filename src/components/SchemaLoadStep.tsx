@@ -33,6 +33,9 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
           <div className="SchemaLoadStep notebook-step completed">
             <Title level={3}>Successfully imported {schema.value.file.name}</Title>
             <Text>Here is what the data looks like:</Text>
+            { schema.value.rowsPreview.length === 1000 && (
+              <Text><small> (only the first 1000 rows are shown)</small></Text>
+            )}
             <DataPreviewTable schema={schema.value} />
           </div>
           {/* Render next step */}

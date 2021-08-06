@@ -58,7 +58,7 @@ class DiffixAnonymizer implements Anonymizer {
 
       // Drop row index column from schema.
       const columns = result.columns.slice(1);
-      const rowsPreview = result.rows.map((row) => row.slice(1));
+      const rowsPreview = result.rows.map((row) => row.slice(1)).slice(0, 1000);
 
       const types = this.detectColumnTypes(columns.length, rowsPreview as string[][]);
       for (let index = 0; index < columns.length; index++) columns[index].type = types[index];
@@ -79,7 +79,7 @@ class DiffixAnonymizer implements Anonymizer {
           ${bucketColumnsString}
         FROM table
         GROUP BY ${bucketColumnsString}
-        LIMIT 10000
+        LIMIT 1000
       `;
       const result = await window.executeQuery(schema.file.path, schema.salt, statement, signal);
       const rows: AnonymizedResultRow[] = result.rows.map((row) => ({
