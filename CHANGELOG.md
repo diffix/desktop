@@ -1,4 +1,4 @@
-## Version 0.2.1
+## Version 0.1.1
 
 - Added application icon.
 - Made path resolution for reference CLI absolute in production builds.
