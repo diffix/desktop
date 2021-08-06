@@ -7,7 +7,7 @@ import { AnonymizedQueryResult, TableSchema } from '../types';
 
 import './AnonymizationStep.css';
 
-const { Title } = Typography;
+const { Text, Title } = Typography;
 
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [] };
 
@@ -27,6 +27,8 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ c
       return (
         <div className="AnonymizationStep notebook-step completed">
           <Title level={3}>Anonymized data</Title>
+          <Text>Here is what the result looks like:</Text>
+          {cachedResult.rows.length === 1000 && <Text type="secondary"> (only the first 1000 rows are shown)</Text>}
           <AnonymizedResultsTable loading={!loaded} result={cachedResult} />
           <Button
             className="AnonymizationStep-export-button"
