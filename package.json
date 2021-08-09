@@ -2,11 +2,11 @@
   "name": "easy_diffix",
   "productName": "Easy Diffix",
   "author": "Open Diffix",
-  "version": "0.2.0",
+  "version": "0.1.2",
   "description": "Desktop app for anonymizing data using Open Diffix Elm",
   "main": ".webpack/main",
   "scripts": {
-    "build": "dotnet publish -o ./bin/ -c Release ./reference/src/OpenDiffix.CLI/",
+    "build": "dotnet publish -o ./bin/ -c Release ./reference/src/OpenDiffix.CLI/ -p:UseAppHost=True",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
@@ -21,13 +21,15 @@
     "forge": {
       "packagerConfig": {
         "extraResource": "bin",
-        "name": "easy_diffix"
+        "name": "easy_diffix",
+        "icon": "assets/icon"
       },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "frameworkVersion": "net5.0"
+            "frameworkVersion": "net5.0",
+            "setupIcon": "assets/icon.ico"
           }
         },
         {
