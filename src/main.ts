@@ -66,7 +66,7 @@ async function runTask<T>(taskId: string, runner: (signal: AbortSignal) => Promi
   }
 }
 
-ipcMain.handle('cancel_task', async (_event, taskId: string) => {
+ipcMain.on('cancel_task', async (_event, taskId: string) => {
   console.log(`Cancelling task ${taskId}.`);
   const controller = activeTasks.get(taskId);
   if (controller) {
