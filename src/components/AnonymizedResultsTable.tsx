@@ -108,6 +108,7 @@ export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTablePro
   return (
     <div className={`AnonymizedResultsTable ${mode}`}>
       <Table
+        key={loading ? 1 : 0 /* Resets internal state */}
         bordered
         loading={loading}
         columns={columns}
