@@ -1,8 +1,12 @@
-## Version 0.1.2
+### Version 0.1.3
+
+- Keep detected column types in anonymization output.
+
+### Version 0.1.2
 
 - Fix `reference` CLI executable binary generation on MacOS.
 
-## Version 0.1.1
+### Version 0.1.1
 
 - Added application icon.
 - Made path resolution for reference CLI absolute in production builds.
