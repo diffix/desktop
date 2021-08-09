@@ -20,7 +20,10 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "extraResource": "bin",
+        "extraResource": [
+          "bin",
+          "assets"
+        ],
         "name": "easy_diffix",
         "icon": "assets/icon"
       },
