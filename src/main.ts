@@ -48,9 +48,9 @@ app.on('activate', () => {
   }
 });
 
-const diffixBinLocation = app.isPackaged ? [app.getAppPath(), '..'] : [];
+const diffixBinLocation = app.isPackaged ? '..' : '.';
 const diffixName = 'OpenDiffix.CLI' + (process.platform === 'win32' ? '.exe' : '');
-const diffixPath = path.join(...diffixBinLocation, 'bin', diffixName);
+const diffixPath = path.join(app.getAppPath(), diffixBinLocation, 'bin', diffixName);
 
 const activeTasks = new Map<string, AbortController>();
 
