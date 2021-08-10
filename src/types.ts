@@ -70,6 +70,14 @@ export type AnonymizedAggregate = {
   anonValue: number | null;
 };
 
+// Anonymization stats
+
+export type AnonymizationStats = {
+  bucketSuppression: number;
+  averageDistortion: number;
+  maximumDistortion: number;
+};
+
 // API
 
 export type Anonymizer = {

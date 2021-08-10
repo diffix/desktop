@@ -23,3 +23,9 @@ body {
 .App-empty {
   margin-top: 64px;
 }
+
+/* Helpers */
+
+.mb-1 {
+  margin-bottom: 8px;
+}
