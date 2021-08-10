@@ -1,6 +1,7 @@
 ### Version 0.1.3
 
 - Keep detected column types in anonymization output.
+- Include .NET libraries in deployment.
 
 ### Version 0.1.2
 
