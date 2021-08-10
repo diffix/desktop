@@ -73,9 +73,7 @@ export type AnonymizedAggregate = {
 // Anonymization stats
 
 export type AnonymizationStats = {
-  anonymizedBuckets: number;
-  suppressedBuckets: number;
-  totalBuckets: number;
+  bucketSuppression: number;
   averageDistortion: number;
   maximumDistortion: number;
 };

@@ -9,6 +9,8 @@ import './AnonymizationStep.css';
 
 const { Text, Title } = Typography;
 
+const MAX_ROWS = 1000;
+
 type CommonProps = { result: AnonymizedQueryResult; loading: boolean };
 
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [] };
@@ -21,12 +23,6 @@ function formatPercentage(value: number) {
   return `${Math.round(10 * 100 * value) / 10}%`;
 }
 
-function formatSuppression(stats: AnonymizationStats) {
-  const { suppressedBuckets, totalBuckets } = stats;
-  if (totalBuckets === 0) return '0 / 0';
-  return `${suppressedBuckets} / ${totalBuckets} (${formatPercentage(suppressedBuckets / totalBuckets)})`;
-}
-
 function AnonymizationSummary({ result, loading }: CommonProps) {
   const [stats, setStats] = useState<AnonymizationStats | null>(null);
   useEffect(() => {
@@ -36,12 +32,19 @@ function AnonymizationSummary({ result, loading }: CommonProps) {
   return (
     <div className="AnonymizationSummary loading notebook-step">
       <Title level={3}>Anonymization summary</Title>
-      <Descriptions layout="vertical" bordered column={{ xs: 1, sm: 2, md: 4 }}>
-        <Descriptions.Item label="Output rows">
-          {!loading && stats ? stats.anonymizedBuckets : <TextPlaceholder />}
-        </Descriptions.Item>
-        <Descriptions.Item label="Rows suppressed">
-          {!loading && stats ? formatSuppression(stats) : <TextPlaceholder />}
+      {result.rows.length === MAX_ROWS && (
+        <div className="mb-1">
+          <Text type="secondary">Values are estimated based on the first {MAX_ROWS} rows.</Text>
+        </div>
+      )}
+      <Descriptions
+        className="AnonymizationSummary-descriptions"
+        layout="vertical"
+        bordered
+        column={{ xs: 1, sm: 2, md: 3 }}
+      >
+        <Descriptions.Item label="Row suppression">
+          {!loading && stats ? formatPercentage(stats.bucketSuppression) : <TextPlaceholder />}
         </Descriptions.Item>
         <Descriptions.Item label="Average distortion">
           {!loading && stats ? formatPercentage(stats.averageDistortion) : <TextPlaceholder />}
@@ -58,8 +61,10 @@ function AnonymizationResults({ result, loading }: CommonProps) {
   return (
     <div className="AnonymizationResults notebook-step">
       <Title level={3}>Anonymized data</Title>
-      <Text>Here is what the result looks like:</Text>
-      {result.rows.length === 1000 && <Text type="secondary"> (only the first 1000 rows are shown)</Text>}
+      <div className="mb-1">
+        <Text>Here is what the result looks like:</Text>
+        {result.rows.length === MAX_ROWS && <Text type="secondary"> (only the first {MAX_ROWS} rows are shown)</Text>}
+      </div>
       <AnonymizedResultsTable loading={loading} result={result} />
       <Button
         className="AnonymizationResults-export-button"

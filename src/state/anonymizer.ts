@@ -120,9 +120,7 @@ export function computeAnonymizationStats(result: AnonymizedQueryResult): Anonym
   }
 
   return {
-    anonymizedBuckets,
-    suppressedBuckets,
-    totalBuckets,
+    bucketSuppression: totalBuckets > 0 ? suppressedBuckets / totalBuckets : 0,
     averageDistortion,
     maximumDistortion,
   };

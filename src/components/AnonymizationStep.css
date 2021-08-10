@@ -1,8 +1,8 @@
-.AnonymizationSummary {
-  max-width: 800px;
+.AnonymizationSummary-descriptions {
+  max-width: 660px;
 }
 
-.AnonymizationSummary .ant-descriptions-bordered .ant-descriptions-view > table {
+.AnonymizationSummary .AnonymizationSummary-descriptions .ant-descriptions-view > table {
   table-layout: fixed;
 }
 
