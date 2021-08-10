@@ -86,7 +86,7 @@ class DiffixAnonymizer implements Anonymizer {
         lowCount: row[0] as boolean,
         values: [...row.slice(3), { realValue: row[1] as number, anonValue: row[2] as number | null }],
       }));
-      const columns: AnonymizedResultColumn[] = [...result.columns.slice(3), { name: 'Count', type: 'aggregate' }];
+      const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];
       return { columns, rows };
     });
   }
