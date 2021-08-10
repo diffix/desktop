@@ -10,7 +10,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            build-target: linux
+          - os: windows-latest
+            build-target: win
+          - os: macos-latest
+            build-target: osx
 
     steps:
       - uses: actions/checkout@v2
@@ -26,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build reference CLI
-        run: npm run build
+        run: npm run build-${{ matrix.build-target }}
       - name: Publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
