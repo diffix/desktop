@@ -33,6 +33,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
         <List
           className="ColumnSelectionStep-list"
           size="small"
+          bordered
           dataSource={schema.columns}
           renderItem={(column, index) => (
             <List.Item
