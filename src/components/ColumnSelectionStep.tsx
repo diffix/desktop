@@ -32,12 +32,14 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
         <Title level={3}>Select columns for anonymization</Title>
         <List
           className="ColumnSelectionStep-list"
+          size="small"
           dataSource={schema.columns}
           renderItem={(column, index) => (
             <List.Item
               actions={[
                 <Switch
                   key="column-toggle"
+                  size="small"
                   checked={columns[index]}
                   onChange={(checked) => setColumns(updateArray(columns, index, checked))}
                 />,
