@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import { execFile } from 'child_process';
 import util from 'util';
 import fs from 'fs';
@@ -81,7 +81,7 @@ ipcMain.on('cancel_task', async (_event, taskId: string) => {
 
 ipcMain.handle('execute_query', (_event, taskId: string, fileName: string, salt: string, statement: string) =>
   runTask(taskId, async (signal) => {
-    console.log(`(${taskId}) Executing query: ${statement}`);
+    console.log(`(${taskId}) Executing query: ${statement.trimEnd()}`);
 
     const diffixArgs = ['--json', '-f', fileName, '-s', salt, '-q', statement];
     // Throws stderr output on error.
@@ -93,6 +93,30 @@ ipcMain.handle('execute_query', (_event, taskId: string, fileName: string, salt:
     return stdout;
   }),
 );
+
+function showSaveDialog() {
+  const options = {
+    filters: [
+      { name: 'CSV', extensions: ['csv'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+  };
+
+  return dialog.showSaveDialog(BrowserWindow.getAllWindows()[0], options);
+}
+
+ipcMain.handle('export_query_result', async (_event, fileName: string, salt: string, statement: string) => {
+  const outputFileName = (await showSaveDialog()).filePath;
+  if (!outputFileName) return null;
+
+  console.log(`Exporting query result to: ${outputFileName}`);
+
+  const diffixArgs = ['-f', fileName, '-s', salt, '-q', statement, '-o', outputFileName];
+  // Throws stderr output on error.
+  await asyncExecFile(diffixPath, diffixArgs, { windowsHide: true });
+
+  return outputFileName;
+});
 
 ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
   runTask(taskId, async (signal) => {

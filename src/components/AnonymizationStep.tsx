@@ -1,8 +1,9 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Button, Descriptions, Divider, Result, Typography } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 
 import { AnonymizedResultsTable } from '.';
-import { computeAnonymizationStats, useCachedData, useQuery } from '../state';
+import { computeAnonymizationStats, useCachedData, useQuery, anonymizer } from '../state';
 import { AnonymizationStats, AnonymizedQueryResult, TableSchema } from '../types';
 
 import './AnonymizationStep.css';
@@ -11,7 +12,7 @@ const { Text, Title } = Typography;
 
 const MAX_ROWS = 1000;
 
-type CommonProps = { result: AnonymizedQueryResult; loading: boolean };
+type CommonProps = { schema: TableSchema; columns: boolean[]; result: AnonymizedQueryResult; loading: boolean };
 
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [] };
 
@@ -57,7 +58,13 @@ function AnonymizationSummary({ result, loading }: CommonProps) {
   );
 }
 
-function AnonymizationResults({ result, loading }: CommonProps) {
+async function exportResult(schema: TableSchema, columns: boolean[]) {
+  const bucketColumns = schema.columns.filter((_column, i) => columns[i]);
+  const fileName = await anonymizer.export(schema, bucketColumns);
+  console.log(`Result exported successfully to: ${fileName}.`);
+}
+
+function AnonymizationResults({ schema, columns, result, loading }: CommonProps) {
   return (
     <div className="AnonymizationResults notebook-step">
       <Title level={3}>Anonymized data</Title>
@@ -67,10 +74,12 @@ function AnonymizationResults({ result, loading }: CommonProps) {
       </div>
       <AnonymizedResultsTable loading={loading} result={result} />
       <Button
+        icon={<DownloadOutlined />}
         className="AnonymizationResults-export-button"
         type="primary"
         size="large"
         disabled={loading || !result.rows.length}
+        onClick={() => exportResult(schema, columns)}
       >
         Export to CSV
       </Button>
@@ -93,9 +102,9 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ c
       const loading = computedResult.state !== 'completed';
       return (
         <>
-          <AnonymizationSummary result={cachedResult} loading={loading} />
+          <AnonymizationSummary schema={schema} columns={columns} result={cachedResult} loading={loading} />
           <Divider />
-          <AnonymizationResults result={cachedResult} loading={loading} />
+          <AnonymizationResults schema={schema} columns={columns} result={cachedResult} loading={loading} />
         </>
       );
     }
