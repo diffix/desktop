@@ -92,6 +92,19 @@ class DiffixAnonymizer implements Anonymizer {
       return { columns, rows };
     });
   }
+
+  async export(schema: TableSchema, bucketColumns: TableColumn[]): Promise<string | null> {
+    if (bucketColumns.length === 0) return null;
+    const bucketColumnsString = bucketColumns.map((column) => `"${column.name}"`).join(', ');
+    const statement = `
+      SELECT
+        ${bucketColumnsString},
+        count(*)
+      FROM table
+      GROUP BY ${bucketColumnsString}
+    `;
+    return await window.exportQueryResult(schema.file.path, schema.salt, statement);
+  }
 }
 
 export function computeAnonymizationStats(result: AnonymizedQueryResult): AnonymizationStats {

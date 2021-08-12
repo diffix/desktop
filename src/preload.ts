@@ -27,6 +27,10 @@ window.executeQuery = (fileName: string, salt: string, statement: string, signal
     return JSON.parse(json);
   });
 
+window.exportQueryResult = (fileName: string, salt: string, statement: string) => {
+  return ipcRenderer.invoke('export_query_result', fileName, salt, statement);
+};
+
 window.hashFile = (fileName: string, signal: AbortSignal) =>
   newTask(signal, (taskId) => {
     return ipcRenderer.invoke('hash_file', taskId, fileName);
