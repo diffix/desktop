@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Table } from 'antd';
 
-import { DisplayModeSwitch } from '.';
+import { DisplayModeSwitch, ResponsiveTable } from '.';
 import { columnSorter } from '../state';
 import {
   AnonymizedQueryResult,
@@ -36,6 +35,7 @@ function makeColumnData(title: string, dataIndex: string, type: ColumnType) {
     dataIndex,
     render: renderValue,
     sorter: columnSorter(type, dataIndex),
+    ellipsis: true,
   };
 }
 
@@ -107,9 +107,8 @@ export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTablePro
 
   return (
     <div className={`AnonymizedResultsTable ${mode}`}>
-      <Table
+      <ResponsiveTable
         key={loading ? 1 : 0 /* Resets internal state */}
-        bordered
         loading={loading}
         columns={columns}
         dataSource={data}

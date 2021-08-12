@@ -1,0 +1,4 @@
+.ResponsiveTable .ant-table-cell {
+  min-width: 80px;
+  max-width: 300px;
+}

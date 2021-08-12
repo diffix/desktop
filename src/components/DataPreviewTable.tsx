@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
-import { Table } from 'antd';
 
+import { ResponsiveTable } from '.';
 import { TableSchema, Value } from '../types';
 import { columnSorter } from '../state';
 
@@ -13,6 +13,7 @@ export const DataPreviewTable: FunctionComponent<DataPreviewTableProps> = ({ sch
     title: col.name,
     dataIndex: i.toString(),
     sorter: columnSorter(col.type, i),
+    ellipsis: true,
   }));
 
   const rows = schema.rowsPreview.map((row, i) => ({
@@ -22,7 +23,7 @@ export const DataPreviewTable: FunctionComponent<DataPreviewTableProps> = ({ sch
 
   return (
     <div className="DataPreviewTable">
-      <Table bordered scroll={{ x: true }} columns={columns} dataSource={rows} />
+      <ResponsiveTable columns={columns} dataSource={rows} />
     </div>
   );
 };
