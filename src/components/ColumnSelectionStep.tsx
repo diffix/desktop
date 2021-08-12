@@ -14,6 +14,10 @@ function updateArray<T>(array: T[], index: number, value: T): T[] {
   return copy;
 }
 
+function isTrue(x: boolean) {
+  return x;
+}
+
 export type ColumnSelectionStepProps = {
   schema: TableSchema;
   children: (data: ColumnSelectionStepData) => React.ReactNode;
@@ -51,9 +55,15 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
           )}
         />
       </div>
-      {/* Render next step */}
-      <Divider />
-      {children({ columns })}
+      <div className="ColumnSelectionStep-reserved-space">
+        {/* Render next step */}
+        {columns.some(isTrue) && (
+          <>
+            <Divider />
+            {children({ columns })}
+          </>
+        )}
+      </div>
     </>
   );
 };
