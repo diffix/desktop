@@ -2,3 +2,7 @@
   max-width: 300px;
   border: 1px solid #f0f0f0;
 }
+
+.ColumnSelectionStep-reserved-space {
+  min-height: 700px;
+}
