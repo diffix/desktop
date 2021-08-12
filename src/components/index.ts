@@ -6,4 +6,5 @@ export * from './DataPreviewTable';
 export * from './DisplayModeSwitch';
 export * from './FileLoadStep';
 export * from './Notebook';
+export * from './ResponsiveTable';
 export * from './SchemaLoadStep';

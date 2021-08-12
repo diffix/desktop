@@ -118,6 +118,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@rehooks/component-size": "^1.0.3",
     "antd": "^4.16.9",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^17.0.2",
