@@ -83,7 +83,7 @@ export type AnonymizationStats = {
 export type Anonymizer = {
   loadSchema(file: File): Task<TableSchema>;
   anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<AnonymizedQueryResult>;
-  export(schema: TableSchema, bucketColumns: TableColumn[]): Promise<string | null>;
+  export(schema: TableSchema, bucketColumns: TableColumn[], outFileName: string): Promise<void>;
 };
 
 export type Task<T> = {
@@ -95,7 +95,8 @@ export {};
 declare global {
   interface Window {
     executeQuery(fileName: string, salt: string, statement: string, signal: AbortSignal): Promise<QueryResult>;
-    exportQueryResult(fileName: string, salt: string, statement: string): Promise<string | null>;
+    selectExportFile(): Promise<string | null>;
+    exportQueryResult(inFileName: string, salt: string, statement: string, outFileName: string): Promise<void>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;
   }
 }
