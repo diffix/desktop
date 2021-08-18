@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Button, Descriptions, Divider, Result, Typography } from 'antd';
+import { Button, Descriptions, Divider, message, Result, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
 import { AnonymizedResultsTable } from '.';
@@ -59,9 +59,19 @@ function AnonymizationSummary({ result, loading }: CommonProps) {
 }
 
 async function exportResult(schema: TableSchema, columns: boolean[]) {
-  const bucketColumns = schema.columns.filter((_column, i) => columns[i]);
-  const fileName = await anonymizer.export(schema, bucketColumns);
-  console.log(`Result exported successfully to: ${fileName}.`);
+  const filePath = await window.selectExportFile();
+  if (!filePath) return;
+
+  message.loading({ content: `Exporting data to ${filePath}...`, key: filePath, duration: 0 });
+
+  try {
+    const bucketColumns = schema.columns.filter((_column, i) => columns[i]);
+    await anonymizer.export(schema, bucketColumns, filePath);
+
+    message.success({ content: 'Data exported successfully!', key: filePath, duration: 10 });
+  } catch {
+    message.error({ content: 'Data export failed!', key: filePath, duration: 10 });
+  }
 }
 
 function AnonymizationResults({ schema, columns, result, loading }: CommonProps) {

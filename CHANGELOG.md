@@ -1,3 +1,6 @@
+### Version 0.1.4
+ - Added UI feedback on data export.
+
 ### Version 0.1.3
 
 - Keep detected column types in anonymization output.

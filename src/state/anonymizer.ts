@@ -93,8 +93,7 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  async export(schema: TableSchema, bucketColumns: TableColumn[]): Promise<string | null> {
-    if (bucketColumns.length === 0) return null;
+  async export(schema: TableSchema, bucketColumns: TableColumn[], outFileName: string): Promise<void> {
     const bucketColumnsString = bucketColumns.map((column) => `"${column.name}"`).join(', ');
     const statement = `
       SELECT
@@ -103,7 +102,7 @@ class DiffixAnonymizer implements Anonymizer {
       FROM table
       GROUP BY ${bucketColumnsString}
     `;
-    return await window.exportQueryResult(schema.file.path, schema.salt, statement);
+    return await window.exportQueryResult(schema.file.path, schema.salt, statement, outFileName);
   }
 }
 

@@ -94,7 +94,7 @@ ipcMain.handle('execute_query', (_event, taskId: string, fileName: string, salt:
   }),
 );
 
-function showSaveDialog() {
+ipcMain.handle('select_export_file', async (_event) => {
   const options = {
     filters: [
       { name: 'CSV', extensions: ['csv'] },
@@ -102,21 +102,20 @@ function showSaveDialog() {
     ],
   };
 
-  return dialog.showSaveDialog(BrowserWindow.getAllWindows()[0], options);
-}
-
-ipcMain.handle('export_query_result', async (_event, fileName: string, salt: string, statement: string) => {
-  const outputFileName = (await showSaveDialog()).filePath;
-  if (!outputFileName) return null;
-
-  console.log(`Exporting query result to: ${outputFileName}`);
-
-  const diffixArgs = ['-f', fileName, '-s', salt, '-q', statement, '-o', outputFileName];
-  // Throws stderr output on error.
-  await asyncExecFile(diffixPath, diffixArgs, { windowsHide: true });
-
-  return outputFileName;
+  const dialogResult = await dialog.showSaveDialog(BrowserWindow.getAllWindows()[0], options);
+  return dialogResult.filePath;
 });
+
+ipcMain.handle(
+  'export_query_result',
+  (_event, inFileName: string, salt: string, statement: string, outFileName: string) => {
+    console.log(`Exporting query result to: ${outFileName}`);
+
+    const diffixArgs = ['-f', inFileName, '-s', salt, '-q', statement, '-o', outFileName];
+    // Throws stderr output on error.
+    return asyncExecFile(diffixPath, diffixArgs, { windowsHide: true });
+  },
+);
 
 ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
   runTask(taskId, async (signal) => {
