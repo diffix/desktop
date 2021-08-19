@@ -62,15 +62,15 @@ async function exportResult(schema: TableSchema, columns: boolean[]) {
   const filePath = await window.selectExportFile();
   if (!filePath) return;
 
-  message.loading({ content: `Exporting data to ${filePath}...`, key: filePath, duration: 0 });
+  message.loading({ content: `Exporting anonymized data to ${filePath}...`, key: filePath, duration: 0 });
 
   try {
     const bucketColumns = schema.columns.filter((_column, i) => columns[i]);
     await anonymizer.export(schema, bucketColumns, filePath);
 
-    message.success({ content: 'Data exported successfully!', key: filePath, duration: 10 });
+    message.success({ content: 'Anonymized data exported successfully!', key: filePath, duration: 10 });
   } catch {
-    message.error({ content: 'Data export failed!', key: filePath, duration: 10 });
+    message.error({ content: 'Anonymized data export failed!', key: filePath, duration: 10 });
   }
 }
 
@@ -91,7 +91,7 @@ function AnonymizationResults({ schema, columns, result, loading }: CommonProps)
         disabled={loading || !result.rows.length}
         onClick={() => exportResult(schema, columns)}
       >
-        Export to CSV
+        Export anonymized data to CSV
       </Button>
     </div>
   );
