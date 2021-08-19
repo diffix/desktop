@@ -1,22 +1,12 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { Divider, List, Switch, Typography } from 'antd';
+import { useImmer } from 'use-immer';
 
 import { BucketColumn, TableSchema } from '../types';
 
 import './ColumnSelectionStep.css';
 
 const { Title } = Typography;
-
-function updateArray<T>(array: T[], index: number, value: T): T[] {
-  if (array[index] === value) return array;
-  const copy = array.slice();
-  copy[index] = value;
-  return copy;
-}
-
-function isTrue(x: boolean) {
-  return x;
-}
 
 export type ColumnSelectionStepProps = {
   schema: TableSchema;
@@ -27,8 +17,14 @@ export type ColumnSelectionStepData = {
   bucketColumns: BucketColumn[];
 };
 
+type ColumnState = BucketColumn & { selected: boolean };
+
 export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema }) => {
-  const [selectedColumns, setSelectedColumns] = useState(() => Array(schema.columns.length).fill(false));
+  const [columns, setColumns] = useImmer<ColumnState[]>(() =>
+    schema.columns.map((column, index) => ({ key: index.toString(), column, generalization: null, selected: false })),
+  );
+
+  const bucketColumns = useMemo(() => columns.filter((c) => c.selected), [columns]);
 
   return (
     <>
@@ -45,8 +41,8 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                 <Switch
                   key="column-toggle"
                   size="small"
-                  checked={selectedColumns[index]}
-                  onChange={(checked) => setSelectedColumns(updateArray(selectedColumns, index, checked))}
+                  checked={columns[index].selected}
+                  onChange={(checked) => setColumns((draft) => void (draft[index].selected = checked))}
                 />,
               ]}
             >
@@ -57,10 +53,10 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
       </div>
       <div className="ColumnSelectionStep-reserved-space">
         {/* Render next step */}
-        {selectedColumns.some(isTrue) && (
+        {bucketColumns.length !== 0 && (
           <>
             <Divider />
-            {children({ bucketColumns: [] })}
+            {children({ bucketColumns })}
           </>
         )}
       </div>
