@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { AnonymizedQueryResult, ComputedData, TableSchema } from '../types';
+import { AnonymizedQueryResult, BucketColumn, ComputedData, TableSchema } from '../types';
 import { useAnonymizer } from './anonymizer';
 import { inProgressState } from './utils';
 
-export function useQuery(schema: TableSchema, selectedColumns: boolean[]): ComputedData<AnonymizedQueryResult> {
+export function useQuery(schema: TableSchema, bucketColumns: BucketColumn[]): ComputedData<AnonymizedQueryResult> {
   const anonymizer = useAnonymizer();
   const [result, setResult] = useState<ComputedData<AnonymizedQueryResult>>(inProgressState);
 
@@ -12,7 +12,6 @@ export function useQuery(schema: TableSchema, selectedColumns: boolean[]): Compu
 
     let canceled = false;
 
-    const bucketColumns = schema.columns.filter((_column, i) => selectedColumns[i]);
     const task = anonymizer.anonymize(schema, bucketColumns);
 
     task.result
@@ -31,7 +30,7 @@ export function useQuery(schema: TableSchema, selectedColumns: boolean[]): Compu
       canceled = true;
       task.cancel();
     };
-  }, [anonymizer, schema, selectedColumns]);
+  }, [anonymizer, schema, bucketColumns]);
 
   return result;
 }

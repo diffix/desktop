@@ -31,6 +31,24 @@ export type TableColumn = {
 
 export type ColumnType = 'boolean' | 'integer' | 'real' | 'text';
 
+// Query request
+
+export type NumericGeneralization = {
+  type: 'numeric-generalization';
+  bucketSize: number;
+};
+
+export type StringGeneralization = {
+  type: 'string-generalization';
+  substringStart: number;
+  substringLength: number;
+};
+
+export type BucketColumn = {
+  column: TableColumn;
+  generalization: null | NumericGeneralization | StringGeneralization;
+};
+
 // Query results
 
 export type QueryResult = {
@@ -82,8 +100,8 @@ export type AnonymizationStats = {
 
 export type Anonymizer = {
   loadSchema(file: File): Task<TableSchema>;
-  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<AnonymizedQueryResult>;
-  export(schema: TableSchema, bucketColumns: TableColumn[], outFileName: string): Promise<void>;
+  anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult>;
+  export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Promise<void>;
 };
 
 export type Task<T> = {

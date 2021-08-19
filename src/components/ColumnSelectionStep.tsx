@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Divider, List, Switch, Typography } from 'antd';
 
-import { TableSchema } from '../types';
+import { BucketColumn, TableSchema } from '../types';
 
 import './ColumnSelectionStep.css';
 
@@ -24,11 +24,11 @@ export type ColumnSelectionStepProps = {
 };
 
 export type ColumnSelectionStepData = {
-  columns: boolean[];
+  bucketColumns: BucketColumn[];
 };
 
 export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema }) => {
-  const [columns, setColumns] = useState(() => Array(schema.columns.length).fill(false));
+  const [selectedColumns, setSelectedColumns] = useState(() => Array(schema.columns.length).fill(false));
 
   return (
     <>
@@ -45,8 +45,8 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                 <Switch
                   key="column-toggle"
                   size="small"
-                  checked={columns[index]}
-                  onChange={(checked) => setColumns(updateArray(columns, index, checked))}
+                  checked={selectedColumns[index]}
+                  onChange={(checked) => setSelectedColumns(updateArray(selectedColumns, index, checked))}
                 />,
               ]}
             >
@@ -57,10 +57,10 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
       </div>
       <div className="ColumnSelectionStep-reserved-space">
         {/* Render next step */}
-        {columns.some(isTrue) && (
+        {selectedColumns.some(isTrue) && (
           <>
             <Divider />
-            {children({ columns })}
+            {children({ bucketColumns: [] })}
           </>
         )}
       </div>

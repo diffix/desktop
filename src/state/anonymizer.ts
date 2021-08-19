@@ -6,9 +6,9 @@ import {
   AnonymizedResultColumn,
   AnonymizedResultRow,
   Anonymizer,
+  BucketColumn,
   ColumnType,
   File,
-  TableColumn,
   TableSchema,
   Task,
 } from '../types';
@@ -64,10 +64,10 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<AnonymizedQueryResult> {
+  anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult> {
     return runTask(async (signal) => {
       if (bucketColumns.length === 0) return { columns: [], rows: [] };
-      const bucketColumnsString = bucketColumns.map((column) => `"${column.name}"`).join(', ');
+      const bucketColumnsString = bucketColumns.map(({ column }) => `"${column.name}"`).join(', ');
       const statement = `
         SELECT
           diffix_low_count(RowIndex),
@@ -83,13 +83,16 @@ class DiffixAnonymizer implements Anonymizer {
         lowCount: row[0] as boolean,
         values: [...row.slice(3), { realValue: row[1] as number, anonValue: row[2] as number | null }],
       }));
-      const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];
+      const columns: AnonymizedResultColumn[] = [
+        ...bucketColumns.map(({ column }) => column),
+        { name: 'Count', type: 'aggregate' },
+      ];
       return { columns, rows };
     });
   }
 
-  async export(schema: TableSchema, bucketColumns: TableColumn[], outFileName: string): Promise<void> {
-    const bucketColumnsString = bucketColumns.map((column) => `"${column.name}"`).join(', ');
+  async export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Promise<void> {
+    const bucketColumnsString = bucketColumns.map(({ column }) => `"${column.name}"`).join(', ');
     const statement = `
       SELECT
         ${bucketColumnsString},
