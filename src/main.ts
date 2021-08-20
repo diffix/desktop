@@ -122,7 +122,7 @@ ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
     console.log(`(${taskId}) Hashing file ${fileName}`);
 
     const fileStream = stream.addAbortSignal(signal, fs.createReadStream(fileName));
-    const hash = crypto.createHash('md5');
+    const hash = crypto.createHash('sha256');
 
     await asyncPipeline(fileStream, hash);
     return hash.digest('hex');
