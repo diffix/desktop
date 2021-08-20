@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useMemo } from 'react';
-import { Divider, List, Switch, Typography } from 'antd';
+import { Divider, Switch, Typography } from 'antd';
 import { useImmer } from 'use-immer';
 
 import { BucketColumn, TableSchema } from '../types';
@@ -21,7 +21,7 @@ type ColumnState = BucketColumn & { selected: boolean };
 
 export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema }) => {
   const [columns, setColumns] = useImmer<ColumnState[]>(() =>
-    schema.columns.map((column, index) => ({ key: index.toString(), column, generalization: null, selected: false })),
+    schema.columns.map((column) => ({ column, generalization: null, selected: false })),
   );
 
   const bucketColumns = useMemo(() => columns.filter((c) => c.selected), [columns]);
@@ -30,26 +30,23 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
     <>
       <div className="ColumnSelectionStep notebook-step">
         <Title level={3}>Select columns for anonymization</Title>
-        <List
-          className="ColumnSelectionStep-list"
-          size="small"
-          bordered
-          dataSource={schema.columns}
-          renderItem={(column, index) => (
-            <List.Item
-              actions={[
-                <Switch
-                  key="column-toggle"
-                  size="small"
-                  checked={columns[index].selected}
-                  onChange={(checked) => setColumns((draft) => void (draft[index].selected = checked))}
-                />,
-              ]}
-            >
-              {column.name}
-            </List.Item>
-          )}
-        />
+        <table className="ColumnSelectionStep-columns">
+          <tbody>
+            {columns.map(({ column }, index) => (
+              <tr key={index}>
+                <td className="ColumnSelectionStep-column-name">{column.name}</td>
+                <td className="ColumnSelectionStep-column-switch">
+                  <Switch
+                    size="small"
+                    checked={columns[index].selected}
+                    onChange={(checked) => setColumns((draft) => void (draft[index].selected = checked))}
+                  />
+                </td>
+                <td className="ColumnSelectionStep-column-generalization"></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
       <div className="ColumnSelectionStep-reserved-space">
         {/* Render next step */}

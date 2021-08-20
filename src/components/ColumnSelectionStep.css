@@ -1,6 +1,22 @@
-.ColumnSelectionStep .ColumnSelectionStep-list {
-  max-width: 300px;
+.ColumnSelectionStep-columns {
+  border-collapse: collapse;
+}
+
+.ColumnSelectionStep-columns tr {
   border: 1px solid #f0f0f0;
+}
+
+.ColumnSelectionStep-column-name {
+  min-width: 200px;
+  padding: 8px 16px;
+}
+
+.ColumnSelectionStep-column-switch {
+  padding: 8px 16px;
+}
+
+.ColumnSelectionStep-column-generalization {
+  padding: 0;
 }
 
 .ColumnSelectionStep-reserved-space {
