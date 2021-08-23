@@ -15,11 +15,6 @@ import {
 import { runTask } from './utils';
 
 class DiffixAnonymizer implements Anonymizer {
-  private async computeSaltFromFile(fileName: string, signal: AbortSignal) {
-    const hash = await window.hashFile(fileName, signal);
-    return BigInt('0x' + hash.substring(0, 16)).toString(10); // Return a 64-bit decimal string.
-  }
-
   private static booleanRE = /^(?:true|false|0|1)$/i;
   private static integerRE = /^-?\d{1,20}$/;
   private static realRE = /^-?\d{1,20}(?:\.\d{1,20})?$/;
@@ -56,7 +51,7 @@ class DiffixAnonymizer implements Anonymizer {
     return runTask(async (signal) => {
       const fileName = file.path;
       const result = await window.executeQuery(fileName, '0', 'SELECT * FROM table LIMIT 10000', signal);
-      const salt = await this.computeSaltFromFile(fileName, signal);
+      const salt = await window.hashFile(fileName, signal);
 
       // Drop row index column from schema.
       const columns = result.columns.slice(1);
