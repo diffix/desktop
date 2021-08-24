@@ -6,6 +6,10 @@
   border: 1px solid #f0f0f0;
 }
 
+.ColumnSelectionStep-columns thead th {
+  padding: 8px;
+}
+
 .ColumnSelectionStep-column-name {
   min-width: 200px;
   padding: 8px 16px;
@@ -13,10 +17,19 @@
 
 .ColumnSelectionStep-column-switch {
   padding: 8px 16px;
+  text-align: center;
 }
 
 .ColumnSelectionStep-column-generalization {
   padding: 0;
+}
+
+.ColumnSelectionStep .GeneralizationControls {
+  margin-left: 16px;
+}
+
+.ColumnSelectionStep .GeneralizationControls label {
+  min-width: 120px;
 }
 
 .ColumnSelectionStep-reserved-space {

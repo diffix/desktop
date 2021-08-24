@@ -24,30 +24,31 @@ export type TableSchema = {
   salt: string;
 };
 
-export type TableColumn = {
-  name: string;
-  type: ColumnType;
-};
+export type IntegerColumn = { name: string; type: 'integer' };
+export type RealColumn = { name: string; type: 'real' };
+export type TextColumn = { name: string; type: 'text' };
+export type BooleanColumn = { name: string; type: 'boolean' };
 
-export type ColumnType = 'boolean' | 'integer' | 'real' | 'text';
+export type TableColumn = IntegerColumn | RealColumn | TextColumn | BooleanColumn;
+
+export type ColumnType = TableColumn['type'];
 
 // Query request
 
 export type NumericGeneralization = {
-  type: 'numeric-generalization';
-  bucketSize: number;
+  binSize: number;
 };
 
 export type StringGeneralization = {
-  type: 'string-generalization';
   substringStart: number;
   substringLength: number;
 };
 
-export type BucketColumn = {
-  column: TableColumn;
-  generalization: null | NumericGeneralization | StringGeneralization;
-};
+export type BucketColumn =
+  | { column: BooleanColumn }
+  | { column: IntegerColumn; generalization: NumericGeneralization | null }
+  | { column: RealColumn; generalization: NumericGeneralization | null }
+  | { column: TextColumn; generalization: StringGeneralization | null };
 
 // Query results
 
