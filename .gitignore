@@ -92,3 +92,4 @@ out/
 .ionide
 
 bin/
+obj/
