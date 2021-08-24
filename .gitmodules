@@ -1,3 +1,3 @@
 [submodule "reference"]
-	path = reference
+	path = anonymizer/reference
 	url = git@github.com:diffix/reference.git
