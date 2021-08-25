@@ -5,7 +5,7 @@ import { useImmer } from 'use-immer';
 import { assign } from 'lodash';
 
 import { useMemoStable } from '../state';
-import { BucketColumn, NumericGeneralization, StringGeneralization, TableColumn, TableSchema } from '../types';
+import { BucketColumn, ColumnType, NumericGeneralization, StringGeneralization, TableSchema } from '../types';
 
 import './ColumnSelectionStep.css';
 
@@ -21,7 +21,8 @@ export type ColumnSelectionStepData = {
 };
 
 type ColumnState = {
-  tableColumn: TableColumn;
+  name: string;
+  type: ColumnType;
   selected: boolean;
   binSize: number | null;
   substringStart: number | null;
@@ -56,7 +57,7 @@ function GeneralizationControls({
   // Needed to clean up InputNumber values on reset click.
   const [tick, setTick] = useState(0);
 
-  switch (column.tableColumn.type) {
+  switch (column.type) {
     case 'integer':
     case 'real': {
       const isActive = column.binSize !== null;
@@ -139,8 +140,9 @@ function GeneralizationControls({
 
 export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema }) => {
   const [columns, setColumns] = useImmer<ColumnState[]>(() =>
-    schema.columns.map((column) => ({
-      tableColumn: column,
+    schema.columns.map(({ name, type }) => ({
+      name,
+      type,
       selected: false,
       binSize: null,
       substringStart: null,
@@ -153,16 +155,15 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
       columns
         .filter((c) => c.selected)
         .map((c) => {
-          const { tableColumn: column } = c;
-          switch (column.type) {
+          const { name, type } = c;
+          switch (type) {
             case 'integer':
-              return { column, generalization: getNumericGeneralization(c) };
             case 'real':
-              return { column, generalization: getNumericGeneralization(c) };
+              return { name, type, generalization: getNumericGeneralization(c) };
             case 'text':
-              return { column, generalization: getStringGeneralization(c) };
+              return { name, type, generalization: getStringGeneralization(c) };
             case 'boolean':
-              return { column };
+              return { name, type };
           }
         }),
     [columns],
@@ -189,7 +190,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
 
               return (
                 <tr key={index}>
-                  <td className="ColumnSelectionStep-column-name">{column.tableColumn.name}</td>
+                  <td className="ColumnSelectionStep-column-name">{column.name}</td>
                   <td className="ColumnSelectionStep-column-switch">
                     <Switch
                       size="small"

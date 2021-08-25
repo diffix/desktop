@@ -9,6 +9,8 @@ import {
   BucketColumn,
   ColumnType,
   File,
+  NumericGeneralization,
+  StringGeneralization,
   TableSchema,
   Task,
 } from '../types';
@@ -47,6 +49,36 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
+  private makeBinSQL = (columnName: string, { binSize }: NumericGeneralization) => {
+    return `floor(cast(${columnName} AS real) / ${binSize}) * ${binSize}`;
+  };
+
+  private makeSubstringSQL = (columnName: string, { substringStart, substringLength }: StringGeneralization) => {
+    return `substring(${columnName}, ${substringStart}, ${substringLength})`;
+  };
+
+  private makeColumnSQL = (column: BucketColumn, aliases: boolean) => {
+    const columnName = `"${column.name}"`;
+
+    switch (column.type) {
+      case 'integer':
+      case 'real':
+        return column.generalization
+          ? this.makeBinSQL(columnName, column.generalization) + (aliases ? ` AS ${columnName}` : '')
+          : columnName;
+      case 'text':
+        return column.generalization
+          ? this.makeSubstringSQL(columnName, column.generalization) + (aliases ? ` AS ${columnName}` : '')
+          : columnName;
+      case 'boolean':
+        return columnName;
+    }
+  };
+
+  private makeBucketsSQL = (bucketColumns: BucketColumn[], aliases: boolean) => {
+    return bucketColumns.map((column) => this.makeColumnSQL(column, aliases)).join(', ');
+  };
+
   loadSchema(file: File): Task<TableSchema> {
     return runTask(async (signal) => {
       const fileName = file.path;
@@ -67,15 +99,14 @@ class DiffixAnonymizer implements Anonymizer {
   anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult> {
     return runTask(async (signal) => {
       if (bucketColumns.length === 0) return { columns: [], rows: [] };
-      const bucketColumnsString = bucketColumns.map(({ column }) => `"${column.name}"`).join(', ');
       const statement = `
         SELECT
           diffix_low_count(RowIndex),
           count(*),
           diffix_count(RowIndex),
-          ${bucketColumnsString}
+          ${this.makeBucketsSQL(bucketColumns, true)}
         FROM table
-        GROUP BY ${bucketColumnsString}
+        GROUP BY ${this.makeBucketsSQL(bucketColumns, false)}
         LIMIT 1000
       `;
       const result = await window.executeQuery(schema.file.path, schema.salt, statement, signal);
@@ -83,22 +114,18 @@ class DiffixAnonymizer implements Anonymizer {
         lowCount: row[0] as boolean,
         values: [...row.slice(3), { realValue: row[1] as number, anonValue: row[2] as number | null }],
       }));
-      const columns: AnonymizedResultColumn[] = [
-        ...bucketColumns.map(({ column }) => column),
-        { name: 'Count', type: 'aggregate' },
-      ];
+      const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];
       return { columns, rows };
     });
   }
 
   async export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Promise<void> {
-    const bucketColumnsString = bucketColumns.map(({ column }) => `"${column.name}"`).join(', ');
     const statement = `
       SELECT
-        ${bucketColumnsString},
+        ${this.makeBucketsSQL(bucketColumns, true)},
         count(*)
       FROM table
-      GROUP BY ${bucketColumnsString}
+      GROUP BY ${this.makeBucketsSQL(bucketColumns, false)}
     `;
     return await window.exportQueryResult(schema.file.path, schema.salt, statement, outFileName);
   }

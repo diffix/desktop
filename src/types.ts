@@ -45,10 +45,10 @@ export type StringGeneralization = {
 };
 
 export type BucketColumn =
-  | { column: BooleanColumn }
-  | { column: IntegerColumn; generalization: NumericGeneralization | null }
-  | { column: RealColumn; generalization: NumericGeneralization | null }
-  | { column: TextColumn; generalization: StringGeneralization | null };
+  | (IntegerColumn & { generalization: NumericGeneralization | null })
+  | (RealColumn & { generalization: NumericGeneralization | null })
+  | (TextColumn & { generalization: StringGeneralization | null })
+  | BooleanColumn;
 
 // Query results
 
