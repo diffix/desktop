@@ -27,6 +27,8 @@ type ColumnState = {
   binSize: number | null;
   substringStart: number | null;
   substringLength: number | null;
+  // Hack to clear input numbers on reset click
+  resetCount: number;
 };
 
 function getNumericGeneralization({ binSize }: ColumnState): NumericGeneralization | null {
@@ -57,12 +59,14 @@ function GeneralizationControls({
       return (
         <Form className={'GeneralizationControls' + (isActive ? ' active' : '')} layout="inline">
           <Form.Item label="Bin size" name="binSize">
-            <InputNumber
-              size="small"
-              min={1}
-              value={column.binSize as number}
-              onChange={(binSize) => updateColumn({ binSize })}
-            />
+            <span key={column.resetCount}>
+              <InputNumber
+                size="small"
+                min={1}
+                value={column.binSize as number}
+                onChange={(binSize) => updateColumn({ binSize })}
+              />
+            </span>
           </Form.Item>
         </Form>
       );
@@ -72,20 +76,24 @@ function GeneralizationControls({
       return (
         <Form className={'GeneralizationControls' + (isActive ? ' active' : '')} layout="inline">
           <Form.Item label="Substring start" name="substringStart">
-            <InputNumber
-              size="small"
-              min={0}
-              value={column.substringStart as number}
-              onChange={(substringStart) => updateColumn({ substringStart })}
-            />
+            <span key={column.resetCount}>
+              <InputNumber
+                size="small"
+                min={0}
+                value={column.substringStart as number}
+                onChange={(substringStart) => updateColumn({ substringStart })}
+              />
+            </span>
           </Form.Item>
           <Form.Item label="Substring length" name="substringLength">
-            <InputNumber
-              size="small"
-              min={1}
-              value={column.substringLength as number}
-              onChange={(substringLength) => updateColumn({ substringLength })}
-            />
+            <span key={column.resetCount}>
+              <InputNumber
+                size="small"
+                min={1}
+                value={column.substringLength as number}
+                onChange={(substringLength) => updateColumn({ substringLength })}
+              />
+            </span>
           </Form.Item>
         </Form>
       );
@@ -104,6 +112,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
       binSize: null,
       substringStart: null,
       substringLength: null,
+      resetCount: 0,
     })),
   );
 
@@ -167,7 +176,12 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                         icon={<CloseCircleOutlined />}
                         title="Clear values"
                         onClick={() => {
-                          updateColumn({ binSize: null, substringStart: null, substringLength: null });
+                          updateColumn({
+                            binSize: null,
+                            substringStart: null,
+                            substringLength: null,
+                            resetCount: column.resetCount + 1,
+                          });
                         }}
                       ></Button>
                     )}
