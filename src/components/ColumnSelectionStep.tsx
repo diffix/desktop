@@ -1,6 +1,6 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { Form, Button, Divider, InputNumber, Switch, Typography } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
 import { assign } from 'lodash';
 
@@ -9,7 +9,7 @@ import { BucketColumn, ColumnType, NumericGeneralization, StringGeneralization, 
 
 import './ColumnSelectionStep.css';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export type ColumnSelectionStepProps = {
   schema: TableSchema;
@@ -39,12 +39,8 @@ function getStringGeneralization({ substringStart, substringLength }: ColumnStat
   return { substringStart: substringStart || 0, substringLength };
 }
 
-function greyedText(text: string, greyed: boolean) {
-  if (greyed) {
-    return <Text type="secondary">{text}</Text>;
-  } else {
-    return <Text>{text}</Text>;
-  }
+function anyNonNull(...values: unknown[]) {
+  return values.some((v) => v !== null);
 }
 
 function GeneralizationControls({
@@ -54,82 +50,43 @@ function GeneralizationControls({
   column: ColumnState;
   updateColumn: (values: Partial<ColumnState>) => void;
 }) {
-  // Needed to clean up InputNumber values on reset click.
-  const [tick, setTick] = useState(0);
-
   switch (column.type) {
     case 'integer':
     case 'real': {
       const isActive = column.binSize !== null;
       return (
-        <Form className="GeneralizationControls" layout="inline">
-          <Form.Item label={greyedText('Bin size', !isActive)} name="binSize">
-            <span key={tick}>
-              <InputNumber
-                size="small"
-                min={1}
-                value={column.binSize as number}
-                onChange={(binSize) => updateColumn({ binSize })}
-              />
-            </span>
+        <Form className={'GeneralizationControls' + (isActive ? ' active' : '')} layout="inline">
+          <Form.Item label="Bin size" name="binSize">
+            <InputNumber
+              size="small"
+              min={1}
+              value={column.binSize as number}
+              onChange={(binSize) => updateColumn({ binSize })}
+            />
           </Form.Item>
-          {isActive && (
-            <Form.Item>
-              <Button
-                danger
-                type="text"
-                shape="circle"
-                icon={<CloseOutlined />}
-                title="Clear values"
-                onClick={() => {
-                  updateColumn({ binSize: null });
-                  setTick((x) => x + 1);
-                }}
-              />
-            </Form.Item>
-          )}
         </Form>
       );
     }
     case 'text': {
       const isActive = column.substringLength !== null;
       return (
-        <Form key={tick} layout="inline" className="GeneralizationControls">
-          <Form.Item label={greyedText('Substring start', !isActive)} name="substringStart">
-            <span key={tick}>
-              <InputNumber
-                size="small"
-                min={0}
-                value={column.substringStart as number}
-                onChange={(substringStart) => updateColumn({ substringStart })}
-              />
-            </span>
+        <Form className={'GeneralizationControls' + (isActive ? ' active' : '')} layout="inline">
+          <Form.Item label="Substring start" name="substringStart">
+            <InputNumber
+              size="small"
+              min={0}
+              value={column.substringStart as number}
+              onChange={(substringStart) => updateColumn({ substringStart })}
+            />
           </Form.Item>
-          <Form.Item label={greyedText('Substring length', !isActive)} name="substringLength">
-            <span key={tick}>
-              <InputNumber
-                size="small"
-                min={1}
-                value={column.substringLength as number}
-                onChange={(substringLength) => updateColumn({ substringLength })}
-              />
-            </span>
+          <Form.Item label="Substring length" name="substringLength">
+            <InputNumber
+              size="small"
+              min={1}
+              value={column.substringLength as number}
+              onChange={(substringLength) => updateColumn({ substringLength })}
+            />
           </Form.Item>
-          {(isActive || column.substringStart !== null) && (
-            <Form.Item>
-              <Button
-                danger
-                type="text"
-                shape="circle"
-                icon={<CloseOutlined />}
-                title="Clear values"
-                onClick={() => {
-                  updateColumn({ substringStart: null, substringLength: null });
-                  setTick((x) => x + 1);
-                }}
-              />
-            </Form.Item>
-          )}
         </Form>
       );
     }
@@ -175,12 +132,13 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
     <>
       <div className="ColumnSelectionStep notebook-step">
         <Title level={3}>Select columns for anonymization</Title>
-        <table className="ColumnSelectionStep-columns">
+        <table className="ColumnSelectionStep-table">
           <thead>
             <tr>
-              <th>Column</th>
-              <th>Selected</th>
-              <th>{anySelected && 'Generalization'}</th>
+              <th className="ColumnSelectionStep-th-name">Column</th>
+              <th className="ColumnSelectionStep-th-switch">Selected</th>
+              <th className="ColumnSelectionStep-th-generalization">{anySelected && 'Generalization'}</th>
+              <th className="ColumnSelectionStep-th-clear-generalization" />
             </tr>
           </thead>
           <tbody>
@@ -190,16 +148,29 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
 
               return (
                 <tr key={index}>
-                  <td className="ColumnSelectionStep-column-name">{column.name}</td>
-                  <td className="ColumnSelectionStep-column-switch">
+                  <td className="ColumnSelectionStep-td-name">{column.name}</td>
+                  <td className="ColumnSelectionStep-td-switch">
                     <Switch
                       size="small"
                       checked={column.selected}
                       onChange={(selected) => updateColumn({ selected })}
                     />
                   </td>
-                  <td className="ColumnSelectionStep-column-generalization">
+                  <td className="ColumnSelectionStep-td-generalization">
                     {column.selected && <GeneralizationControls column={column} updateColumn={updateColumn} />}
+                  </td>
+                  <td className="ColumnSelectionStep-td-clear-generalization">
+                    {column.selected && anyNonNull(column.binSize, column.substringStart, column.substringLength) && (
+                      <Button
+                        type="text"
+                        shape="circle"
+                        icon={<CloseCircleOutlined />}
+                        title="Clear values"
+                        onClick={() => {
+                          updateColumn({ binSize: null, substringStart: null, substringLength: null });
+                        }}
+                      ></Button>
+                    )}
                   </td>
                 </tr>
               );
