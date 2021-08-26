@@ -1,5 +1,7 @@
 ### Version 0.1.4
+
  - Added UI feedback on data export.
+ - Added support for column generalization.
 
 ### Version 0.1.3
 

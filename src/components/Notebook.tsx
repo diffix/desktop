@@ -16,7 +16,7 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ onTitleChange }) =>
           <SchemaLoadStep file={file}>
             {({ schema }) => (
               <ColumnSelectionStep schema={schema}>
-                {({ columns }) => <AnonymizationStep columns={columns} schema={schema} />}
+                {({ bucketColumns }) => <AnonymizationStep bucketColumns={bucketColumns} schema={schema} />}
               </ColumnSelectionStep>
             )}
           </SchemaLoadStep>

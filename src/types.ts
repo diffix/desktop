@@ -24,12 +24,31 @@ export type TableSchema = {
   salt: string;
 };
 
-export type TableColumn = {
-  name: string;
-  type: ColumnType;
+export type IntegerColumn = { name: string; type: 'integer' };
+export type RealColumn = { name: string; type: 'real' };
+export type TextColumn = { name: string; type: 'text' };
+export type BooleanColumn = { name: string; type: 'boolean' };
+
+export type TableColumn = IntegerColumn | RealColumn | TextColumn | BooleanColumn;
+
+export type ColumnType = TableColumn['type'];
+
+// Query request
+
+export type NumericGeneralization = {
+  binSize: number;
 };
 
-export type ColumnType = 'boolean' | 'integer' | 'real' | 'text';
+export type StringGeneralization = {
+  substringStart: number;
+  substringLength: number;
+};
+
+export type BucketColumn =
+  | (IntegerColumn & { generalization: NumericGeneralization | null })
+  | (RealColumn & { generalization: NumericGeneralization | null })
+  | (TextColumn & { generalization: StringGeneralization | null })
+  | BooleanColumn;
 
 // Query results
 
@@ -82,8 +101,8 @@ export type AnonymizationStats = {
 
 export type Anonymizer = {
   loadSchema(file: File): Task<TableSchema>;
-  anonymize(schema: TableSchema, bucketColumns: TableColumn[]): Task<AnonymizedQueryResult>;
-  export(schema: TableSchema, bucketColumns: TableColumn[], outFileName: string): Promise<void>;
+  anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult>;
+  export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Promise<void>;
 };
 
 export type Task<T> = {

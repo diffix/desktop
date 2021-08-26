@@ -8,6 +8,13 @@ body {
 .App {
   margin-right: calc(100% - 100vw);
   padding-top: 40px;
+  min-width: 400px;
+}
+
+@media screen and (max-width: 400px) {
+  body {
+    overflow-x: auto;
+  }
 }
 
 .App .ant-tabs-nav {
