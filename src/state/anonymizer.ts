@@ -110,10 +110,13 @@ class DiffixAnonymizer implements Anonymizer {
         LIMIT 1000
       `;
       const result = await window.executeQuery(schema.file.path, schema.salt, statement, signal);
-      const rows: AnonymizedResultRow[] = result.rows.map((row) => ({
-        lowCount: row[0] as boolean,
-        values: [...row.slice(3), { realValue: row[1] as number, anonValue: row[2] as number | null }],
-      }));
+      const rows: AnonymizedResultRow[] = result.rows.map((row) => {
+        const lowCount = row[0] as boolean;
+        return {
+          lowCount,
+          values: [...row.slice(3), { realValue: row[1] as number, anonValue: lowCount ? null : (row[2] as number) }],
+        };
+      });
       const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];
       return { columns, rows };
     });
