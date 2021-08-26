@@ -57,26 +57,26 @@ class DiffixAnonymizer implements Anonymizer {
     return `substring(${columnName}, ${substringStart}, ${substringLength})`;
   };
 
-  private makeColumnSQL = (column: BucketColumn, aliases: boolean) => {
+  private makeColumnSQL = (column: BucketColumn) => {
     const columnName = `"${column.name}"`;
 
     switch (column.type) {
       case 'integer':
       case 'real':
         return column.generalization
-          ? this.makeBinSQL(columnName, column.generalization) + (aliases ? ` AS ${columnName}` : '')
+          ? this.makeBinSQL(columnName, column.generalization) + ` AS ${columnName}`
           : columnName;
       case 'text':
         return column.generalization
-          ? this.makeSubstringSQL(columnName, column.generalization) + (aliases ? ` AS ${columnName}` : '')
+          ? this.makeSubstringSQL(columnName, column.generalization) + ` AS ${columnName}`
           : columnName;
       case 'boolean':
         return columnName;
     }
   };
 
-  private makeBucketsSQL = (bucketColumns: BucketColumn[], aliases: boolean) => {
-    return bucketColumns.map((column) => this.makeColumnSQL(column, aliases)).join(', ');
+  private makeBucketsSQL = (bucketColumns: BucketColumn[]) => {
+    return bucketColumns.map((column) => this.makeColumnSQL(column)).join(', ');
   };
 
   loadSchema(file: File): Task<TableSchema> {
@@ -104,9 +104,9 @@ class DiffixAnonymizer implements Anonymizer {
           diffix_low_count(RowIndex),
           count(*),
           diffix_count(RowIndex),
-          ${this.makeBucketsSQL(bucketColumns, true)}
+          ${this.makeBucketsSQL(bucketColumns)}
         FROM table
-        GROUP BY ${this.makeBucketsSQL(bucketColumns, false)}
+        GROUP BY ${bucketColumns.map((_, index) => 4 + index).join(', ')}
         LIMIT 1000
       `;
       const result = await window.executeQuery(schema.file.path, schema.salt, statement, signal);
@@ -122,10 +122,10 @@ class DiffixAnonymizer implements Anonymizer {
   async export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Promise<void> {
     const statement = `
       SELECT
-        ${this.makeBucketsSQL(bucketColumns, true)},
+        ${this.makeBucketsSQL(bucketColumns)},
         count(*)
       FROM table
-      GROUP BY ${this.makeBucketsSQL(bucketColumns, false)}
+      GROUP BY ${bucketColumns.map((_, index) => 1 + index).join(', ')}
     `;
     return await window.exportQueryResult(schema.file.path, schema.salt, statement, outFileName);
   }
