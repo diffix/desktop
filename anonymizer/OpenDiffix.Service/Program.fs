@@ -111,12 +111,6 @@ let getOutputStream (parsedArgs: ParseResults<CliArguments>) =
     | Some filePath -> new StreamWriter(filePath)
     | None -> new StreamWriter(Console.OpenStandardOutput())
 
-let dryRun query filePath anonParams =
-    let encodedRequest =
-        JsonEncodersDecoders.encodeRequestParams query filePath anonParams
-
-    Thoth.Json.Net.Encode.toString 2 encodedRequest, 0
-
 let runQuery query filePath anonParams =
     use dataProvider =
         new CSV.DataProvider(filePath) :> IDataProvider
