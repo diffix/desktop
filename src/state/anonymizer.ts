@@ -126,9 +126,10 @@ class DiffixAnonymizer implements Anonymizer {
     const statement = `
       SELECT
         ${this.makeBucketsSQL(bucketColumns)},
-        count(*)
+        diffix_count(RowIndex) AS count
       FROM table
       GROUP BY ${bucketColumns.map((_, index) => 1 + index).join(', ')}
+      HAVING NOT diffix_low_count(RowIndex)
     `;
     return await window.exportQueryResult(schema.file.path, schema.salt, statement, outFileName);
   }
