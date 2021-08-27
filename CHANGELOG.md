@@ -2,6 +2,7 @@
 
  - Added UI feedback on data export.
  - Added support for column generalization.
+ - Removed anonymized count value in low count rows.
 
 ### Version 0.1.3
 
