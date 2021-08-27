@@ -3,7 +3,7 @@ import { Button, Descriptions, Divider, message, Result, Typography } from 'antd
 import { DownloadOutlined } from '@ant-design/icons';
 
 import { AnonymizedResultsTable } from '.';
-import { computeAnonymizationStats, useCachedData, useQuery, anonymizer } from '../state';
+import { computeAnonymizationStats, useCachedData, useQuery, anonymizer, formatPercentage } from '../state';
 import { AnonymizationStats, AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
 
 import './AnonymizationStep.css';
@@ -23,10 +23,6 @@ const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [] };
 
 function TextPlaceholder() {
   return <span className="TextPlaceholder" />;
-}
-
-function formatPercentage(value: number) {
-  return `${Math.round(10 * 100 * value) / 10}%`;
 }
 
 function AnonymizationSummary({ result, loading }: CommonProps) {
