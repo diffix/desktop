@@ -157,7 +157,9 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
 
               return (
                 <tr key={index}>
-                  <td className="ColumnSelectionStep-td-name">{column.name}</td>
+                  <td className="ColumnSelectionStep-td-name" title={`Type: ${column.type}`}>
+                    {column.name}
+                  </td>
                   <td className="ColumnSelectionStep-td-switch">
                     <Switch
                       size="small"
