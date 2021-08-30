@@ -21,8 +21,7 @@ async function newTask<T>(signal: AbortSignal, runner: (taskId: string) => Promi
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-window.callService = (request: any, signal: AbortSignal) =>
+window.callService = (request: unknown, signal: AbortSignal) =>
   newTask(signal, async (taskId) => {
     const json: string | null = await ipcRenderer.invoke('call_service', taskId, JSON.stringify(request));
     return json ? JSON.parse(json) : null;

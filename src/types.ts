@@ -113,8 +113,7 @@ export type Task<T> = {
 export {};
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    callService(request: any, signal: AbortSignal): Promise<QueryResult>;
+    callService(request: unknown, signal: AbortSignal): Promise<QueryResult>;
     selectExportFile(): Promise<string | null>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;
   }
