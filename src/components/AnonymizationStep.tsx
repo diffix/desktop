@@ -71,7 +71,7 @@ async function exportResult(schema: TableSchema, bucketColumns: BucketColumn[]) 
 
     message.success({ content: 'Anonymized data exported successfully!', key: filePath, duration: 10 });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     message.error({ content: 'Anonymized data export failed!', key: filePath, duration: 10 });
   }
 }
