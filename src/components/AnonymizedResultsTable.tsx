@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from 'react';
 
 import { DisplayModeSwitch, ResponsiveTable } from '.';
-import { columnSorter } from '../state';
+import { columnSorter, formatPercentage, relativeNoise } from '../state';
 import {
   AnonymizedQueryResult,
   AnonymizedResultColumn,
@@ -29,11 +29,24 @@ function renderValue(v: Value) {
   }
 }
 
-function makeColumnData(title: string, dataIndex: string, type: ColumnType) {
+function renderLowCountValue(v: Value) {
+  return v === null ? '-' : v.toString();
+}
+
+function renderRelativeNoiseValue(v: Value) {
+  return v === null ? '-' : formatPercentage(v as number);
+}
+
+function makeColumnData(
+  title: string,
+  dataIndex: string,
+  type: ColumnType,
+  render: (v: Value) => React.ReactNode = renderValue,
+) {
   return {
     title,
     dataIndex,
-    render: renderValue,
+    render,
     sorter: columnSorter(type, dataIndex),
     ellipsis: true,
   };
@@ -48,8 +61,9 @@ const mapColumn = (mode: DisplayMode) => (column: AnonymizedResultColumn, i: num
         return [makeColumnData(column.name, i + '_anon', AGG_COLUMN_TYPE)];
       case 'combined':
         return [
-          makeColumnData(column.name + ' (anonymized)', i + '_anon', AGG_COLUMN_TYPE),
+          makeColumnData(column.name + ' (anonymized)', i + '_anon', AGG_COLUMN_TYPE, renderLowCountValue),
           makeColumnData(column.name + ' (original)', i + '_real', AGG_COLUMN_TYPE),
+          makeColumnData(column.name + ' noise', i + '_diff', 'real', renderRelativeNoiseValue),
         ];
     }
   }
@@ -84,6 +98,7 @@ function mapRow(row: AnonymizedResultRow, i: number) {
     if (value && typeof value === 'object') {
       rowData[i + '_real'] = value.realValue;
       rowData[i + '_anon'] = value.anonValue;
+      rowData[i + '_diff'] = relativeNoise(value);
     } else {
       rowData[i] = value;
     }

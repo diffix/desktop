@@ -120,10 +120,13 @@ class DiffixAnonymizer implements Anonymizer {
       };
       const result = await window.callService(request, signal);
 
-      const rows: AnonymizedResultRow[] = result.rows.map((row) => ({
-        lowCount: row[0] as boolean,
-        values: [...row.slice(3), { realValue: row[1] as number, anonValue: row[2] as number | null }],
-      }));
+      const rows: AnonymizedResultRow[] = result.rows.map((row) => {
+        const lowCount = row[0] as boolean;
+        return {
+          lowCount,
+          values: [...row.slice(3), { realValue: row[1] as number, anonValue: lowCount ? null : (row[2] as number) }],
+        };
+      });
       const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];
 
       return { columns, rows };
@@ -135,9 +138,10 @@ class DiffixAnonymizer implements Anonymizer {
       const statement = `
         SELECT
           ${this.makeBucketsSQL(bucketColumns)},
-          count(*)
+          diffix_count(RowIndex) AS count
         FROM table
         GROUP BY ${bucketColumns.map((_, index) => 1 + index).join(', ')}
+        HAVING NOT diffix_low_count(RowIndex)
       `;
       const request = {
         type: 'Export',
