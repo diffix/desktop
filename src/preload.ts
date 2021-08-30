@@ -21,18 +21,15 @@ async function newTask<T>(signal: AbortSignal, runner: (taskId: string) => Promi
   }
 }
 
-window.executeQuery = (fileName: string, salt: string, statement: string, signal: AbortSignal) =>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+window.callService = (request: any, signal: AbortSignal) =>
   newTask(signal, async (taskId) => {
-    const json: string = await ipcRenderer.invoke('execute_query', taskId, fileName, salt, statement);
-    return JSON.parse(json);
+    const json: string | null = await ipcRenderer.invoke('call_service', taskId, JSON.stringify(request));
+    return json ? JSON.parse(json) : null;
   });
 
 window.selectExportFile = () => {
   return ipcRenderer.invoke('select_export_file');
-};
-
-window.exportQueryResult = (inFileName: string, salt: string, statement: string, outFileName: string) => {
-  return ipcRenderer.invoke('export_query_result', inFileName, salt, statement, outFileName);
 };
 
 window.hashFile = (fileName: string, signal: AbortSignal) =>

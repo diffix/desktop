@@ -70,10 +70,12 @@ async function exportResult(schema: TableSchema, bucketColumns: BucketColumn[]) 
   message.loading({ content: `Exporting anonymized data to ${filePath}...`, key: filePath, duration: 0 });
 
   try {
-    await anonymizer.export(schema, bucketColumns, filePath);
+    const exportTask = anonymizer.export(schema, bucketColumns, filePath);
+    await exportTask.result;
 
     message.success({ content: 'Anonymized data exported successfully!', key: filePath, duration: 10 });
-  } catch {
+  } catch (e) {
+    console.log(e);
     message.error({ content: 'Anonymized data export failed!', key: filePath, duration: 10 });
   }
 }

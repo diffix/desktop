@@ -81,9 +81,9 @@ class DiffixAnonymizer implements Anonymizer {
 
   loadSchema(file: File): Task<TableSchema> {
     return runTask(async (signal) => {
-      const fileName = file.path;
-      const result = await window.executeQuery(fileName, '0', 'SELECT * FROM table LIMIT 10000', signal);
-      const salt = await window.hashFile(fileName, signal);
+      const request = { type: 'Load', inputPath: file.path, rows: 1000 };
+      const result = await window.callService(request, signal);
+      const salt = await window.hashFile(file.path, signal);
 
       // Drop row index column from schema.
       const columns = result.columns.slice(1);
@@ -99,6 +99,7 @@ class DiffixAnonymizer implements Anonymizer {
   anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult> {
     return runTask(async (signal) => {
       if (bucketColumns.length === 0) return { columns: [], rows: [] };
+
       const statement = `
         SELECT
           diffix_low_count(RowIndex),
@@ -109,25 +110,43 @@ class DiffixAnonymizer implements Anonymizer {
         GROUP BY ${bucketColumns.map((_, index) => 4 + index).join(', ')}
         LIMIT 1000
       `;
-      const result = await window.executeQuery(schema.file.path, schema.salt, statement, signal);
+      const request = {
+        type: 'Preview',
+        inputPath: schema.file.path,
+        salt: schema.salt,
+        query: statement,
+        rows: 1000,
+      };
+      const result = await window.callService(request, signal);
+
       const rows: AnonymizedResultRow[] = result.rows.map((row) => ({
         lowCount: row[0] as boolean,
         values: [...row.slice(3), { realValue: row[1] as number, anonValue: row[2] as number | null }],
       }));
       const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];
+
       return { columns, rows };
     });
   }
 
-  async export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Promise<void> {
-    const statement = `
-      SELECT
-        ${this.makeBucketsSQL(bucketColumns)},
-        count(*)
-      FROM table
-      GROUP BY ${bucketColumns.map((_, index) => 1 + index).join(', ')}
-    `;
-    return await window.exportQueryResult(schema.file.path, schema.salt, statement, outFileName);
+  export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Task<void> {
+    return runTask(async (signal) => {
+      const statement = `
+        SELECT
+          ${this.makeBucketsSQL(bucketColumns)},
+          count(*)
+        FROM table
+        GROUP BY ${bucketColumns.map((_, index) => 1 + index).join(', ')}
+      `;
+      const request = {
+        type: 'Export',
+        inputPath: schema.file.path,
+        salt: schema.salt,
+        query: statement,
+        outputPath: outFileName,
+      };
+      await window.callService(request, signal);
+    });
   }
 }
 
