@@ -82,8 +82,8 @@ class DiffixAnonymizer implements Anonymizer {
   loadSchema(file: File): Task<TableSchema> {
     return runTask(async (signal) => {
       const request = { type: 'Load', inputPath: file.path, rows: 1000 };
+      const saltPromise = window.hashFile(file.path, signal);
       const result = await window.callService(request, signal);
-      const salt = await window.hashFile(file.path, signal);
 
       // Drop row index column from schema.
       const columns = result.columns.slice(1);
@@ -92,6 +92,7 @@ class DiffixAnonymizer implements Anonymizer {
       const types = this.detectColumnTypes(columns.length, rowsPreview as string[][]);
       for (let index = 0; index < columns.length; index++) columns[index].type = types[index];
 
+      const salt = await saltPromise;
       return { file, columns, rowsPreview, salt };
     });
   }
