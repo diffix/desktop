@@ -1,6 +1,8 @@
 import React, { FunctionComponent } from 'react';
-
-import { FileLoadStep, SchemaLoadStep, ColumnSelectionStep, AnonymizationStep } from '.';
+import { FileLoadStep } from '../FileLoadStep';
+import { SchemaLoadStep } from '../SchemaLoadStep';
+import { ColumnSelectionStep } from '../ColumnSelectionStep';
+import { AnonymizationStep } from '../AnonymizationStep';
 
 import './Notebook.css';
 

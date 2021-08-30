@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 
-import { DisplayModeSwitch, ResponsiveTable } from '.';
-import { columnSorter, formatPercentage, relativeNoise } from '../state';
+import { columnSorter, formatPercentage, relativeNoise, ResponsiveTable } from '../shared';
 import {
   AnonymizedQueryResult,
   AnonymizedResultColumn,
@@ -11,6 +10,7 @@ import {
   RowData,
   Value,
 } from '../types';
+import { DisplayModeSwitch } from './DisplayModeSwitch';
 
 import './AnonymizedResultsTable.css';
 

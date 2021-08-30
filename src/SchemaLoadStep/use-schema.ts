@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
+import { inProgressState, useAnonymizer } from '../shared';
 import { ComputedData, File, TableSchema } from '../types';
-import { useAnonymizer } from './anonymizer';
-import { inProgressState } from './utils';
 
 export function useSchema(file: File): ComputedData<TableSchema> {
   const anonymizer = useAnonymizer();

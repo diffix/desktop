@@ -1,8 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
-import { ResponsiveTable } from '.';
+import { columnSorter, ResponsiveTable } from '../shared';
 import { TableSchema, Value } from '../types';
-import { columnSorter } from '../state';
 
 export type DataPreviewTableProps = {
   schema: TableSchema;
