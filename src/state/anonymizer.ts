@@ -81,7 +81,7 @@ class DiffixAnonymizer implements Anonymizer {
 
   loadSchema(file: File): Task<TableSchema> {
     return runTask(async (signal) => {
-      const request = { type: 'Load', inputPath: file.path, rows: 1000 };
+      const request = { type: 'Load', inputPath: file.path, rows: 10000 };
       const saltPromise = window.hashFile(file.path, signal);
       const result = await window.callService(request, signal);
 
