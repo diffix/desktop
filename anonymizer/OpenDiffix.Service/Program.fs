@@ -52,8 +52,7 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Query = que
 let handleExport { InputPath = inputPath; Salt = salt; Query = query; OutputPath = outputPath } =
   let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
   let output = anonParams |> runQuery query inputPath |> csvFormatter
-  use writer = new StreamWriter(outputPath)
-  fprintfn writer $"%s{output}"
+  File.WriteAllText(outputPath, output)
 
 [<EntryPoint>]
 let main argv =
