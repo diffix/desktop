@@ -2,9 +2,10 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Button, Descriptions, Divider, message, Result, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
-import { AnonymizedResultsTable } from '.';
-import { computeAnonymizationStats, useCachedData, useQuery, anonymizer, formatPercentage } from '../state';
+import { anonymizer, computeAnonymizationStats, formatPercentage, useCachedData } from '../shared';
 import { AnonymizationStats, AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
+import { AnonymizedResultsTable } from './AnonymizedResultsTable';
+import { useQuery } from './use-query';
 
 import './AnonymizationStep.css';
 

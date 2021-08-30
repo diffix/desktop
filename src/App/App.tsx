@@ -2,8 +2,8 @@ import React, { FunctionComponent, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Empty, Tabs } from 'antd';
 
-import { Notebook } from '.';
-import { AnonymizerContext, anonymizer } from '../state';
+import { AnonymizerContext, anonymizer } from '../shared';
+import { Notebook } from '../Notebook/Notebook';
 
 import './App.css';
 

@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { Divider, message, Result, Space, Spin, Typography } from 'antd';
 
-import { DataPreviewTable } from '.';
-import { useSchema } from '../state';
 import { File, TableSchema } from '../types';
+import { DataPreviewTable } from './DataPreviewTable';
+import { useSchema } from './use-schema';
 
 import './SchemaLoadStep.css';
 

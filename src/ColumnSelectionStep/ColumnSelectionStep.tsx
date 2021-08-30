@@ -4,7 +4,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
 import { assign } from 'lodash';
 
-import { useMemoStable } from '../state';
+import { useMemoStable } from '../shared';
 import { BucketColumn, ColumnType, NumericGeneralization, StringGeneralization, TableSchema } from '../types';
 
 import './ColumnSelectionStep.css';

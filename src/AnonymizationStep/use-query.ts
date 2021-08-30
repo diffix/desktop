@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
+import { inProgressState, useAnonymizer } from '../shared';
 import { AnonymizedQueryResult, BucketColumn, ComputedData, TableSchema } from '../types';
-import { useAnonymizer } from './anonymizer';
-import { inProgressState } from './utils';
 
 export function useQuery(schema: TableSchema, bucketColumns: BucketColumn[]): ComputedData<AnonymizedQueryResult> {
   const anonymizer = useAnonymizer();
