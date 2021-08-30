@@ -79,17 +79,17 @@ ipcMain.on('cancel_task', async (_event, taskId: string) => {
   }
 });
 
-ipcMain.handle('execute_query', (_event, taskId: string, fileName: string, salt: string, statement: string) =>
+ipcMain.handle('call_service', (_event, taskId: string, request: string) =>
   runTask(taskId, async (signal) => {
-    console.log(`(${taskId}) Executing query: ${statement.trimEnd()}`);
+    console.log(`(${taskId}) Calling service: ${request}`);
 
-    const diffixArgs = ['--json', '-f', fileName, '-s', salt, '-q', statement];
+    const promise = asyncExecFile(diffixPath, null, { maxBuffer: 100 * 1024 * 1024, windowsHide: true, signal });
+
+    promise.child.stdin?.write(request);
+    promise.child.stdin?.end();
+
     // Throws stderr output on error.
-    const { stdout } = await asyncExecFile(diffixPath, diffixArgs, {
-      maxBuffer: 100 * 1024 * 1024,
-      windowsHide: true,
-      signal,
-    });
+    const { stdout } = await promise;
     return stdout;
   }),
 );
@@ -105,17 +105,6 @@ ipcMain.handle('select_export_file', async (_event) => {
   const dialogResult = await dialog.showSaveDialog(BrowserWindow.getAllWindows()[0], options);
   return dialogResult.filePath;
 });
-
-ipcMain.handle(
-  'export_query_result',
-  (_event, inFileName: string, salt: string, statement: string, outFileName: string) => {
-    console.log(`Exporting query result to: ${outFileName}`);
-
-    const diffixArgs = ['-f', inFileName, '-s', salt, '-q', statement, '-o', outFileName];
-    // Throws stderr output on error.
-    return asyncExecFile(diffixPath, diffixArgs, { windowsHide: true });
-  },
-);
 
 ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
   runTask(taskId, async (signal) => {
