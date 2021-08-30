@@ -39,16 +39,6 @@ let csvFormatter result =
 
 let jsonFormatter = encodeQueryResult >> Thoth.Json.Net.Encode.toString 2
 
-let readRequest () =
-  let readLine _ = Console.ReadLine()
-
-  let isValidLine =
-    function
-    | null -> false
-    | _ -> true
-
-  Seq.initInfinite readLine |> Seq.takeWhile isValidLine |> String.join "\n"
-
 let handleLoad ({ InputPath = inputPath; Rows = rows }: Load) =
   let query = $"SELECT * FROM table LIMIT %d{rows}"
   let output = AnonymizationParams.Default |> runQuery query inputPath |> jsonFormatter
@@ -68,7 +58,7 @@ let handleExport { InputPath = inputPath; Salt = salt; Query = query; OutputPath
 [<EntryPoint>]
 let main argv =
   try
-    match readRequest () |> decodeRequest with
+    match Console.In.ReadToEnd() |> decodeRequest with
     | Load load -> handleLoad load
     | Preview preview -> handlePreview preview
     | Export export -> handleExport export
