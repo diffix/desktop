@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect } from 'react';
 import { Divider, message, Result, Space, Spin, Typography } from 'antd';
 
+import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { File, TableSchema } from '../types';
 import { DataPreviewTable } from './DataPreviewTable';
 import { useSchema } from './use-schema';
@@ -31,6 +32,7 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
       return (
         <>
           <div className="SchemaLoadStep notebook-step completed">
+            <NotebookNavAnchor step={NotebookNavStep.DataPreview} status="done" />
             <Title level={3}>Successfully imported {schema.value.file.name}</Title>
             <div className="mb-1">
               <Text>Here is what the data looks like:</Text>
@@ -49,6 +51,7 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
     case 'failed':
       return (
         <div className="SchemaLoadStep notebook-step failed">
+          <NotebookNavAnchor step={NotebookNavStep.DataPreview} status="failed" />
           <Result
             status="error"
             title="Schema discovery failed"
@@ -60,6 +63,7 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
     case 'in_progress':
       return (
         <div className="SchemaLoadStep notebook-step loading">
+          <NotebookNavAnchor step={NotebookNavStep.DataPreview} status="loading" />
           <Space direction="vertical">
             <Spin size="large" />
             <Text type="secondary">Loading schema</Text>

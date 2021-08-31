@@ -2,6 +2,7 @@ import React, { FunctionComponent, useCallback, useState } from 'react';
 import { Divider, Typography, Upload } from 'antd';
 import { FileOutlined } from '@ant-design/icons';
 
+import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { File } from '../types';
 
 const { Dragger } = Upload;
@@ -24,6 +25,7 @@ export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children, o
   return (
     <>
       <div className="FileLoadStep notebook-step">
+        <NotebookNavAnchor step={NotebookNavStep.CsvImport} status={file ? 'done' : 'active'} />
         <Title level={3}>Import data to anonymize</Title>
         <Dragger
           accept=".csv"
