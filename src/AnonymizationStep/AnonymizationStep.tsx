@@ -63,7 +63,8 @@ function AnonymizationSummary({ result, loading }: CommonProps) {
 }
 
 async function exportResult(schema: TableSchema, bucketColumns: BucketColumn[]) {
-  const filePath = await window.selectExportFile();
+  const defaultPath = schema.file.path.replace(/\.\w*$/, '') + '_anonymized.csv';
+  const filePath = await window.selectExportFile(defaultPath);
   if (!filePath) return;
 
   message.loading({ content: `Exporting anonymized data to ${filePath}...`, key: filePath, duration: 0 });
