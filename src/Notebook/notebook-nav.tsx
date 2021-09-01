@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useContext, useRef } from 'react';
 import { Steps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
