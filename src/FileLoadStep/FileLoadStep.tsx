@@ -28,7 +28,7 @@ export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children, o
         <NotebookNavAnchor step={NotebookNavStep.CsvImport} status={file ? 'done' : 'active'} />
         <Title level={3}>Import data to anonymize</Title>
         <Dragger
-          accept=".csv"
+          accept=".csv,.tsv,.txt"
           fileList={[]}
           beforeUpload={(file) => {
             // Uploader is mid state update. We push the op to next frame to avoid react warning.
