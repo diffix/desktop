@@ -94,8 +94,9 @@ ipcMain.handle('call_service', (_event, taskId: string, request: string) =>
   }),
 );
 
-ipcMain.handle('select_export_file', async (_event) => {
+ipcMain.handle('select_export_file', async (_event, defaultPath: string) => {
   const options = {
+    defaultPath: defaultPath,
     filters: [
       { name: 'CSV', extensions: ['csv'] },
       { name: 'All Files', extensions: ['*'] },

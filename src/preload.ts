@@ -27,8 +27,8 @@ window.callService = (request: unknown, signal: AbortSignal) =>
     return json ? JSON.parse(json) : null;
   });
 
-window.selectExportFile = () => {
-  return ipcRenderer.invoke('select_export_file');
+window.selectExportFile = (defaultPath: string) => {
+  return ipcRenderer.invoke('select_export_file', defaultPath);
 };
 
 window.hashFile = (fileName: string, signal: AbortSignal) =>
