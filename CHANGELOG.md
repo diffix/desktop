@@ -1,10 +1,11 @@
-### Version 0.1.4
+### Version 0.2.0
 
 - Added UI feedback on data export.
 - Added support for column generalization.
 - Removed anonymized count value in low count rows.
 - Added relative noise column in combined view.
 - Added side navigation in Notebooks.
+- Sets a default path on data export.
 
 ### Version 0.1.3
 
