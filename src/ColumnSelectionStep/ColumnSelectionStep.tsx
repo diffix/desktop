@@ -4,6 +4,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
 import { assign } from 'lodash';
 
+import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { useMemoStable } from '../shared';
 import { BucketColumn, ColumnType, NumericGeneralization, StringGeneralization, TableSchema } from '../types';
 
@@ -140,6 +141,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
   return (
     <>
       <div className="ColumnSelectionStep notebook-step">
+        <NotebookNavAnchor step={NotebookNavStep.ColumnSelection} status={anySelected ? 'done' : 'active'} />
         <Title level={3}>Select columns for anonymization</Title>
         <table className="ColumnSelectionStep-table">
           <thead>

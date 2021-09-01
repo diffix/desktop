@@ -5,3 +5,14 @@
 .Notebook .notebook-step {
   margin: 32px 0;
 }
+
+.Notebook-nav {
+  position: fixed;
+  top: 60px;
+  left: 24px;
+  max-width: 300px;
+}
+
+.Notebook-content {
+  margin-left: 316px;
+}

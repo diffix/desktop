@@ -2,6 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Button, Descriptions, Divider, message, Result, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
+import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { anonymizer, computeAnonymizationStats, formatPercentage, useCachedData } from '../shared';
 import { AnonymizationStats, AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
 import { AnonymizedResultsTable } from './AnonymizedResultsTable';
@@ -34,6 +35,7 @@ function AnonymizationSummary({ result, loading }: CommonProps) {
 
   return (
     <div className="AnonymizationSummary loading notebook-step">
+      <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status={loading ? 'loading' : 'done'} />
       <Title level={3}>Anonymization summary</Title>
       {result.rows.length === MAX_ROWS && (
         <div className="mb-1">
@@ -78,21 +80,34 @@ async function exportResult(schema: TableSchema, bucketColumns: BucketColumn[]) 
 }
 
 function AnonymizationResults({ schema, bucketColumns, result, loading }: CommonProps) {
+  const [exported, setExported] = useState(false);
+  useEffect(() => {
+    setExported(false);
+  }, [bucketColumns]);
+
   return (
     <div className="AnonymizationResults notebook-step">
+      <NotebookNavAnchor step={NotebookNavStep.AnonymizedResults} status={loading ? 'loading' : 'done'} />
       <Title level={3}>Anonymized data</Title>
       <div className="mb-1">
         <Text>Here is what the result looks like:</Text>
         {result.rows.length === MAX_ROWS && <Text type="secondary"> (only the first {MAX_ROWS} rows are shown)</Text>}
       </div>
       <AnonymizedResultsTable loading={loading} result={result} />
+      <NotebookNavAnchor
+        step={NotebookNavStep.CsvExport}
+        status={loading ? 'inactive' : exported ? 'done' : 'active'}
+      />
       <Button
         icon={<DownloadOutlined />}
         className="AnonymizationResults-export-button"
         type="primary"
         size="large"
         disabled={loading || !result.rows.length}
-        onClick={() => exportResult(schema, bucketColumns)}
+        onClick={() => {
+          exportResult(schema, bucketColumns);
+          setExported(true);
+        }}
       >
         Export anonymized data to CSV
       </Button>
@@ -125,6 +140,8 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ b
     case 'failed':
       return (
         <div className="AnonymizationStep notebook-step failed">
+          <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status="failed" />
+          <NotebookNavAnchor step={NotebookNavStep.AnonymizedResults} status="failed" />
           <Result status="error" title="Anonymization failed" subTitle="Something went wrong." />
         </div>
       );
