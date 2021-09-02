@@ -53,8 +53,10 @@ export type BucketColumn =
 // Query results
 
 export type AnonymizationSummary = {
-  totalCount: number;
-  lowCount: number;
+  totalBuckets: number;
+  lowCountBuckets: number;
+  totalRows: number;
+  lowCountRows: number;
   maxDistortion: number;
   avgDistortion: number;
 };

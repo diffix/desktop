@@ -5,8 +5,10 @@ open Thoth.Json.Net
 
 type Summary =
   {
-    TotalCount: int64
-    LowCount: int64
+    TotalBuckets: int64
+    LowCountBuckets: int64
+    TotalRows: int64
+    LowCountRows: int64
     MaxDistortion: float
     AvgDistortion: float
   }

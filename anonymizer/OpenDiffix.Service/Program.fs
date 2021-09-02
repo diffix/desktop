@@ -44,10 +44,10 @@ let handleLoad ({ InputPath = inputPath; Rows = rows }: LoadRequest) =
 
   printfn $"%s{output}"
 
-let computeDistortion realCount noisyCount =
-  match realCount, noisyCount with
-  | Integer realCount, Integer noisyCount -> float (abs (noisyCount - realCount)) / float realCount
-  | _ -> failwith "Unexpected value types received."
+let unwrapCount count =
+  match count with
+  | Integer count -> count
+  | _ -> failwith "Unexpected value type received for count."
 
 let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = buckets } =
   let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
@@ -65,31 +65,39 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = b
 
   let result = runQuery query inputPath anonParams
 
-  let mutable totalCount = 0L
-  let mutable lowCount = 0L
+  let mutable totalBuckets = 0L
+  let mutable lowCountBuckets = 0L
+  let mutable totalRows = 0L
+  let mutable lowCountRows = 0L
   let mutable maxDistortion = 0.0
   let mutable sumDistortion = 0.0
 
   for row in result.Rows do
-    totalCount <- totalCount + 1L
+    let realCount = unwrapCount row.[1]
+    totalBuckets <- totalBuckets + 1L
+    totalRows <- totalRows + realCount
 
     if row.[0] = Boolean true then
-      lowCount <- lowCount + 1L
+      lowCountBuckets <- lowCountBuckets + 1L
+      lowCountRows <- lowCountRows + realCount
     else
-      let distortion = computeDistortion row.[1] row.[2]
+      let noisyCount = unwrapCount row.[2]
+      let distortion = float (abs (noisyCount - realCount)) / float realCount
       maxDistortion <- max maxDistortion distortion
       sumDistortion <- sumDistortion + distortion
 
   let avgDistortion =
-    if totalCount = lowCount then
+    if totalBuckets = lowCountBuckets then
       0.0
     else
-      sumDistortion / float (totalCount - lowCount)
+      sumDistortion / float (totalBuckets - lowCountBuckets)
 
   let summary =
     {
-      TotalCount = totalCount
-      LowCount = lowCount
+      TotalBuckets = totalBuckets
+      LowCountBuckets = lowCountBuckets
+      TotalRows = totalRows
+      LowCountRows = lowCountRows
       MaxDistortion = maxDistortion
       AvgDistortion = avgDistortion
     }
