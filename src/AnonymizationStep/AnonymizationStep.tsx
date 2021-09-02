@@ -32,17 +32,22 @@ function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
     <div className="AnonymizationSummary loading notebook-step">
       <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status={loading ? 'loading' : 'done'} />
       <Title level={3}>Anonymization summary</Title>
-      <Descriptions
-        className="AnonymizationSummary-descriptions"
-        layout="vertical"
-        bordered
-        column={{ sm: 2, md: 4 }}
-      >
+      <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
         <Descriptions.Item label="Anonymous bins">
-          {!loading && summary ? `${summary.totalCount - summary.lowCount} (${formatPercentage(1.0 - summary.lowCount / summary.totalCount)})` : <TextPlaceholder />}
+          {!loading && summary ? (
+            `${summary.totalCount - summary.lowCount} (${formatPercentage(
+              1.0 - summary.lowCount / summary.totalCount,
+            )})`
+          ) : (
+            <TextPlaceholder />
+          )}
         </Descriptions.Item>
         <Descriptions.Item label="Suppressed bins">
-          {!loading && summary ? `${summary.lowCount} (${formatPercentage(summary.lowCount / summary.totalCount)})` : <TextPlaceholder />}
+          {!loading && summary ? (
+            `${summary.lowCount} (${formatPercentage(summary.lowCount / summary.totalCount)})`
+          ) : (
+            <TextPlaceholder />
+          )}
         </Descriptions.Item>
         <Descriptions.Item label="Average distortion">
           {!loading && summary ? formatPercentage(summary.avgDistortion) : <TextPlaceholder />}
