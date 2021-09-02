@@ -1,6 +1,7 @@
 ### Version 0.2.1
 
 - Anonymization summary is computed over the entire output.
+- Show suppression info about input and output rows in anonymization summary.
 
 ### Version 0.2.0
 

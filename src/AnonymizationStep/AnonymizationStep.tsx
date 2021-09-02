@@ -21,7 +21,15 @@ type CommonProps = {
   loading: boolean;
 };
 
-const emptySummary: AnonymizationSummary = { totalCount: 0, lowCount: 0, maxDistortion: 0, avgDistortion: 0 };
+const emptySummary: AnonymizationSummary = {
+  totalBuckets: 0,
+  lowCountBuckets: 0,
+  totalRows: 0,
+  lowCountRows: 0,
+  maxDistortion: 0,
+  avgDistortion: 0,
+};
+
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: emptySummary };
 
 function TextPlaceholder() {
@@ -34,26 +42,28 @@ function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
       <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status={loading ? 'loading' : 'done'} />
       <Title level={3}>Anonymization summary</Title>
       <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
-        <Descriptions.Item label="Anonymous bins">
+        <Descriptions.Item label="Suppressed Count">
           {!loading ? (
-            `${summary.totalCount - summary.lowCount} (${formatPercentage(
-              1.0 - summary.lowCount / summary.totalCount,
+            `${summary.lowCountRows} of ${summary.totalRows} (${formatPercentage(
+              summary.lowCountRows / summary.totalRows,
             )})`
           ) : (
             <TextPlaceholder />
           )}
         </Descriptions.Item>
-        <Descriptions.Item label="Suppressed bins">
+        <Descriptions.Item label="Suppressed Bins">
           {!loading ? (
-            `${summary.lowCount} (${formatPercentage(summary.lowCount / summary.totalCount)})`
+            `${summary.lowCountBuckets} of ${summary.totalBuckets} (${formatPercentage(
+              summary.lowCountBuckets / summary.totalBuckets,
+            )})`
           ) : (
             <TextPlaceholder />
           )}
         </Descriptions.Item>
-        <Descriptions.Item label="Average distortion">
+        <Descriptions.Item label="Average Distortion">
           {!loading ? formatPercentage(summary.avgDistortion) : <TextPlaceholder />}
         </Descriptions.Item>
-        <Descriptions.Item label="Maximum distortion">
+        <Descriptions.Item label="Maximum Distortion">
           {!loading ? formatPercentage(summary.maxDistortion) : <TextPlaceholder />}
         </Descriptions.Item>
       </Descriptions>
