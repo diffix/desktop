@@ -3,8 +3,8 @@ import { Button, Descriptions, Divider, message, Result, Typography } from 'antd
 import { DownloadOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
-import { anonymizer, computeAnonymizationStats, formatPercentage, useCachedData } from '../shared';
-import { AnonymizationStats, AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
+import { anonymizer, formatPercentage, useCachedData } from '../shared';
+import { AnonymizationSummary, AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
 import { AnonymizedResultsTable } from './AnonymizedResultsTable';
 import { useQuery } from './use-query';
 
@@ -21,41 +21,40 @@ type CommonProps = {
   loading: boolean;
 };
 
-const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [] };
+const emptySummary: AnonymizationSummary = { totalCount: 0, lowCount: 0, maxDistortion: 0, avgDistortion: 0 };
+const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: emptySummary };
 
 function TextPlaceholder() {
   return <span className="TextPlaceholder" />;
 }
 
-function AnonymizationSummary({ result, loading }: CommonProps) {
-  const [stats, setStats] = useState<AnonymizationStats | null>(null);
-  useEffect(() => {
-    setStats(computeAnonymizationStats(result));
-  }, [result]);
-
+function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
   return (
     <div className="AnonymizationSummary loading notebook-step">
       <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status={loading ? 'loading' : 'done'} />
       <Title level={3}>Anonymization summary</Title>
-      {result.rows.length === MAX_ROWS && (
-        <div className="mb-1">
-          <Text type="secondary">Values are estimated based on the first {MAX_ROWS} rows.</Text>
-        </div>
-      )}
-      <Descriptions
-        className="AnonymizationSummary-descriptions"
-        layout="vertical"
-        bordered
-        column={{ xs: 1, sm: 2, md: 3 }}
-      >
-        <Descriptions.Item label="Row suppression">
-          {!loading && stats ? formatPercentage(stats.bucketSuppression) : <TextPlaceholder />}
+      <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
+        <Descriptions.Item label="Anonymous bins">
+          {!loading ? (
+            `${summary.totalCount - summary.lowCount} (${formatPercentage(
+              1.0 - summary.lowCount / summary.totalCount,
+            )})`
+          ) : (
+            <TextPlaceholder />
+          )}
+        </Descriptions.Item>
+        <Descriptions.Item label="Suppressed bins">
+          {!loading ? (
+            `${summary.lowCount} (${formatPercentage(summary.lowCount / summary.totalCount)})`
+          ) : (
+            <TextPlaceholder />
+          )}
         </Descriptions.Item>
         <Descriptions.Item label="Average distortion">
-          {!loading && stats ? formatPercentage(stats.averageDistortion) : <TextPlaceholder />}
+          {!loading ? formatPercentage(summary.avgDistortion) : <TextPlaceholder />}
         </Descriptions.Item>
         <Descriptions.Item label="Maximum distortion">
-          {!loading && stats ? formatPercentage(stats.maximumDistortion) : <TextPlaceholder />}
+          {!loading ? formatPercentage(summary.maxDistortion) : <TextPlaceholder />}
         </Descriptions.Item>
       </Descriptions>
     </div>

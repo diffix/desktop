@@ -52,10 +52,24 @@ export type BucketColumn =
 
 // Query results
 
-export type QueryResult = {
+export type AnonymizationSummary = {
+  totalCount: number;
+  lowCount: number;
+  maxDistortion: number;
+  avgDistortion: number;
+};
+
+export type LoadResponse = {
   columns: ResultColumn[];
   rows: ResultRow[];
 };
+
+export type PreviewResponse = {
+  summary: AnonymizationSummary;
+  rows: ResultRow[];
+};
+
+export type Response = LoadResponse | PreviewResponse;
 
 export type ResultColumn = {
   name: string;
@@ -71,6 +85,7 @@ export type Value = boolean | number | string | null;
 export type AnonymizedQueryResult = {
   columns: AnonymizedResultColumn[];
   rows: AnonymizedResultRow[];
+  summary: AnonymizationSummary;
 };
 
 export type AnonymizedResultColumn = {
@@ -89,14 +104,6 @@ export type AnonymizedAggregate = {
   anonValue: number | null;
 };
 
-// Anonymization stats
-
-export type AnonymizationStats = {
-  bucketSuppression: number;
-  averageDistortion: number;
-  maximumDistortion: number;
-};
-
 // API
 
 export type Anonymizer = {
@@ -113,7 +120,7 @@ export type Task<T> = {
 export {};
 declare global {
   interface Window {
-    callService(request: unknown, signal: AbortSignal): Promise<QueryResult>;
+    callService(request: unknown, signal: AbortSignal): Promise<Response>;
     selectExportFile(defaultPath: string): Promise<string | null>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;
   }

@@ -1,7 +1,5 @@
 import { createContext, useContext } from 'react';
 import {
-  AnonymizationStats,
-  AnonymizedAggregate,
   AnonymizedQueryResult,
   AnonymizedResultColumn,
   AnonymizedResultRow,
@@ -9,7 +7,9 @@ import {
   BucketColumn,
   ColumnType,
   File,
+  LoadResponse,
   NumericGeneralization,
+  PreviewResponse,
   StringGeneralization,
   TableSchema,
   Task,
@@ -57,7 +57,7 @@ class DiffixAnonymizer implements Anonymizer {
     return `substring(${columnName}, ${substringStart}, ${substringLength})`;
   };
 
-  private makeColumnSQL = (column: BucketColumn) => {
+  private mapBucketToSQL = (column: BucketColumn) => {
     const columnName = `"${column.name}"`;
 
     switch (column.type) {
@@ -75,15 +75,15 @@ class DiffixAnonymizer implements Anonymizer {
     }
   };
 
-  private makeBucketsSQL = (bucketColumns: BucketColumn[]) => {
-    return bucketColumns.map((column) => this.makeColumnSQL(column)).join(', ');
+  private mapBucketsToSQL = (bucketColumns: BucketColumn[]) => {
+    return bucketColumns.map((column) => this.mapBucketToSQL(column));
   };
 
   loadSchema(file: File): Task<TableSchema> {
     return runTask(async (signal) => {
       const request = { type: 'Load', inputPath: file.path, rows: 10000 };
       const saltPromise = window.hashFile(file.path, signal);
-      const result = await window.callService(request, signal);
+      const result = (await window.callService(request, signal)) as LoadResponse;
 
       // Drop row index column from schema.
       const columns = result.columns.slice(1);
@@ -99,26 +99,14 @@ class DiffixAnonymizer implements Anonymizer {
 
   anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult> {
     return runTask(async (signal) => {
-      if (bucketColumns.length === 0) return { columns: [], rows: [] };
-
-      const statement = `
-        SELECT
-          diffix_low_count(RowIndex),
-          count(*),
-          diffix_count(RowIndex),
-          ${this.makeBucketsSQL(bucketColumns)}
-        FROM table
-        GROUP BY ${bucketColumns.map((_, index) => 4 + index).join(', ')}
-        LIMIT 1000
-      `;
       const request = {
         type: 'Preview',
         inputPath: schema.file.path,
         salt: schema.salt,
-        query: statement,
+        buckets: this.mapBucketsToSQL(bucketColumns),
         rows: 1000,
       };
-      const result = await window.callService(request, signal);
+      const result = (await window.callService(request, signal)) as PreviewResponse;
 
       const rows: AnonymizedResultRow[] = result.rows.map((row) => {
         const lowCount = row[0] as boolean;
@@ -128,63 +116,24 @@ class DiffixAnonymizer implements Anonymizer {
         };
       });
       const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];
+      const summary = result.summary;
 
-      return { columns, rows };
+      return { columns, rows, summary };
     });
   }
 
   export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Task<void> {
     return runTask(async (signal) => {
-      const statement = `
-        SELECT
-          ${this.makeBucketsSQL(bucketColumns)},
-          diffix_count(RowIndex) AS count
-        FROM table
-        GROUP BY ${bucketColumns.map((_, index) => 1 + index).join(', ')}
-        HAVING NOT diffix_low_count(RowIndex)
-      `;
       const request = {
         type: 'Export',
         inputPath: schema.file.path,
         salt: schema.salt,
-        query: statement,
+        buckets: this.mapBucketsToSQL(bucketColumns),
         outputPath: outFileName,
       };
       await window.callService(request, signal);
     });
   }
-}
-
-export function computeAnonymizationStats(result: AnonymizedQueryResult): AnonymizationStats {
-  const totalBuckets = result.rows.length;
-  let suppressedBuckets = 0;
-  let averageDistortion = 0;
-  let maximumDistortion = 0;
-
-  for (let i = 0; i < totalBuckets; i++) {
-    const row = result.rows[i];
-    if (row.lowCount) {
-      suppressedBuckets++;
-      continue;
-    }
-
-    const count = row.values[row.values.length - 1] as AnonymizedAggregate;
-    const distortion = Math.abs(count.realValue - (count.anonValue || 0)) / count.realValue;
-    maximumDistortion = Math.max(distortion, maximumDistortion);
-    averageDistortion += distortion;
-  }
-
-  const anonymizedBuckets = totalBuckets - suppressedBuckets;
-
-  if (anonymizedBuckets > 0) {
-    averageDistortion /= anonymizedBuckets;
-  }
-
-  return {
-    bucketSuppression: totalBuckets > 0 ? suppressedBuckets / totalBuckets : 0,
-    averageDistortion,
-    maximumDistortion,
-  };
 }
 
 export const anonymizer = new DiffixAnonymizer();

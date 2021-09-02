@@ -3,7 +3,30 @@ module JsonEncodersDecoders
 open OpenDiffix.Core
 open Thoth.Json.Net
 
-let rec encodeValue =
+type Summary =
+  {
+    TotalCount: int64
+    LowCount: int64
+    MaxDistortion: float
+    AvgDistortion: float
+  }
+
+type LoadResponse = QueryEngine.QueryResult
+
+type PreviewResponse = { Summary: Summary; Rows: Row list }
+
+type LoadRequest = { InputPath: string; Rows: int }
+
+type PreviewRequest = { InputPath: string; Rows: int; Salt: string; Buckets: string [] }
+
+type ExportRequest = { InputPath: string; Salt: string; Buckets: string []; OutputPath: string }
+
+type Request =
+  | Load of LoadRequest
+  | Preview of PreviewRequest
+  | Export of ExportRequest
+
+let rec private encodeValue =
   function
   | Null -> Encode.nil
   | Boolean bool -> Encode.bool bool
@@ -12,7 +35,7 @@ let rec encodeValue =
   | String string -> Encode.string string
   | List values -> Encode.list (values |> List.map encodeValue)
 
-let rec typeName =
+let rec private typeName =
   function
   | BooleanType -> "boolean"
   | IntegerType -> "integer"
@@ -21,35 +44,25 @@ let rec typeName =
   | ListType itemType -> typeName itemType + "[]"
   | UnknownType _ -> "unknown"
 
-let encodeRow values =
-  Encode.list (values |> Array.toList |> List.map encodeValue)
+let private encodeType = typeName >> Encode.string
 
-let encodeColumn (column: Column) =
-  Encode.object [ "name", Encode.string column.Name; "type", column.Type |> typeName |> Encode.string ]
+let private generateDecoder<'T> = Decode.Auto.generateDecoder<'T> CamelCase
 
-let encodeQueryResult (queryResult: QueryEngine.QueryResult) =
-  Encode.object [
-    "columns", Encode.list (queryResult.Columns |> List.map encodeColumn)
-    "rows", Encode.list (queryResult.Rows |> List.map encodeRow)
-  ]
+let private extraEncoders =
+  Extra.empty
+  |> Extra.withInt64
+  |> Extra.withCustom encodeType generateDecoder<ExpressionType>
+  |> Extra.withCustom encodeValue generateDecoder<Value>
 
-type Load = { InputPath: string; Rows: int }
+let private decodeType request =
+  Decode.Auto.unsafeFromString (request, caseStrategy = CamelCase)
 
-type Preview = { InputPath: string; Rows: int; Salt: string; Query: string }
-
-type Export = { InputPath: string; Salt: string; Query: string; OutputPath: string }
-
-type Request =
-  | Load of Load
-  | Preview of Preview
-  | Export of Export
-
-let decodeType<'T> request =
-  Decode.Auto.unsafeFromString<'T> (request, caseStrategy = CamelCase)
+let encodeResponse response =
+  Encode.Auto.toString (2, response, caseStrategy = CamelCase, extra = extraEncoders)
 
 let decodeRequest request =
   match Decode.unsafeFromString (Decode.field "type" Decode.string) request with
-  | "Load" -> Load(decodeType<Load> request)
-  | "Preview" -> Preview(decodeType<Preview> request)
-  | "Export" -> Export(decodeType<Export> request)
+  | "Load" -> Load(decodeType request)
+  | "Preview" -> Preview(decodeType request)
+  | "Export" -> Export(decodeType request)
   | unknownType -> failwith $"Unknown request type: %s{unknownType}"

@@ -1,3 +1,7 @@
+### Version 0.2.1
+
+- Anonymization summary is computed over the entire output.
+
 ### Version 0.2.0
 
 - Added UI feedback on data export.
