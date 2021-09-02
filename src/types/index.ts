@@ -52,7 +52,7 @@ export type BucketColumn =
 
 // Query results
 
-export type Summary = {
+export type AnonymizationSummary = {
   totalCount: number;
   lowCount: number;
   maxDistortion: number;
@@ -65,7 +65,7 @@ export type LoadResponse = {
 };
 
 export type PreviewResponse = {
-  summary: Summary;
+  summary: AnonymizationSummary;
   rows: ResultRow[];
 };
 
@@ -85,7 +85,7 @@ export type Value = boolean | number | string | null;
 export type AnonymizedQueryResult = {
   columns: AnonymizedResultColumn[];
   rows: AnonymizedResultRow[];
-  summary: Summary | null;
+  summary: AnonymizationSummary;
 };
 
 export type AnonymizedResultColumn = {

@@ -4,7 +4,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { anonymizer, formatPercentage, useCachedData } from '../shared';
-import { AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
+import { AnonymizationSummary, AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
 import { AnonymizedResultsTable } from './AnonymizedResultsTable';
 import { useQuery } from './use-query';
 
@@ -21,7 +21,8 @@ type CommonProps = {
   loading: boolean;
 };
 
-const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: null };
+const emptySummary: AnonymizationSummary = { totalCount: 0, lowCount: 0, maxDistortion: 0, avgDistortion: 0 };
+const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: emptySummary };
 
 function TextPlaceholder() {
   return <span className="TextPlaceholder" />;
@@ -34,7 +35,7 @@ function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
       <Title level={3}>Anonymization summary</Title>
       <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
         <Descriptions.Item label="Anonymous bins">
-          {!loading && summary ? (
+          {!loading ? (
             `${summary.totalCount - summary.lowCount} (${formatPercentage(
               1.0 - summary.lowCount / summary.totalCount,
             )})`
@@ -43,17 +44,17 @@ function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
           )}
         </Descriptions.Item>
         <Descriptions.Item label="Suppressed bins">
-          {!loading && summary ? (
+          {!loading ? (
             `${summary.lowCount} (${formatPercentage(summary.lowCount / summary.totalCount)})`
           ) : (
             <TextPlaceholder />
           )}
         </Descriptions.Item>
         <Descriptions.Item label="Average distortion">
-          {!loading && summary ? formatPercentage(summary.avgDistortion) : <TextPlaceholder />}
+          {!loading ? formatPercentage(summary.avgDistortion) : <TextPlaceholder />}
         </Descriptions.Item>
         <Descriptions.Item label="Maximum distortion">
-          {!loading && summary ? formatPercentage(summary.maxDistortion) : <TextPlaceholder />}
+          {!loading ? formatPercentage(summary.maxDistortion) : <TextPlaceholder />}
         </Descriptions.Item>
       </Descriptions>
     </div>
