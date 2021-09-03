@@ -69,8 +69,8 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = b
   let mutable lowCountBuckets = 0L
   let mutable totalRows = 0L
   let mutable lowCountRows = 0L
-  let mutable maxDistortion = 0.0
-  let mutable sumDistortion = 0.0
+
+  let distortions = Array.create result.Rows.Length 0.0
 
   for row in result.Rows do
     let realCount = unwrapCount row.[1]
@@ -83,14 +83,12 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = b
     else
       let noisyCount = unwrapCount row.[2]
       let distortion = float (abs (noisyCount - realCount)) / float realCount
-      maxDistortion <- max maxDistortion distortion
-      sumDistortion <- sumDistortion + distortion
+      let anonBucket = int (totalBuckets - lowCountBuckets) - 1
+      distortions.[anonBucket] <- distortion
 
-  let avgDistortion =
-    if totalBuckets = lowCountBuckets then
-      0.0
-    else
-      sumDistortion / float (totalBuckets - lowCountBuckets)
+  let anonBuckets = int (totalBuckets - lowCountBuckets)
+  let distortions = if anonBuckets = 0 then [| 0.0 |] else Array.truncate anonBuckets distortions
+  Array.sortInPlace distortions
 
   let summary =
     {
@@ -98,8 +96,8 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = b
       LowCountBuckets = lowCountBuckets
       TotalRows = totalRows
       LowCountRows = lowCountRows
-      MaxDistortion = maxDistortion
-      AvgDistortion = avgDistortion
+      MaxDistortion = Array.last distortions
+      MedianDistortion = distortions.[anonBuckets / 2]
     }
 
   let output = encodeResponse { Summary = summary; Rows = List.truncate rows result.Rows }

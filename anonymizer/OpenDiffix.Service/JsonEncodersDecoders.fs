@@ -10,7 +10,7 @@ type Summary =
     TotalRows: int64
     LowCountRows: int64
     MaxDistortion: float
-    AvgDistortion: float
+    MedianDistortion: float
   }
 
 type LoadResponse = QueryEngine.QueryResult

@@ -27,7 +27,7 @@ const emptySummary: AnonymizationSummary = {
   totalRows: 0,
   lowCountRows: 0,
   maxDistortion: 0,
-  avgDistortion: 0,
+  medianDistortion: 0,
 };
 
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: emptySummary };
@@ -60,8 +60,8 @@ function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
             <TextPlaceholder />
           )}
         </Descriptions.Item>
-        <Descriptions.Item label="Average Distortion">
-          {!loading ? formatPercentage(summary.avgDistortion) : <TextPlaceholder />}
+        <Descriptions.Item label="Median Distortion">
+          {!loading ? formatPercentage(summary.medianDistortion) : <TextPlaceholder />}
         </Descriptions.Item>
         <Descriptions.Item label="Maximum Distortion">
           {!loading ? formatPercentage(summary.maxDistortion) : <TextPlaceholder />}
