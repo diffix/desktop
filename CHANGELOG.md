@@ -4,6 +4,8 @@
 - Show suppression info about input and output rows in anonymization summary.
 - Replace average distortion with median distortion in anonymization summary.
 - Substring indexes are now 1-based.
+- Fixed substring crashes.
+- Fixed handling of real columns when system has a non-English locale.
 
 ### Version 0.2.0
 
