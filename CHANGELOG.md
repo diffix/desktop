@@ -2,6 +2,7 @@
 
 - Anonymization summary is computed over the entire output.
 - Show suppression info about input and output rows in anonymization summary.
+- Replace average distortion with median distortion in anonymization summary.
 
 ### Version 0.2.0
 
