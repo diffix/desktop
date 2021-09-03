@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useCallback } from 'react';
 import { Form, Button, Divider, InputNumber, Switch, Typography } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
@@ -39,7 +39,7 @@ function getNumericGeneralization({ binSize }: ColumnState): NumericGeneralizati
 
 function getStringGeneralization({ substringStart, substringLength }: ColumnState): StringGeneralization | null {
   if (typeof substringLength !== 'number') return null;
-  return { substringStart: substringStart || 0, substringLength };
+  return { substringStart: substringStart || 1, substringLength };
 }
 
 function anyNonNull(...values: unknown[]) {
@@ -80,7 +80,8 @@ function GeneralizationControls({
             <span key={column.resetCount}>
               <InputNumber
                 size="small"
-                min={0}
+                placeholder="1"
+                min={1}
                 value={column.substringStart as number}
                 onChange={(substringStart) => updateColumn({ substringStart })}
               />

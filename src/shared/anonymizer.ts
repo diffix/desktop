@@ -54,7 +54,7 @@ class DiffixAnonymizer implements Anonymizer {
   };
 
   private makeSubstringSQL = (columnName: string, { substringStart, substringLength }: StringGeneralization) => {
-    return `substring(${columnName}, ${substringStart}, ${substringLength})`;
+    return `substring(${columnName}, ${substringStart - 1}, ${substringLength})`;
   };
 
   private mapBucketToSQL = (column: BucketColumn) => {
