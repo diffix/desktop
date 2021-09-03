@@ -58,7 +58,7 @@ export type AnonymizationSummary = {
   totalRows: number;
   lowCountRows: number;
   maxDistortion: number;
-  avgDistortion: number;
+  medianDistortion: number;
 };
 
 export type LoadResponse = {
