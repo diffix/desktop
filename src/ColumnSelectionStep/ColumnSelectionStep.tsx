@@ -53,12 +53,6 @@ function GeneralizationControls({
   column: ColumnState;
   updateColumn: (values: Partial<ColumnState>) => void;
 }) {
-  const substringStartRef = useCallback((element: HTMLInputElement | null) => {
-    if (element) {
-      element.placeholder = '1';
-    }
-  }, []);
-
   switch (column.type) {
     case 'integer':
     case 'real': {
@@ -85,8 +79,8 @@ function GeneralizationControls({
           <Form.Item label="Substring start" name="substringStart">
             <span key={column.resetCount}>
               <InputNumber
-                ref={substringStartRef}
                 size="small"
+                placeholder="1"
                 min={1}
                 value={column.substringStart as number}
                 onChange={(substringStart) => updateColumn({ substringStart })}
