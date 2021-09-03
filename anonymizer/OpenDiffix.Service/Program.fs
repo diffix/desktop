@@ -84,7 +84,7 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = b
       let noisyCount = unwrapCount row.[2]
       let distortion = float (abs (noisyCount - realCount)) / float realCount
       let anonBucket = int (totalBuckets - lowCountBuckets) - 1
-      Array.set distortions anonBucket distortion
+      distortions.[anonBucket] <- distortion
 
   let anonBuckets = int (totalBuckets - lowCountBuckets)
   let distortions = if anonBuckets = 0 then [| 0.0 |] else Array.truncate anonBuckets distortions
