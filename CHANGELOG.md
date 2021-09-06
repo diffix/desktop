@@ -1,6 +1,7 @@
 ### Version 0.2.2
 
 - Increased noise SD to 1.0.
+- Updated appearance of anonymized results table.
 
 ### Version 0.2.1
 
