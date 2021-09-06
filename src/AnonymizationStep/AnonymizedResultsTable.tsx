@@ -63,7 +63,7 @@ const mapColumn = (mode: DisplayMode) => (column: AnonymizedResultColumn, i: num
         return [
           makeColumnData(column.name + ' (anonymized)', i + '_anon', AGG_COLUMN_TYPE, renderLowCountValue),
           makeColumnData(column.name + ' (original)', i + '_real', AGG_COLUMN_TYPE),
-          makeColumnData(column.name + ' noise', i + '_diff', 'real', renderRelativeNoiseValue),
+          makeColumnData('Distortion', i + '_diff', 'real', renderRelativeNoiseValue),
         ];
     }
   }
