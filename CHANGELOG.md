@@ -1,3 +1,7 @@
+### Version 0.2.2
+
+- Increased noise SD to 1.0.
+
 ### Version 0.2.1
 
 - Anonymization summary is computed over the entire output.
