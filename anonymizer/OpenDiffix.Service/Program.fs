@@ -65,28 +65,28 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = b
 
   let result = runQuery query inputPath anonParams
 
-  let mutable totalBuckets = 0L
-  let mutable lowCountBuckets = 0L
-  let mutable totalRows = 0L
-  let mutable lowCountRows = 0L
+  let mutable totalBuckets = 0
+  let mutable lowCountBuckets = 0
+  let mutable totalRows = 0
+  let mutable lowCountRows = 0
 
   let distortions = Array.create result.Rows.Length 0.0
 
   for row in result.Rows do
-    let realCount = unwrapCount row.[1]
-    totalBuckets <- totalBuckets + 1L
+    let realCount = int (unwrapCount row.[1])
+    totalBuckets <- totalBuckets + 1
     totalRows <- totalRows + realCount
 
     if row.[0] = Boolean true then
-      lowCountBuckets <- lowCountBuckets + 1L
+      lowCountBuckets <- lowCountBuckets + 1
       lowCountRows <- lowCountRows + realCount
     else
-      let noisyCount = unwrapCount row.[2]
+      let noisyCount = int (unwrapCount row.[2])
       let distortion = float (abs (noisyCount - realCount)) / float realCount
-      let anonBucket = int (totalBuckets - lowCountBuckets) - 1
+      let anonBucket = totalBuckets - lowCountBuckets - 1
       distortions.[anonBucket] <- distortion
 
-  let anonBuckets = int (totalBuckets - lowCountBuckets)
+  let anonBuckets = totalBuckets - lowCountBuckets
   let distortions = if anonBuckets = 0 then [| 0.0 |] else Array.truncate anonBuckets distortions
   Array.sortInPlace distortions
 

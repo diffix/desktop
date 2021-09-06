@@ -5,10 +5,10 @@ open Thoth.Json.Net
 
 type Summary =
   {
-    TotalBuckets: int64
-    LowCountBuckets: int64
-    TotalRows: int64
-    LowCountRows: int64
+    TotalBuckets: int
+    LowCountBuckets: int
+    TotalRows: int
+    LowCountRows: int
     MaxDistortion: float
     MedianDistortion: float
   }
@@ -32,7 +32,7 @@ let rec private encodeValue =
   function
   | Null -> Encode.nil
   | Boolean bool -> Encode.bool bool
-  | Integer int64 -> Encode.int64 int64
+  | Integer int64 -> Encode.float (float int64)
   | Real float -> Encode.float float
   | String string -> Encode.string string
   | List values -> Encode.list (values |> List.map encodeValue)
@@ -52,7 +52,6 @@ let private generateDecoder<'T> = Decode.Auto.generateDecoder<'T> CamelCase
 
 let private extraEncoders =
   Extra.empty
-  |> Extra.withInt64
   |> Extra.withCustom encodeType generateDecoder<ExpressionType>
   |> Extra.withCustom encodeValue generateDecoder<Value>
 
