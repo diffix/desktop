@@ -1,0 +1,44 @@
+name: cd
+on:
+  push:
+    branches:
+      - master
+      - deploy
+
+jobs:
+  cd:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            build-target: linux
+          - os: windows-latest
+            build-target: win
+          - os: macos-latest
+            build-target: osx
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: ${{ secrets.ACCESS_TOKEN }}
+      - uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+      - name: Install dependencies
+        run: npm install
+      - name: Build reference CLI
+        run: npm run build-${{ matrix.build-target }}
+      - name: Make
+        run: npm run make
+      - name: Upload ${{ matrix.build-target }} build
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.build-target }}
+          path: out/make
+          retention-days: 7
