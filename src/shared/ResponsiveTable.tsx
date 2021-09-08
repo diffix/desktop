@@ -7,7 +7,7 @@ import './ResponsiveTable.css';
 const AntTable = React.memo(Table) as unknown as typeof Table;
 
 const MIN_COL_WIDTH = 150;
-const MAX_COL_WIDTH = 300;
+const MAX_COL_WIDTH = 250;
 
 function isFixedLayout(width: number, columnCount: number) {
   if (isNaN(width)) return false;
@@ -41,7 +41,7 @@ export function ResponsiveTable<T extends AnyRecord = AnyRecord>(props: Responsi
   return (
     <div className="ResponsiveTable" ref={ref}>
       <div style={{ maxWidth: maxWidth(columnCount) }}>
-        <AntTable bordered {...props} {...layoutProps} />
+        <AntTable size="middle" bordered {...props} {...layoutProps} />
       </div>
     </div>
   );

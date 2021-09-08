@@ -1,3 +1,7 @@
+### Version 0.2.3
+
+- Made data tables more compact.
+
 ### Version 0.2.2
 
 - Increased noise SD to 1.0.
