@@ -67,7 +67,7 @@ async function runTask<T>(taskId: string, runner: (signal: AbortSignal) => Promi
     return await runner(abortController.signal);
   } finally {
     const taskTime = Math.round(performance.now() - startTimestamp);
-    console.info(`Task ${taskId} took ${taskTime} ms.`);
+    console.debug(`Task ${taskId} took ${taskTime} ms.`);
 
     activeTasks.delete(taskId);
   }
