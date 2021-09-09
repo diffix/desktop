@@ -61,27 +61,32 @@ async function runTask<T>(taskId: string, runner: (signal: AbortSignal) => Promi
 
   const abortController = new AbortController();
   activeTasks.set(taskId, abortController);
+
+  const startTimestamp = performance.now();
   try {
     return await runner(abortController.signal);
   } finally {
+    const taskTime = Math.round(performance.now() - startTimestamp);
+    console.debug(`Task ${taskId} took ${taskTime} ms.`);
+
     activeTasks.delete(taskId);
   }
 }
 
 ipcMain.on('cancel_task', async (_event, taskId: string) => {
-  console.log(`Cancelling task ${taskId}.`);
+  console.info(`Cancelling task ${taskId}.`);
   const controller = activeTasks.get(taskId);
   if (controller) {
     controller.abort();
     activeTasks.delete(taskId);
   } else {
-    console.log(`Task ${taskId} not found.`);
+    console.info(`Task ${taskId} not found.`);
   }
 });
 
 ipcMain.handle('call_service', (_event, taskId: string, request: string) =>
   runTask(taskId, async (signal) => {
-    console.log(`(${taskId}) Calling service: ${request}`);
+    console.info(`(${taskId}) Calling service: ${request}.`);
 
     const promise = asyncExecFile(diffixPath, null, { maxBuffer: 100 * 1024 * 1024, windowsHide: true, signal });
 
@@ -109,7 +114,7 @@ ipcMain.handle('select_export_file', async (_event, defaultPath: string) => {
 
 ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
   runTask(taskId, async (signal) => {
-    console.log(`(${taskId}) Hashing file ${fileName}`);
+    console.info(`(${taskId}) Hashing file ${fileName}.`);
 
     const fileStream = stream.addAbortSignal(signal, fs.createReadStream(fileName));
     const hash = crypto.createHash('sha256');
