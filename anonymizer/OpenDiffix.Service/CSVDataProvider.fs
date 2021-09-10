@@ -41,16 +41,22 @@ type DataProvider(dbPath: string) =
         }
       ]
 
-    member this.OpenTable(table) =
+    member this.OpenTable(table, columnIndices) =
       assert (table.Name = "table")
 
       seq<Row> {
-        let mutable index = 0L
+        let mutable rowIndex = 0L
 
         while csv.Read() do
-          index <- index + 1L
+          rowIndex <- rowIndex + 1L
 
-          yield
-            Array.init csv.HeaderRecord.Length (csv.GetField >> String)
-            |> Array.append [| Integer index |]
+          let row = Array.create (csv.HeaderRecord.Length + 1) Null
+
+          for index in columnIndices do
+            if index = 0 then
+              row.[0] <- Integer rowIndex
+            else
+              row.[index] <- csv.GetField(index - 1) |> String
+
+          yield row
       }
