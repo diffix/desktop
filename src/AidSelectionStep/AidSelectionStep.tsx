@@ -5,30 +5,30 @@ import { WarningTwoTone } from '@ant-design/icons';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { TableSchema } from '../types';
 
-import './AIDSelectStep.css';
+import './AidSelectionStep.css';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-type AIDSelectProps = {
+type AidSelectionProps = {
   schema: TableSchema;
-  children: (data: AIDSelectStepData) => React.ReactNode;
+  children: (data: AidSelectionStepData) => React.ReactNode;
 };
 
-export type AIDSelectStepData = {
+export type AidSelectionStepData = {
   aidColumn: string;
 };
 
-export const AIDSelectStep: FunctionComponent<AIDSelectProps> = ({ schema, children }) => {
+export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema, children }) => {
   const [aidColumn, setAidColumn] = useState('');
   return (
     <>
-      <div className="AIDSelectStep notebook-step">
-        <NotebookNavAnchor step={NotebookNavStep.AIDSelect} status={aidColumn ? 'done' : 'active'} />
+      <div className="AidSelectionStep notebook-step">
+        <NotebookNavAnchor step={NotebookNavStep.AidSelection} status={aidColumn ? 'done' : 'active'} />
         <Title level={3}>Select the entity identifier column</Title>
         <div className="mb-1">
           <Select
-            className="AIDSelectStep-select"
+            className="AidSelectionStep-select"
             showSearch
             placeholder="Select a column or 'None'"
             optionFilterProp="children"
@@ -55,7 +55,7 @@ export const AIDSelectStep: FunctionComponent<AIDSelectProps> = ({ schema, child
           </Space>
         )}
       </div>
-      <div className="AIDSelectStep-reserved-space">
+      <div className="AidSelectionStep-reserved-space">
         {/* Render next step */}
         {aidColumn && (
           <>

@@ -4,7 +4,7 @@ import { FileLoadStep } from '../FileLoadStep';
 import { SchemaLoadStep } from '../SchemaLoadStep';
 import { ColumnSelectionStep } from '../ColumnSelectionStep';
 import { AnonymizationStep } from '../AnonymizationStep';
-import { AIDSelectStep } from '../AIDSelectStep';
+import { AidSelectionStep } from '../AidSelectionStep';
 import { NotebookNavProvider, NotebookNav } from './notebook-nav';
 
 import './Notebook.css';
@@ -25,7 +25,7 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ onTitleChange }) =>
             {({ file }) => (
               <SchemaLoadStep file={file}>
                 {({ schema }) => (
-                  <AIDSelectStep schema={schema}>
+                  <AidSelectionStep schema={schema}>
                     {({ aidColumn }) => (
                       <ColumnSelectionStep schema={schema} aidColumn={aidColumn}>
                         {({ bucketColumns }) => (
@@ -33,7 +33,7 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ onTitleChange }) =>
                         )}
                       </ColumnSelectionStep>
                     )}
-                  </AIDSelectStep>
+                  </AidSelectionStep>
                 )}
               </SchemaLoadStep>
             )}
