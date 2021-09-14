@@ -122,7 +122,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
   const bucketColumns = useMemoStable<BucketColumn[]>(
     () =>
       columns
-        .filter((c) => c.name != aidColumn)
+        .filter((c) => c.name !== aidColumn)
         .filter((c) => c.selected)
         .map((c) => {
           const { name, type } = c;
@@ -161,7 +161,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                 setColumns((draft) => void assign(draft[index], values));
 
               return (
-                column.name != aidColumn && (
+                column.name !== aidColumn && (
                   <tr key={index}>
                     <td className="ColumnSelectionStep-td-name" title={`Type: ${column.type}`}>
                       {column.name}
