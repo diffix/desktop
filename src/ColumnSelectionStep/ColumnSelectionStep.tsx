@@ -157,45 +157,43 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
           </thead>
           <tbody>
             {columns.map((column, index) => {
+              if (column.name === aidColumn) return;
               const updateColumn = (values: Partial<ColumnState>) =>
                 setColumns((draft) => void assign(draft[index], values));
-
               return (
-                column.name !== aidColumn && (
-                  <tr key={index}>
-                    <td className="ColumnSelectionStep-td-name" title={`Type: ${column.type}`}>
-                      {column.name}
-                    </td>
-                    <td className="ColumnSelectionStep-td-switch">
-                      <Switch
-                        size="small"
-                        checked={column.selected}
-                        onChange={(selected) => updateColumn({ selected })}
-                      />
-                    </td>
-                    <td className="ColumnSelectionStep-td-generalization">
-                      {column.selected && <GeneralizationControls column={column} updateColumn={updateColumn} />}
-                    </td>
-                    <td className="ColumnSelectionStep-td-clear-generalization">
-                      {column.selected && anyNonNull(column.binSize, column.substringStart, column.substringLength) && (
-                        <Button
-                          type="text"
-                          shape="circle"
-                          icon={<CloseCircleOutlined />}
-                          title="Clear values"
-                          onClick={() => {
-                            updateColumn({
-                              binSize: null,
-                              substringStart: null,
-                              substringLength: null,
-                              resetCount: column.resetCount + 1,
-                            });
-                          }}
-                        ></Button>
-                      )}
-                    </td>
-                  </tr>
-                )
+                <tr key={index}>
+                  <td className="ColumnSelectionStep-td-name" title={`Type: ${column.type}`}>
+                    {column.name}
+                  </td>
+                  <td className="ColumnSelectionStep-td-switch">
+                    <Switch
+                      size="small"
+                      checked={column.selected}
+                      onChange={(selected) => updateColumn({ selected })}
+                    />
+                  </td>
+                  <td className="ColumnSelectionStep-td-generalization">
+                    {column.selected && <GeneralizationControls column={column} updateColumn={updateColumn} />}
+                  </td>
+                  <td className="ColumnSelectionStep-td-clear-generalization">
+                    {column.selected && anyNonNull(column.binSize, column.substringStart, column.substringLength) && (
+                      <Button
+                        type="text"
+                        shape="circle"
+                        icon={<CloseCircleOutlined />}
+                        title="Clear values"
+                        onClick={() => {
+                          updateColumn({
+                            binSize: null,
+                            substringStart: null,
+                            substringLength: null,
+                            resetCount: column.resetCount + 1,
+                          });
+                        }}
+                      ></Button>
+                    )}
+                  </td>
+                </tr>
               );
             })}
           </tbody>
