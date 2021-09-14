@@ -110,8 +110,8 @@ export type AnonymizedAggregate = {
 
 export type Anonymizer = {
   loadSchema(file: File): Task<TableSchema>;
-  anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult>;
-  export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Task<void>;
+  anonymize(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult>;
+  export(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[], outFileName: string): Task<void>;
 };
 
 export type Task<T> = {

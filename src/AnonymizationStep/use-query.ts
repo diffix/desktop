@@ -2,7 +2,11 @@ import { useEffect, useState } from 'react';
 import { inProgressState, useAnonymizer } from '../shared';
 import { AnonymizedQueryResult, BucketColumn, ComputedData, TableSchema } from '../types';
 
-export function useQuery(schema: TableSchema, bucketColumns: BucketColumn[]): ComputedData<AnonymizedQueryResult> {
+export function useQuery(
+  schema: TableSchema,
+  aidColumn: string,
+  bucketColumns: BucketColumn[],
+): ComputedData<AnonymizedQueryResult> {
   const anonymizer = useAnonymizer();
   const [result, setResult] = useState<ComputedData<AnonymizedQueryResult>>(inProgressState);
 
@@ -11,7 +15,7 @@ export function useQuery(schema: TableSchema, bucketColumns: BucketColumn[]): Co
 
     let canceled = false;
 
-    const task = anonymizer.anonymize(schema, bucketColumns);
+    const task = anonymizer.anonymize(schema, aidColumn, bucketColumns);
 
     task.result
       .then((queryResult) => {
@@ -29,7 +33,7 @@ export function useQuery(schema: TableSchema, bucketColumns: BucketColumn[]): Co
       canceled = true;
       task.cancel();
     };
-  }, [anonymizer, schema, bucketColumns]);
+  }, [anonymizer, schema, aidColumn, bucketColumns]);
 
   return result;
 }

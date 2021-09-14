@@ -14,6 +14,7 @@ const { Title } = Typography;
 
 export type ColumnSelectionStepProps = {
   schema: TableSchema;
+  aidColumn: string;
   children: (data: ColumnSelectionStepData) => React.ReactNode;
 };
 
@@ -105,7 +106,7 @@ function GeneralizationControls({
   }
 }
 
-export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema }) => {
+export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema, aidColumn }) => {
   const [columns, setColumns] = useImmer<ColumnState[]>(() =>
     schema.columns.map(({ name, type }) => ({
       name,
@@ -121,6 +122,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
   const bucketColumns = useMemoStable<BucketColumn[]>(
     () =>
       columns
+        .filter((c) => c.name !== aidColumn)
         .filter((c) => c.selected)
         .map((c) => {
           const { name, type } = c;
@@ -134,7 +136,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
               return { name, type };
           }
         }),
-    [columns],
+    [columns, aidColumn],
   );
 
   const anySelected = columns.some((c) => c.selected);
@@ -155,9 +157,9 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
           </thead>
           <tbody>
             {columns.map((column, index) => {
+              if (column.name === aidColumn) return;
               const updateColumn = (values: Partial<ColumnState>) =>
                 setColumns((draft) => void assign(draft[index], values));
-
               return (
                 <tr key={index}>
                   <td className="ColumnSelectionStep-td-name" title={`Type: ${column.type}`}>

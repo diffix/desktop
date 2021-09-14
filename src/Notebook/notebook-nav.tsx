@@ -11,6 +11,7 @@ const { Step } = Steps;
 export enum NotebookNavStep {
   CsvImport,
   DataPreview,
+  AidSelection,
   ColumnSelection,
   AnonymizationSummary,
   AnonymizedResults,
@@ -168,6 +169,11 @@ export const NotebookNav: React.FunctionComponent = () => {
     >
       <Step status={status(NotebookNavStep.CsvImport)} title="CSV Import" description="Load data from CSV" />
       <Step status={status(NotebookNavStep.DataPreview)} title="Data Preview" description="Preview contents of file" />
+      <Step
+        status={status(NotebookNavStep.AidSelection)}
+        title="ID Selection"
+        description="Select the entity identifier column"
+      />
       <Step
         status={status(NotebookNavStep.ColumnSelection)}
         title="Column Selection"
