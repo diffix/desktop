@@ -4,6 +4,7 @@ import { FileLoadStep } from '../FileLoadStep';
 import { SchemaLoadStep } from '../SchemaLoadStep';
 import { ColumnSelectionStep } from '../ColumnSelectionStep';
 import { AnonymizationStep } from '../AnonymizationStep';
+import { AIDSelectStep } from '../AIDSelectStep';
 import { NotebookNavProvider, NotebookNav } from './notebook-nav';
 
 import './Notebook.css';
@@ -24,9 +25,15 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ onTitleChange }) =>
             {({ file }) => (
               <SchemaLoadStep file={file}>
                 {({ schema }) => (
-                  <ColumnSelectionStep schema={schema}>
-                    {({ bucketColumns }) => <AnonymizationStep bucketColumns={bucketColumns} schema={schema} />}
-                  </ColumnSelectionStep>
+                  <AIDSelectStep schema={schema}>
+                    {({ aidColumn }) => (
+                      <ColumnSelectionStep schema={schema} aidColumn={aidColumn}>
+                        {({ bucketColumns }) => (
+                          <AnonymizationStep bucketColumns={bucketColumns} schema={schema} aidColumn={aidColumn} />
+                        )}
+                      </ColumnSelectionStep>
+                    )}
+                  </AIDSelectStep>
                 )}
               </SchemaLoadStep>
             )}

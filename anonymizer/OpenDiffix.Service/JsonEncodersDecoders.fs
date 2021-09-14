@@ -19,9 +19,23 @@ type PreviewResponse = { Summary: Summary; Rows: Row list }
 
 type LoadRequest = { InputPath: string; Rows: int }
 
-type PreviewRequest = { InputPath: string; Rows: int; Salt: string; Buckets: string [] }
+type PreviewRequest =
+  {
+    InputPath: string
+    AidColumn: string
+    Rows: int
+    Salt: string
+    Buckets: string []
+  }
 
-type ExportRequest = { InputPath: string; Salt: string; Buckets: string []; OutputPath: string }
+type ExportRequest =
+  {
+    InputPath: string
+    AidColumn: string
+    Salt: string
+    Buckets: string []
+    OutputPath: string
+  }
 
 type Request =
   | Load of LoadRequest

@@ -97,11 +97,12 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  anonymize(schema: TableSchema, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult> {
+  anonymize(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult> {
     return runTask(async (signal) => {
       const request = {
         type: 'Preview',
         inputPath: schema.file.path,
+        aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
         buckets: this.mapBucketsToSQL(bucketColumns),
         rows: 1000,
@@ -122,11 +123,12 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  export(schema: TableSchema, bucketColumns: BucketColumn[], outFileName: string): Task<void> {
+  export(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[], outFileName: string): Task<void> {
     return runTask(async (signal) => {
       const request = {
         type: 'Export',
         inputPath: schema.file.path,
+        aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
         buckets: this.mapBucketsToSQL(bucketColumns),
         outputPath: outFileName,

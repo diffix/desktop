@@ -49,15 +49,23 @@ let unwrapCount count =
   | Integer count -> count
   | _ -> failwith "Unexpected value type received for count."
 
-let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = buckets } =
+let handlePreview
+  {
+    InputPath = inputPath
+    AidColumn = aidColumn
+    Rows = rows
+    Salt = salt
+    Buckets = buckets
+  }
+  =
   let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
 
   let query =
     $"""
       SELECT
-        diffix_low_count(RowIndex),
+        diffix_low_count(%s{aidColumn}),
         count(*),
-        diffix_count(RowIndex),
+        diffix_count(%s{aidColumn}),
         %s{String.join ", " buckets}
       FROM table
       GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
@@ -106,6 +114,7 @@ let handlePreview { InputPath = inputPath; Rows = rows; Salt = salt; Buckets = b
 let handleExport
   {
     InputPath = inputPath
+    AidColumn = aidColumn
     Salt = salt
     Buckets = buckets
     OutputPath = outputPath
@@ -117,10 +126,10 @@ let handleExport
     $"""
       SELECT
         %s{String.join ", " buckets},
-        diffix_count(RowIndex)
+        diffix_count(%s{aidColumn})
       FROM table
       GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
-      HAVING NOT diffix_low_count(RowIndex)
+      HAVING NOT diffix_low_count(%s{aidColumn})
     """
 
   let output = anonParams |> runQuery query inputPath |> csvFormatter
