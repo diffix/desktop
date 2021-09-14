@@ -46,11 +46,14 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
           </Select>
         </div>
         {aidColumn == 'RowIndex' && (
-          <Space size={2}>
+          <Space>
             <WarningTwoTone twoToneColor="orange" />
             <Text type="warning" strong>
-              CAUTION: When no identifier column is present in the data, you must ensure that each individual row from
-              the input file represents a unique entity.
+              CAUTION:
+            </Text>
+            <Text>
+              When no identifier column is present in the data, you must ensure that each individual row from the input
+              file represents a unique entity.
             </Text>
           </Space>
         )}
