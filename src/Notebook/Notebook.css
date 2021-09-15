@@ -1,18 +1,28 @@
-.Notebook {
-  padding: 8px 32px;
-}
-
 .Notebook .notebook-step {
   margin: 32px 0;
 }
 
 .Notebook-nav {
   position: fixed;
-  top: 60px;
-  left: 24px;
-  max-width: 280px;
+  top: 40px;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  padding: 24px 16px 16px 24px;
+  overflow-y: auto;
 }
 
 .Notebook-content {
-  margin-left: 296px;
+  padding: 8px 32px;
+  margin-left: 300px;
+}
+
+@media screen and (max-width: 800px) {
+  .Notebook-nav {
+    display: none;
+  }
+
+  .Notebook-content {
+    margin-left: 0;
+  }
 }
