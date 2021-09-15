@@ -1,8 +1,12 @@
-import React, { useCallback, useContext, useRef } from 'react';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Steps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useInViewport } from 'react-in-viewport';
 import { useImmer } from 'use-immer';
-import { noop } from 'lodash';
+import { produce } from 'immer';
+import { debounce, noop } from 'lodash';
+
+import { useSingleton } from '../shared';
 
 const { Step } = Steps;
 
@@ -27,13 +31,17 @@ type NotebookNavStepState = {
 
 type NotebookNavState = {
   steps: NotebookNavStepState[];
+  focusedStep: NotebookNavStep;
 };
 
 const defaultNavState: NotebookNavState = {
   steps: Array(NotebookNavStep.CsvExport + 1)
     .fill(null)
     .map(() => ({ status: 'inactive', htmlElement: null })),
+  focusedStep: NotebookNavStep.CsvImport,
 };
+
+const defaultVisibility = Array(NotebookNavStep.CsvExport + 1).fill(false);
 
 const NotebookNavStateContext = React.createContext<NotebookNavState>(defaultNavState);
 
@@ -49,11 +57,15 @@ type NotebookNavStepPatch =
   | { htmlElement?: never; status: NotebookNavStepStatus };
 
 type NotebookNavFunctions = {
-  updateStep(step: NotebookNavStep, patch: NotebookNavStepPatch): void;
+  updateStepStatus(step: NotebookNavStep, patch: NotebookNavStepPatch): void;
+  updateStepVisibility(step: NotebookNavStep, visible: boolean): void;
+  focusStep(step: NotebookNavStep): void;
 };
 
 const NotebookNavFunctionsContext = React.createContext<NotebookNavFunctions>({
-  updateStep: noop,
+  updateStepStatus: noop,
+  updateStepVisibility: noop,
+  focusStep: noop,
 });
 
 function useNavFunctions(): NotebookNavFunctions {
@@ -64,8 +76,13 @@ function useNavFunctions(): NotebookNavFunctions {
 
 export const NotebookNavProvider: React.FunctionComponent = ({ children }) => {
   const [navState, updateNavState] = useImmer(defaultNavState);
+  const visibilityRef = useRef(defaultVisibility);
+  const focusStep = useSingleton(() =>
+    debounce((step: NotebookNavStep) => updateNavState((draft) => void (draft.focusedStep = step)), 300),
+  );
+
   const navFunctions = useRef<NotebookNavFunctions>({
-    updateStep(step, patch) {
+    updateStepStatus(step, patch) {
       updateNavState((draft) => {
         const { steps } = draft as NotebookNavState;
         if (patch.htmlElement === null) {
@@ -79,6 +96,18 @@ export const NotebookNavProvider: React.FunctionComponent = ({ children }) => {
           steps[step].status = patch.status;
         }
       });
+    },
+    updateStepVisibility(step: NotebookNavStep, visible: boolean) {
+      visibilityRef.current = produce(visibilityRef.current, (draft) => void (draft[step] = visible));
+      const focusedStep = Math.max(
+        NotebookNavStep.CsvImport,
+        visibilityRef.current.findIndex((visible) => visible),
+      );
+      focusStep(focusedStep);
+    },
+    focusStep(step: NotebookNavStep) {
+      focusStep(step);
+      focusStep.flush();
     },
   });
 
@@ -101,9 +130,11 @@ export type NotebookNavAnchorProps = {
 export const NotebookNavAnchor: React.FunctionComponent<NotebookNavAnchorProps> = ({ step, status = 'active' }) => {
   const navFunctions = useNavFunctions();
 
-  const ref = useCallback(
+  const visibilityRef = useRef<HTMLDivElement>(null);
+
+  const scrollRef = useCallback(
     (htmlElement: HTMLElement | null) => {
-      navFunctions.updateStep(step, {
+      navFunctions.updateStepStatus(step, {
         htmlElement,
         status,
       } as NotebookNavStepPatch);
@@ -111,9 +142,16 @@ export const NotebookNavAnchor: React.FunctionComponent<NotebookNavAnchorProps> 
     [step, status, navFunctions],
   );
 
+  const { inViewport } = useInViewport(visibilityRef, {}, { disconnectOnLeave: false }, {});
+
+  useEffect(() => {
+    navFunctions.updateStepVisibility(step, inViewport);
+  }, [step, inViewport, navFunctions]);
+
   return (
     <div style={{ position: 'relative' }}>
-      <div ref={ref} style={{ position: 'absolute', top: -60, left: 0 }}></div>
+      <div ref={scrollRef} style={{ position: 'absolute', top: -60, left: 0 }}></div>
+      <div ref={visibilityRef} style={{ position: 'absolute', top: -40, left: 0 }}></div>
     </div>
   );
 };
@@ -133,7 +171,9 @@ function mapStatus(status: NotebookNavStepStatus): 'error' | 'process' | 'finish
 }
 
 export const NotebookNav: React.FunctionComponent = () => {
+  const navFunctions = useNavFunctions();
   const { steps } = useNavState();
+
   const status = (step: NotebookNavStep) => mapStatus(steps[step].status);
 
   return (
@@ -165,6 +205,7 @@ export const NotebookNav: React.FunctionComponent = () => {
             block: 'start',
           });
         }
+        navFunctions.focusStep(step);
       }}
     >
       <Step status={status(NotebookNavStep.CsvImport)} title="CSV Import" description="Load data from CSV" />
