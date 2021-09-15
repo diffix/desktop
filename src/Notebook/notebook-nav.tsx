@@ -170,10 +170,8 @@ function mapStatus(status: NotebookNavStepStatus): 'error' | 'process' | 'finish
   }
 }
 
-export const NotebookNav: React.FunctionComponent = () => {
+const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[] }>(({ steps }) => {
   const navFunctions = useNavFunctions();
-  const { steps } = useNavState();
-
   const status = (step: NotebookNavStep) => mapStatus(steps[step].status);
 
   return (
@@ -233,4 +231,9 @@ export const NotebookNav: React.FunctionComponent = () => {
       <Step status={status(NotebookNavStep.CsvExport)} title="CSV Export" description="Export anonymized data to CSV" />
     </Steps>
   );
+});
+
+export const NotebookNav: React.FunctionComponent = () => {
+  const { steps } = useNavState();
+  return <NotebookNavSteps steps={steps} />;
 };
