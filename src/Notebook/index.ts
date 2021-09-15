@@ -1,2 +1,2 @@
 export * from './Notebook';
-export * from './notebook-nav';
+export { NotebookNavAnchor, NotebookNavStep } from './notebook-nav';
