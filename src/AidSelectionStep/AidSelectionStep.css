@@ -5,3 +5,7 @@
 .AidSelectionStep-select {
   width: 400px;
 }
+
+.AidSelectionStep-warning {
+  max-width: 1000px;
+}
