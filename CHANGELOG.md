@@ -1,3 +1,9 @@
+### Version 0.3.0
+
+- Added support for datasets with multiple rows per entity.
+- Fixed crash when bucketizing empty values.
+- Major performance optimizations.
+
 ### Version 0.2.3
 
 - Made data tables more compact.
