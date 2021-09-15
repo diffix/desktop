@@ -1,13 +1,13 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Divider, Typography, Select, Space } from 'antd';
-import { WarningTwoTone } from '@ant-design/icons';
+import { Divider, Typography, Select, Alert } from 'antd';
+import { WarningOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { TableSchema } from '../types';
 
 import './AidSelectionStep.css';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 const { Option } = Select;
 
 type AidSelectionProps = {
@@ -46,16 +46,14 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
           </Select>
         </div>
         {aidColumn == 'RowIndex' && (
-          <Space>
-            <WarningTwoTone twoToneColor="orange" />
-            <Text type="warning" strong>
-              CAUTION:
-            </Text>
-            <Text>
-              When no identifier column is present in the data, you must ensure that each individual row from the input
-              file represents a unique entity.
-            </Text>
-          </Space>
+          <Alert
+            className="AidSelectionStep-warning"
+            message="CAUTION: When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity."
+            type="warning"
+            showIcon
+            icon={<WarningOutlined />}
+            closable
+          />
         )}
       </div>
       <div className="AidSelectionStep-reserved-space">
