@@ -26,29 +26,32 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
       <div className="AidSelectionStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.AidSelection} status={aidColumn ? 'done' : 'active'} />
         <Title level={3}>Select the entity identifier column</Title>
-        <div className="mb-1">
-          <Select
-            className="AidSelectionStep-select"
-            showSearch
-            placeholder="Select a column or 'None'"
-            optionFilterProp="children"
-            onChange={(column: string) => setAidColumn(column)}
-            filterOption={true}
-          >
-            <Option key={-1} value="RowIndex">
-              [None]
+        <Select
+          className="AidSelectionStep-select"
+          showSearch
+          placeholder="Select a column or 'None'"
+          optionFilterProp="children"
+          onChange={(column: string) => setAidColumn(column)}
+          filterOption={true}
+        >
+          <Option key={-1} value="RowIndex">
+            [None]
+          </Option>
+          {schema.columns.map((column, index) => (
+            <Option key={index} value={column.name}>
+              {column.name}
             </Option>
-            {schema.columns.map((column, index) => (
-              <Option key={index} value={column.name}>
-                {column.name}
-              </Option>
-            ))}
-          </Select>
-        </div>
+          ))}
+        </Select>
         {aidColumn == 'RowIndex' && (
           <Alert
             className="AidSelectionStep-warning"
-            message="CAUTION: When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity."
+            message={
+              <>
+                <strong>CAUTION:</strong> When no identifier column is present in the data, you must ensure that each
+                individual row from the input file represents a unique entity.
+              </>
+            }
             type="warning"
             showIcon
             icon={<WarningOutlined />}

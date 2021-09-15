@@ -6,6 +6,7 @@
   width: 400px;
 }
 
-.AidSelectionStep-warning {
+.AidSelectionStep .AidSelectionStep-warning {
+  margin-top: 16px;
   max-width: 1000px;
 }
