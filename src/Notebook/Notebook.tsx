@@ -12,12 +12,13 @@ import { NotebookHelp } from './notebook-help';
 import './Notebook.css';
 
 export type NotebookProps = {
+  isActive: boolean;
   onTitleChange: (title: string) => void;
 };
 
-export const Notebook: FunctionComponent<NotebookProps> = ({ onTitleChange }) => {
+export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleChange }) => {
   return (
-    <NotebookNavProvider>
+    <NotebookNavProvider isActive={isActive}>
       <div className="Notebook">
         <div className="Notebook-nav">
           <NotebookNav />

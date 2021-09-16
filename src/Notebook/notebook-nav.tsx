@@ -80,7 +80,11 @@ function useNavFunctions(): NotebookNavFunctions {
 
 // Context provider
 
-export const NotebookNavProvider: React.FunctionComponent = ({ children }) => {
+export type NotebookNavProviderProps = {
+  isActive: boolean;
+};
+
+export const NotebookNavProvider: React.FunctionComponent<NotebookNavProviderProps> = ({ isActive, children }) => {
   const [navState, updateNavState] = useImmer(defaultNavState);
   const visibilityRef = useRef(defaultVisibility);
 
@@ -105,10 +109,6 @@ export const NotebookNavProvider: React.FunctionComponent = ({ children }) => {
       500,
     ),
   );
-
-  useEffect(() => {
-    return () => focusStep.cancel();
-  }, [focusStep]);
 
   const navFunctions = useRef<NotebookNavFunctions>({
     updateStepStatus(step, patch) {
@@ -143,6 +143,18 @@ export const NotebookNavProvider: React.FunctionComponent = ({ children }) => {
       focusStep.cancel();
     },
   });
+
+  useEffect(() => {
+    if (!isActive) {
+      focusStep.cancel();
+      const id = setTimeout(() => focusStep.cancel(), 400);
+      return () => clearTimeout(id);
+    }
+  }, [isActive, focusStep]);
+
+  useEffect(() => {
+    return () => focusStep.cancel();
+  }, [focusStep]);
 
   return (
     <NotebookNavStateContext.Provider value={navState}>
