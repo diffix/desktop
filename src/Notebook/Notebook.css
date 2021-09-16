@@ -7,14 +7,15 @@
   top: 40px;
   left: 0;
   bottom: 0;
-  width: 300px;
-  padding: 24px 16px 16px 24px;
+  width: 350px;
+  padding: 24px;
   overflow-y: auto;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .Notebook-content {
   padding: 8px 32px;
-  margin-left: 300px;
+  margin-left: 350px;
 }
 
 @media screen and (max-width: 800px) {

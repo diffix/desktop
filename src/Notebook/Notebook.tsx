@@ -21,7 +21,7 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ onTitleChange }) =>
       <div className="Notebook">
         <div className="Notebook-nav">
           <NotebookNav />
-          <Divider />
+          <Divider style={{ margin: '16px 0' }} />
           <NotebookHelp />
         </div>
         <div className="Notebook-content">

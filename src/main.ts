@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
 import { execFile } from 'child_process';
 import util from 'util';
 import fs from 'fs';
@@ -28,6 +28,11 @@ const createWindow = (): void => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
     icon: path.join(app.getAppPath(), resourcesLocation, 'assets', 'icon.png'),
+  });
+
+  mainWindow.webContents.on('new-window', function (e, url) {
+    e.preventDefault();
+    shell.openExternal(url);
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
