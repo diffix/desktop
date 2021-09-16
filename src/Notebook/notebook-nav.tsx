@@ -4,7 +4,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useInViewport } from 'react-in-viewport';
 import { useImmer } from 'use-immer';
 import { produce } from 'immer';
-import { debounce, noop } from 'lodash';
+import { debounce, findLastIndex, noop } from 'lodash';
 
 import { useSingleton } from '../shared';
 
@@ -83,9 +83,32 @@ function useNavFunctions(): NotebookNavFunctions {
 export const NotebookNavProvider: React.FunctionComponent = ({ children }) => {
   const [navState, updateNavState] = useImmer(defaultNavState);
   const visibilityRef = useRef(defaultVisibility);
+
   const focusStep = useSingleton(() =>
-    debounce((step: NotebookNavStep) => updateNavState((draft) => void (draft.focusedStep = step)), 500),
+    debounce(
+      (step?: NotebookNavStep) =>
+        updateNavState((draft) => {
+          if (typeof step !== 'undefined') {
+            draft.focusedStep = step;
+            return;
+          }
+
+          const maxStep = Math.max(
+            NotebookNavStep.CsvImport,
+            findLastIndex(draft.steps, (s) => s.status !== 'inactive'),
+          );
+
+          const visibleStep = visibilityRef.current.findIndex((visible) => visible);
+
+          draft.focusedStep = visibleStep < 0 || visibleStep > maxStep ? maxStep : visibleStep;
+        }),
+      500,
+    ),
   );
+
+  useEffect(() => {
+    return () => focusStep.cancel();
+  }, [focusStep]);
 
   const navFunctions = useRef<NotebookNavFunctions>({
     updateStepStatus(step, patch) {
@@ -102,14 +125,12 @@ export const NotebookNavProvider: React.FunctionComponent = ({ children }) => {
           steps[step].status = patch.status;
         }
       });
+
+      focusStep();
     },
     updateStepVisibility(step: NotebookNavStep, visible: boolean) {
       visibilityRef.current = produce(visibilityRef.current, (draft) => void (draft[step] = visible));
-      const focusedStep = Math.max(
-        NotebookNavStep.CsvImport,
-        visibilityRef.current.findIndex((visible) => visible),
-      );
-      focusStep(focusedStep);
+      focusStep();
     },
     isVisible(step: NotebookNavStep) {
       return visibilityRef.current[step];
