@@ -59,19 +59,13 @@ type NotebookNavStepPatch =
 type NotebookNavFunctions = {
   updateStepStatus(step: NotebookNavStep, patch: NotebookNavStepPatch): void;
   updateStepVisibility(step: NotebookNavStep, visible: boolean): void;
-  isVisible(step: NotebookNavStep): boolean;
-  focusStep(step: NotebookNavStep): void;
-  cancelPendingFocus(): void;
+  scrollToStep(step: NotebookNavStep): void;
 };
 
 const NotebookNavFunctionsContext = React.createContext<NotebookNavFunctions>({
   updateStepStatus: noop,
   updateStepVisibility: noop,
-  isVisible: () => {
-    throw new Error('Not implemented');
-  },
-  focusStep: noop,
-  cancelPendingFocus: noop,
+  scrollToStep: noop,
 });
 
 function useNavFunctions(): NotebookNavFunctions {
@@ -86,6 +80,10 @@ export type NotebookNavProviderProps = {
 
 export const NotebookNavProvider: React.FunctionComponent<NotebookNavProviderProps> = ({ isActive, children }) => {
   const [navState, updateNavState] = useImmer(defaultNavState);
+
+  // Refs are needed in `navFunctions` because we want it referentially stable.
+  const navStateRef = useRef(navState);
+  navStateRef.current = navState;
   const visibilityRef = useRef(defaultVisibility);
 
   const focusStep = useSingleton(() =>
@@ -101,16 +99,14 @@ export const NotebookNavProvider: React.FunctionComponent<NotebookNavProviderPro
             NotebookNavStep.CsvImport,
             findLastIndex(draft.steps, (s) => s.status !== 'inactive'),
           );
-
           const visibleStep = visibilityRef.current.findIndex((visible) => visible);
-
           draft.focusedStep = visibleStep < 0 || visibleStep > maxStep ? maxStep : visibleStep;
         }),
       500,
     ),
   );
 
-  const navFunctions = useRef<NotebookNavFunctions>({
+  const navFunctions = useSingleton<NotebookNavFunctions>(() => ({
     updateStepStatus(step, patch) {
       updateNavState((draft) => {
         const { steps } = draft as NotebookNavState;
@@ -132,18 +128,31 @@ export const NotebookNavProvider: React.FunctionComponent<NotebookNavProviderPro
       visibilityRef.current = produce(visibilityRef.current, (draft) => void (draft[step] = visible));
       focusStep();
     },
-    isVisible(step: NotebookNavStep) {
-      return visibilityRef.current[step];
-    },
-    focusStep(step: NotebookNavStep) {
+    scrollToStep(step: NotebookNavStep) {
+      const { htmlElement } = navStateRef.current.steps[step];
+      if (htmlElement) {
+        htmlElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+
       focusStep(step);
       focusStep.flush();
-    },
-    cancelPendingFocus() {
-      focusStep.cancel();
-    },
-  });
 
+      // Ugly workaround below...
+      // `scrollIntoView` does not return a promise, so we have to cancel intermediate events that happened while smooth scrolling
+      setTimeout(() => {
+        focusStep.cancel();
+        if (!visibilityRef.current[step]) {
+          // If scrolling across the entire page, 400 ms is not enough, so we wait again...
+          setTimeout(() => focusStep.cancel(), 400);
+        }
+      }, 400);
+    },
+  }));
+
+  // Prevents updates while notebook is not active.
   useEffect(() => {
     if (!isActive) {
       focusStep.cancel();
@@ -152,15 +161,14 @@ export const NotebookNavProvider: React.FunctionComponent<NotebookNavProviderPro
     }
   }, [isActive, focusStep]);
 
+  // Cancels pending updates when unmounted.
   useEffect(() => {
     return () => focusStep.cancel();
   }, [focusStep]);
 
   return (
     <NotebookNavStateContext.Provider value={navState}>
-      <NotebookNavFunctionsContext.Provider value={navFunctions.current}>
-        {children}
-      </NotebookNavFunctionsContext.Provider>
+      <NotebookNavFunctionsContext.Provider value={navFunctions}>{children}</NotebookNavFunctionsContext.Provider>
     </NotebookNavStateContext.Provider>
   );
 };
@@ -241,24 +249,7 @@ const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[] }>(({ steps 
       direction="vertical"
       current={-1}
       onChange={(step) => {
-        const { htmlElement } = steps[step];
-        if (htmlElement) {
-          htmlElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
-          });
-        }
-        navFunctions.focusStep(step);
-
-        // Ugly workaround below...
-        // `scrollIntoView` does not return a promise, so we have to cancel intermediate events that happened while smooth scrolling
-        setTimeout(() => {
-          navFunctions.cancelPendingFocus();
-          if (!navFunctions.isVisible(step)) {
-            // If scrolling across the entire page, 400 ms is not enough, so we wait again...
-            setTimeout(() => navFunctions.cancelPendingFocus(), 400);
-          }
-        }, 400);
+        navFunctions.scrollToStep(step);
       }}
     >
       <Step status={status(NotebookNavStep.CsvImport)} title="CSV Import" description="Load data from CSV" />
