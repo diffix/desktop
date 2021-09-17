@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { ComputedData } from '../types';
 
@@ -26,4 +26,9 @@ export function useMemoStable<T>(factory: () => T, deps: React.DependencyList): 
     return value;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
+}
+
+export function useStaticValue<T>(factory: () => T): T {
+  const [value] = useState(factory);
+  return value;
 }

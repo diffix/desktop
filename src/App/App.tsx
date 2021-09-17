@@ -67,7 +67,10 @@ export const App: FunctionComponent = () => {
           <Tabs type="editable-card" activeKey={activeNotebook} onChange={setActiveNotebook} onEdit={onEdit}>
             {notebooks.map((notebook) => (
               <TabPane tab={notebook.title} key={notebook.id}>
-                <Notebook onTitleChange={(title) => setTitle(notebook.id, title)} />
+                <Notebook
+                  isActive={activeNotebook === notebook.id}
+                  onTitleChange={(title) => setTitle(notebook.id, title)}
+                />
               </TabPane>
             ))}
           </Tabs>
