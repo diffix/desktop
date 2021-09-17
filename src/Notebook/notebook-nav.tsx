@@ -6,7 +6,7 @@ import { useImmer } from 'use-immer';
 import { produce } from 'immer';
 import { debounce, findLastIndex, noop } from 'lodash';
 
-import { useSingleton } from '../shared';
+import { useStaticValue } from '../shared';
 
 const { Step } = Steps;
 
@@ -86,7 +86,7 @@ export const NotebookNavProvider: React.FunctionComponent<NotebookNavProviderPro
   navStateRef.current = navState;
   const visibilityRef = useRef(defaultVisibility);
 
-  const focusStep = useSingleton(() =>
+  const focusStep = useStaticValue(() =>
     debounce(
       (step?: NotebookNavStep) =>
         updateNavState((draft) => {
@@ -106,7 +106,7 @@ export const NotebookNavProvider: React.FunctionComponent<NotebookNavProviderPro
     ),
   );
 
-  const navFunctions = useSingleton<NotebookNavFunctions>(() => ({
+  const navFunctions = useStaticValue<NotebookNavFunctions>(() => ({
     updateStepStatus(step, patch) {
       updateNavState((draft) => {
         const { steps } = draft as NotebookNavState;

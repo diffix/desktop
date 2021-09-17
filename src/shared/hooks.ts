@@ -28,7 +28,7 @@ export function useMemoStable<T>(factory: () => T, deps: React.DependencyList): 
   }, deps);
 }
 
-export function useSingleton<T>(factory: () => T): T {
+export function useStaticValue<T>(factory: () => T): T {
   const [value] = useState(factory);
   return value;
 }
