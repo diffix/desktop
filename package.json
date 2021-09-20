@@ -66,6 +66,7 @@
           }
         }
       ],
+      "hooks": "require:forge.hooks.js",
       "plugins": [
         [
           "@electron-forge/plugin-webpack",
