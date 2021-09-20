@@ -33,8 +33,16 @@ type ColumnState = {
   resetCount: number;
 };
 
-function getNumericGeneralization({ binSize }: ColumnState): NumericGeneralization | null {
-  if (typeof binSize !== 'number') return null;
+// Values lower than this will cause the anonymizer to crash.
+const MIN_BIN_SIZE_REAL = 0.000001;
+const MIN_BIN_SIZE_INTEGER = 1;
+
+function minBinSize(columnType: ColumnType) {
+  return columnType === 'real' ? MIN_BIN_SIZE_REAL : MIN_BIN_SIZE_INTEGER;
+}
+
+function getNumericGeneralization({ binSize, type }: ColumnState): NumericGeneralization | null {
+  if (typeof binSize !== 'number' || binSize < minBinSize(type)) return null;
   return { binSize };
 }
 
@@ -57,14 +65,15 @@ function GeneralizationControls({
   switch (column.type) {
     case 'integer':
     case 'real': {
-      const isActive = column.binSize !== null;
+      const minValue = minBinSize(column.type);
+      const isActive = column.binSize !== null && column.binSize >= minValue;
       return (
         <Form className={'GeneralizationControls' + (isActive ? ' active' : '')} layout="inline">
           <Form.Item label="Bin size" name="binSize">
             <span key={column.resetCount}>
               <InputNumber
                 size="small"
-                min={1}
+                min={minValue}
                 value={column.binSize as number}
                 onChange={(binSize) => updateColumn({ binSize })}
               />
