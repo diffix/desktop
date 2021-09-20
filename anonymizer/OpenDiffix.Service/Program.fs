@@ -146,6 +146,7 @@ let main argv =
 
     0
 
-  with e ->
+  with
+  | e ->
     eprintfn $"ERROR: %s{e.Message}"
     1
