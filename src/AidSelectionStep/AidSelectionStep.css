@@ -6,7 +6,7 @@
   width: 400px;
 }
 
-.AidSelectionStep .AidSelectionStep-warning {
-  margin-top: 16px;
+.AidSelectionStep .AidSelectionStep-notice {
+  margin-bottom: 16px;
   max-width: 1000px;
 }
