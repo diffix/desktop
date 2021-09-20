@@ -91,6 +91,8 @@
     }
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.15.6",
+    "@babel/preset-react": "^7.14.5",
     "@electron-forge/cli": "6.0.0-beta.59",
     "@electron-forge/maker-deb": "6.0.0-beta.59",
     "@electron-forge/maker-rpm": "6.0.0-beta.59",
@@ -99,12 +101,14 @@
     "@electron-forge/plugin-webpack": "6.0.0-beta.59",
     "@electron-forge/publisher-github": "^6.0.0-beta.59",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@mdx-js/loader": "^1.6.22",
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.4.6",
     "@types/react": "^17.0.15",
     "@types/react-dom": "^17.0.9",
     "@typescript-eslint/eslint-plugin": "^4.28.5",
     "@typescript-eslint/parser": "^4.28.5",
+    "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
     "electron": "15.0.0-alpha.2",
     "eslint": "^7.31.0",
