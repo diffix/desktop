@@ -25,7 +25,7 @@ jobs:
         run: npm run check-format
       - name: Check F# files format
         working-directory: anonymizer
-        run: dotnet fantomas --check OpenDiffix.Service
+        run: dotnet fantomas --check -r OpenDiffix.Service
       - name: Run TS linter
         run: npm run lint
       - name: Build Service
