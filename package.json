@@ -15,8 +15,8 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "check-format": "prettier --check src",
-    "prettier": "prettier --write src"
+    "check-format": "prettier --check src && cd anonymizer && dotnet fantomas --check -r OpenDiffix.Service",
+    "format": "prettier --write src && cd anonymizer && dotnet fantomas -r OpenDiffix.Service"
   },
   "keywords": [],
   "license": "UNLICENSED",
