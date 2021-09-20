@@ -13,12 +13,22 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: 16
-      - name: Install dependencies
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.100
+      - name: Install GUI dependencies
         run: npm install
-      - name: Check format
+      - name: Install Service dependencies
+        working-directory: anonymizer
+        run: dotnet tool restore
+      - name: Check TS files format
         run: npm run check-format
-      - name: Run linter
+      - name: Check F# files format
+        working-directory: anonymizer
+        run: dotnet fantomas --check -r OpenDiffix.Service
+      - name: Run TS linter
         run: npm run lint
-      - run: mkdir bin
-      - name: Build
+      - name: Build Service
+        run: npm run build
+      - name: Build App
         run: npm run package

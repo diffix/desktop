@@ -16,9 +16,9 @@ function CsvImportHelp() {
         that each row pertains to a single protected entity.
       </Paragraph>
       <Paragraph>
-        The data may have one or multiple rows per protected entity. Examples of the former are
-        demographic data or survey data. An example of the latter is time-series data. Data with multiple rows per
-        protected entity must have at least one column containing a unique ID per protected entity.
+        The data may have one or multiple rows per protected entity. Examples of the former are demographic data or
+        survey data. An example of the latter is time-series data. Data with multiple rows per protected entity must
+        have at least one column containing a unique ID per protected entity.
       </Paragraph>
     </div>
   );
