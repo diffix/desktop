@@ -6,6 +6,7 @@ module.exports = [
   },
   {
     test: /\.(m?js|node)$/,
+    exclude: /node_modules\/react-markdown/,
     parser: { amd: false },
     use: {
       loader: '@marshallofsound/webpack-asset-relocator-loader',
