@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { ComputedData } from '../types';
 
@@ -34,7 +34,7 @@ export function useStaticValue<T>(factory: () => T): T {
 }
 
 export function useScrollRestoration(isActive: boolean, position: number): void {
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isActive) {
       window.scrollTo(0, position);
     }
