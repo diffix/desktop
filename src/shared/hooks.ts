@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { ComputedData } from '../types';
 
@@ -31,4 +31,12 @@ export function useMemoStable<T>(factory: () => T, deps: React.DependencyList): 
 export function useStaticValue<T>(factory: () => T): T {
   const [value] = useState(factory);
   return value;
+}
+
+export function useScrollRestoration(isActive: boolean, position: number): void {
+  useEffect(() => {
+    if (isActive) {
+      window.scrollTo(0, position);
+    }
+  }, [isActive, position]);
 }

@@ -6,6 +6,7 @@ import { SchemaLoadStep } from '../SchemaLoadStep';
 import { AidSelectionStep } from '../AidSelectionStep';
 import { ColumnSelectionStep } from '../ColumnSelectionStep';
 import { AnonymizationStep } from '../AnonymizationStep';
+import { useScrollRestoration } from '../shared';
 import { NotebookNavProvider, NotebookNav } from './notebook-nav';
 import { NotebookHelp } from './notebook-help';
 
@@ -13,10 +14,13 @@ import './Notebook.css';
 
 export type NotebookProps = {
   isActive: boolean;
+  scrollPosition: number;
   onTitleChange: (title: string) => void;
 };
 
-export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleChange }) => {
+export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, scrollPosition, onTitleChange }) => {
+  useScrollRestoration(isActive, scrollPosition);
+
   return (
     <NotebookNavProvider isActive={isActive}>
       <div className="Notebook">
