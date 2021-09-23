@@ -2,12 +2,17 @@
 
 body {
   background: #ffffff;
-  overflow-x: hidden;
+  overflow: hidden;
+}
+
+#root,
+.App,
+.App .ant-tabs,
+.App .ant-tabs .ant-tabs-content {
+  height: 100%;
 }
 
 .App {
-  margin-right: calc(100% - 100vw);
-  padding-top: 40px;
   min-width: 400px;
 }
 
@@ -17,14 +22,8 @@ body {
   }
 }
 
-.App .ant-tabs-nav {
+.App .ant-tabs .ant-tabs-nav {
   margin: 0;
-  position: fixed;
-  background: #ffffff;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 2;
 }
 
 .App-empty {
