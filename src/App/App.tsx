@@ -1,6 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Empty, Tabs } from 'antd';
+import { useImmer } from 'use-immer';
+import { find, findIndex } from 'lodash';
 
 import { AnonymizerContext, anonymizer } from '../shared';
 import { Notebook } from '../Notebook/Notebook';
@@ -9,68 +11,81 @@ import './App.css';
 
 const { TabPane } = Tabs;
 
-type NotebookInfo = {
+type TabInfo = {
   id: string;
   title: string;
 };
 
-let nextNotebookId = 1;
+type AppState = {
+  tabs: TabInfo[];
+  activeTab: string;
+};
 
-function newNotebook(): NotebookInfo {
-  return { id: (nextNotebookId++).toString(), title: 'New Notebook' };
+let nextTabId = 1;
+
+function newNotebook(): TabInfo {
+  return { id: (nextTabId++).toString(), title: 'New Notebook' };
 }
 
-const initialNotebook = [newNotebook()];
+const initialNotebook = newNotebook();
+
+const initialAppState: AppState = {
+  tabs: [initialNotebook],
+  activeTab: initialNotebook.id,
+};
 
 export const App: FunctionComponent = () => {
-  const [notebooks, setNotebooks] = useState(initialNotebook);
-  const [activeNotebook, setActiveNotebook] = useState<string>(() => notebooks[0].id);
+  const [state, updateState] = useImmer(initialAppState);
 
   function onEdit(targetKey: unknown, action: 'add' | 'remove'): void {
     switch (action) {
-      case 'add': {
-        const addedNotebook = newNotebook();
-        setNotebooks([...notebooks, addedNotebook]);
-        setActiveNotebook(addedNotebook.id);
+      case 'add':
+        updateState((state) => {
+          const addedNotebook = newNotebook();
+          state.tabs.push(addedNotebook);
+          state.activeTab = addedNotebook.id;
+        });
         return;
-      }
-      case 'remove': {
-        let index = 0;
-        const filteredNotebooks = notebooks.filter((n, i) => {
-          if (n.id === targetKey) {
-            index = i;
-            return false;
-          } else {
-            return true;
+
+      case 'remove':
+        updateState((state) => {
+          const { tabs } = state;
+          const id = targetKey as string;
+          const index = findIndex(tabs, { id });
+          if (index < 0) return;
+
+          tabs.splice(index, 1);
+          if (id === state.activeTab && tabs.length !== 0) {
+            state.activeTab = tabs[Math.min(index, tabs.length - 1)].id;
           }
         });
-
-        setNotebooks(filteredNotebooks);
-
-        if (targetKey === activeNotebook && filteredNotebooks.length !== 0) {
-          setActiveNotebook(filteredNotebooks[Math.min(index, filteredNotebooks.length - 1)].id);
-        }
-
         return;
-      }
     }
   }
 
-  function setTitle(id: string, title: string) {
-    setNotebooks(notebooks.map((n) => (n.id === id ? { ...n, title } : n)));
+  function setActiveTab(id: string) {
+    updateState((state) => {
+      state.activeTab = id;
+    });
   }
+
+  function setTitle(id: string, title: string) {
+    updateState(({ tabs }) => {
+      const tab = find(tabs, { id });
+      if (tab) tab.title = title;
+    });
+  }
+
+  const { tabs, activeTab } = state;
 
   return (
     <AnonymizerContext.Provider value={anonymizer}>
       <div className="App">
-        {notebooks.length !== 0 ? (
-          <Tabs type="editable-card" activeKey={activeNotebook} onChange={setActiveNotebook} onEdit={onEdit}>
-            {notebooks.map((notebook) => (
-              <TabPane tab={notebook.title} key={notebook.id}>
-                <Notebook
-                  isActive={activeNotebook === notebook.id}
-                  onTitleChange={(title) => setTitle(notebook.id, title)}
-                />
+        {tabs.length !== 0 ? (
+          <Tabs type="editable-card" activeKey={activeTab} onChange={setActiveTab} onEdit={onEdit}>
+            {tabs.map((tab) => (
+              <TabPane tab={tab.title} key={tab.id}>
+                <Notebook isActive={activeTab === tab.id} onTitleChange={(title) => setTitle(tab.id, title)} />
               </TabPane>
             ))}
           </Tabs>
