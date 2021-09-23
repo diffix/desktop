@@ -254,6 +254,7 @@ const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[] }>(({ steps 
       onChange={(step) => {
         navFunctions.scrollToStep(step);
       }}
+      size="small"
     >
       <Step status={status(NotebookNavStep.CsvImport)} title="CSV Import" description="Load data from CSV" />
       <Step status={status(NotebookNavStep.DataPreview)} title="Data Preview" description="Preview contents of file" />
