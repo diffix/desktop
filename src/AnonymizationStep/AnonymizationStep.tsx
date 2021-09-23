@@ -97,32 +97,38 @@ function AnonymizationResults({ schema, aidColumn, bucketColumns, result, loadin
   }, [bucketColumns]);
 
   return (
-    <div className="AnonymizationResults notebook-step">
-      <NotebookNavAnchor step={NotebookNavStep.AnonymizedResults} status={loading ? 'loading' : 'done'} />
-      <Title level={3}>Anonymized data</Title>
-      <div className="mb-1">
-        <Text>Here is what the result looks like:</Text>
-        {result.rows.length === MAX_ROWS && <Text type="secondary"> (only the first {MAX_ROWS} rows are shown)</Text>}
+    <>
+      <div className="AnonymizationResults notebook-step">
+        <NotebookNavAnchor step={NotebookNavStep.AnonymizedResults} status={loading ? 'loading' : 'done'} />
+        <Title level={3}>Anonymized data</Title>
+        <div className="mb-1">
+          <Text>Here is what the result looks like:</Text>
+          {result.rows.length === MAX_ROWS && <Text type="secondary"> (only the first {MAX_ROWS} rows are shown)</Text>}
+        </div>
+        <AnonymizedResultsTable loading={loading} result={result} />
+        <NotebookNavAnchor
+          step={NotebookNavStep.CsvExport}
+          status={loading ? 'inactive' : exported ? 'done' : 'active'}
+        />
       </div>
-      <AnonymizedResultsTable loading={loading} result={result} />
-      <NotebookNavAnchor
-        step={NotebookNavStep.CsvExport}
-        status={loading ? 'inactive' : exported ? 'done' : 'active'}
-      />
-      <Button
-        icon={<DownloadOutlined />}
-        className="AnonymizationResults-export-button"
-        type="primary"
-        size="large"
-        disabled={loading || !result.rows.length}
-        onClick={() => {
-          exportResult(schema, aidColumn, bucketColumns);
-          setExported(true);
-        }}
-      >
-        Export anonymized data to CSV
-      </Button>
-    </div>
+      <Divider />
+      <div className="AnonymizationExports notebook-step">
+        <Button
+          icon={<DownloadOutlined />}
+          className="AnonymizationResults-export-button"
+          type="primary"
+          size="large"
+          disabled={loading || !result.rows.length}
+          onClick={() => {
+            exportResult(schema, aidColumn, bucketColumns);
+            setExported(true);
+          }}
+        >
+          Export anonymized data to CSV
+        </Button>
+        <div className="AnonymizationExport-reserved-space"></div>
+      </div>
+    </>
   );
 }
 
