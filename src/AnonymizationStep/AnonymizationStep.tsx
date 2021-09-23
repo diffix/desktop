@@ -106,13 +106,13 @@ function AnonymizationResults({ schema, aidColumn, bucketColumns, result, loadin
           {result.rows.length === MAX_ROWS && <Text type="secondary"> (only the first {MAX_ROWS} rows are shown)</Text>}
         </div>
         <AnonymizedResultsTable loading={loading} result={result} />
+      </div>
+      <Divider />
+      <div className="AnonymizationExports notebook-step">
         <NotebookNavAnchor
           step={NotebookNavStep.CsvExport}
           status={loading ? 'inactive' : exported ? 'done' : 'active'}
         />
-      </div>
-      <Divider />
-      <div className="AnonymizationExports notebook-step">
         <Button
           icon={<DownloadOutlined />}
           className="AnonymizationResults-export-button"
