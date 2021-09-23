@@ -201,10 +201,13 @@ export const NotebookNavAnchor: React.FunctionComponent<NotebookNavAnchorProps> 
     navFunctions.updateStepVisibility(step, inViewport);
   }, [step, inViewport, navFunctions]);
 
+  // Clicking on the first step will scroll to top.
+  const scrollOffset = step === 0 ? -32 : -24;
+
   return (
     <div style={{ position: 'relative' }}>
-      <div ref={scrollRef} style={{ position: 'absolute', top: -60, left: 0 }}></div>
-      <div ref={visibilityRef} style={{ position: 'absolute', top: -40, left: 0 }}></div>
+      <div ref={scrollRef} style={{ position: 'absolute', top: scrollOffset, left: 0 }}></div>
+      <div ref={visibilityRef} style={{ position: 'absolute', top: 0, left: 0 }}></div>
     </div>
   );
 };

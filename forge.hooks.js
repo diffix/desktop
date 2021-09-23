@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs');
 
 module.exports = {
@@ -14,5 +15,5 @@ module.exports = {
       }
       makeResult.artifacts = artifacts;
     }
-  }
-}; 
+  },
+};
