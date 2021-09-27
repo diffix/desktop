@@ -5,7 +5,8 @@ import { useImmer } from 'use-immer';
 import { find, findIndex } from 'lodash';
 
 import { AnonymizerContext, anonymizer } from '../shared';
-import { Notebook } from '../Notebook/Notebook';
+import { Docs } from '../Docs';
+import { Notebook } from '../Notebook';
 
 import './App.css';
 
@@ -14,6 +15,7 @@ const { TabPane } = Tabs;
 type TabInfo = {
   id: string;
   title: string;
+  type: 'notebook' | 'docs';
 };
 
 type AppState = {
@@ -23,14 +25,18 @@ type AppState = {
 
 let nextTabId = 1;
 
-function newNotebook(): TabInfo {
-  return { id: (nextTabId++).toString(), title: 'New Notebook' };
+function newNotebookTab(): TabInfo {
+  return { id: (nextTabId++).toString(), title: 'New Notebook', type: 'notebook' };
 }
 
-const initialNotebook = newNotebook();
+function newDocsTab(): TabInfo {
+  return { id: (nextTabId++).toString(), title: 'Documentation', type: 'docs' };
+}
+
+const initialNotebook = newNotebookTab();
 
 const initialAppState: AppState = {
-  tabs: [initialNotebook],
+  tabs: [initialNotebook, newDocsTab()],
   activeTab: initialNotebook.id,
 };
 
@@ -41,7 +47,7 @@ export const App: FunctionComponent = () => {
     switch (action) {
       case 'add':
         updateState((state) => {
-          const addedNotebook = newNotebook();
+          const addedNotebook = newNotebookTab();
           state.tabs.push(addedNotebook);
           state.activeTab = addedNotebook.id;
         });
@@ -85,7 +91,11 @@ export const App: FunctionComponent = () => {
           <Tabs type="editable-card" activeKey={activeTab} onChange={setActiveTab} onEdit={onEdit}>
             {tabs.map((tab) => (
               <TabPane tab={tab.title} key={tab.id}>
-                <Notebook isActive={activeTab === tab.id} onTitleChange={(title) => setTitle(tab.id, title)} />
+                {tab.type === 'notebook' ? (
+                  <Notebook isActive={activeTab === tab.id} onTitleChange={(title) => setTitle(tab.id, title)} />
+                ) : (
+                  <Docs onTitleChange={(title) => setTitle(tab.id, title)} />
+                )}
               </TabPane>
             ))}
           </Tabs>

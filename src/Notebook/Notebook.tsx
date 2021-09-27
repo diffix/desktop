@@ -21,7 +21,7 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleCh
   return (
     <NotebookNavProvider isActive={isActive}>
       <Layout className="Notebook">
-        <Layout.Sidebar>
+        <Layout.Sidebar className="Notebook-sidebar">
           <NotebookNav />
           <Divider style={{ margin: '16px 0' }} />
           <NotebookHelp />
