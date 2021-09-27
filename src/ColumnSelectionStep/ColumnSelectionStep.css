@@ -5,7 +5,7 @@
 }
 
 .ColumnSelectionStep-table tr {
-  border: 1px solid #f0f0f0;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .ColumnSelectionStep-th-name,

@@ -6,6 +6,7 @@ import { SchemaLoadStep } from '../SchemaLoadStep';
 import { AidSelectionStep } from '../AidSelectionStep';
 import { ColumnSelectionStep } from '../ColumnSelectionStep';
 import { AnonymizationStep } from '../AnonymizationStep';
+import { Layout } from '../shared';
 import { NotebookNavProvider, NotebookNav } from './notebook-nav';
 import { NotebookHelp } from './notebook-help';
 
@@ -19,13 +20,13 @@ export type NotebookProps = {
 export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleChange }) => {
   return (
     <NotebookNavProvider isActive={isActive}>
-      <div className="Notebook">
-        <div className="Notebook-nav">
+      <Layout className="Notebook">
+        <Layout.Sidebar>
           <NotebookNav />
           <Divider style={{ margin: '16px 0' }} />
           <NotebookHelp />
-        </div>
-        <div className="Notebook-content">
+        </Layout.Sidebar>
+        <Layout.Content className="Notebook-content">
           <FileLoadStep onLoad={(file) => onTitleChange(file.name)}>
             {({ file }) => (
               <SchemaLoadStep file={file}>
@@ -43,8 +44,8 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleCh
               </SchemaLoadStep>
             )}
           </FileLoadStep>
-        </div>
-      </div>
+        </Layout.Content>
+      </Layout>
     </NotebookNavProvider>
   );
 };
