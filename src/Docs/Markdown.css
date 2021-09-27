@@ -1,0 +1,14 @@
+.Markdown table {
+  border-collapse: collapse;
+}
+
+.Markdown table,
+.Markdown table th,
+.Markdown table td {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.Markdown table th,
+.Markdown table td {
+  padding: 8px 16px;
+}
