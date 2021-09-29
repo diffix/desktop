@@ -1,4 +1,30 @@
+.Docs-sidebar > .ant-anchor-wrapper {
+  max-height: none !important;
+}
+
+.Docs-sidebar > .ant-anchor-wrapper > .ant-anchor > .ant-anchor-link:last-child {
+  padding-bottom: 0;
+}
+
+.Docs-sidebar > .ant-anchor-wrapper > .ant-anchor > .ant-anchor-link > .ant-anchor-link-title {
+  font-weight: 600;
+  color: #1890ff;
+}
+
+.Docs-nav-link {
+  margin-left: 2px;
+}
+
 .Docs-content {
-  padding: 32px;
+  padding: 0 0 96px 0;
   overflow-y: auto;
+}
+
+.Docs-content > .Markdown {
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.Docs-content > .Markdown > :first-child {
+  padding-top: 32px;
 }
