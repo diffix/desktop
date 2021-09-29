@@ -6,6 +6,8 @@ import { toc } from 'mdast-util-toc';
 import { toString } from 'mdast-util-to-string';
 import invariant from 'tiny-invariant';
 
+import { components } from './markdown-components';
+
 import './Markdown.css';
 
 type MdAst = import('mdast').Root | import('mdast').Content;
@@ -69,7 +71,12 @@ export const Markdown: FunctionComponent<MarkdownProps> = ({ source, onTableOfCo
   };
 
   return (
-    <ReactMarkdown className="Markdown" skipHtml={true} remarkPlugins={[remarkGfm, remarkSlug, tocPlugin]}>
+    <ReactMarkdown
+      className="Markdown"
+      skipHtml={true}
+      components={components}
+      remarkPlugins={[remarkGfm, remarkSlug, tocPlugin]}
+    >
       {source}
     </ReactMarkdown>
   );
