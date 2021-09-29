@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkSlug from 'remark-slug';
@@ -58,7 +58,9 @@ export type MarkdownProps = {
   onTableOfContents?: (toc: TableOfContents) => void;
 };
 
-export const Markdown: FunctionComponent<MarkdownProps> = ({ source, onTableOfContents }) => {
+export const Markdown = React.memo<MarkdownProps>((props) => {
+  const { source, onTableOfContents } = props;
+
   const tocRef = useRef<TableOfContents>([]);
 
   useEffect(() => {
@@ -80,4 +82,4 @@ export const Markdown: FunctionComponent<MarkdownProps> = ({ source, onTableOfCo
       {source}
     </ReactMarkdown>
   );
-};
+});
