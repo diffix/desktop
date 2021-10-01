@@ -1,3 +1,7 @@
+function excludeModules(modules) {
+  return new RegExp(`node_modules[/\\\\](?:${modules.join('|')})`);
+}
+
 module.exports = [
   // Add support for native node modules
   {
@@ -6,7 +10,7 @@ module.exports = [
   },
   {
     test: /\.(m?js|node)$/,
-    exclude: /node_modules\/react-markdown/,
+    exclude: excludeModules(['react-markdown']),
     parser: { amd: false },
     use: {
       loader: '@marshallofsound/webpack-asset-relocator-loader',

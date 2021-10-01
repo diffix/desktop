@@ -100,6 +100,7 @@
     "@electron-forge/publisher-github": "^6.0.0-beta.59",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
     "@types/lodash": "^4.14.172",
+    "@types/mdast": "^3.0.10",
     "@types/node": "^16.4.6",
     "@types/react": "^17.0.15",
     "@types/react-dom": "^17.0.9",
@@ -122,14 +123,20 @@
   "dependencies": {
     "@rehooks/component-size": "^1.0.3",
     "antd": "^4.16.9",
+    "classnames": "^2.3.1",
     "electron-squirrel-startup": "^1.0.0",
     "immer": "^9.0.5",
     "lodash": "^4.17.21",
+    "mdast-util-to-string": "^3.1.0",
+    "mdast-util-toc": "^6.1.0",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-in-viewport": "^1.0.0-alpha.19",
     "react-markdown": "^7.0.1",
+    "remark-gfm": "^2.0.0",
+    "remark-slug": "^7.0.0",
+    "tiny-invariant": "^1.1.0",
     "use-immer": "^0.6.0"
   }
 }

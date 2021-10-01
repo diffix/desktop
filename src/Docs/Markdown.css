@@ -1,0 +1,38 @@
+/* Tables */
+
+.Markdown table {
+  border-collapse: collapse;
+  margin-bottom: 1em;
+}
+
+.Markdown table,
+.Markdown table th,
+.Markdown table td {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.Markdown table th,
+.Markdown table td {
+  padding: 8px 16px;
+}
+
+.Markdown table th {
+  font-weight: 600;
+}
+
+/* Code */
+
+.Markdown pre.ant-typography > div.ant-typography {
+  margin: 0;
+}
+
+.Markdown pre.ant-typography > div.ant-typography > code {
+  display: block;
+}
+
+/* Blockquotes */
+
+.Markdown blockquote {
+  padding-left: 1em;
+  border-left: 0.25em solid rgba(0, 0, 0, 0.06);
+}
