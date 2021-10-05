@@ -16,15 +16,7 @@ import anonymizationSource from '../../docs/anonymization.md';
 const { Link } = Anchor;
 const { Title } = Typography;
 
-export type PageId = 'introduction' | 'notebook-steps' | 'anonymization';
-
-type DocsPage = {
-  id: PageId;
-  title: string;
-  source: string;
-};
-
-const docsPages: DocsPage[] = [
+const docsPages = [
   {
     id: 'introduction',
     title: 'Introduction',
@@ -40,7 +32,9 @@ const docsPages: DocsPage[] = [
     title: 'Anonymization',
     source: anonymizationSource,
   },
-];
+] as const;
+
+export type PageId = typeof docsPages[number]['id'];
 
 function findDocsPage(id: PageId) {
   const page = find(docsPages, { id });
@@ -56,7 +50,7 @@ function renderLink(link: TableOfContentsLink) {
   );
 }
 
-export const defaultPage: PageId = docsPages[0].id;
+export const defaultPage = docsPages[0].id;
 
 export type DocsProps = {
   page: PageId;
