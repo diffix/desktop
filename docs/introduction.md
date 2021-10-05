@@ -4,6 +4,8 @@
 
 ### Subsection 1
 
+![Optional caption](images/icon.png)
+
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus posuere interdum. Fusce tempor lacus sit amet libero accumsan, id convallis tortor mollis. Mauris ullamcorper, mauris id dapibus blandit, arcu metus pharetra velit, a suscipit lacus leo viverra neque. Ut commodo feugiat odio, in ultricies turpis pulvinar et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris tempor nulla vel purus tincidunt blandit. Donec aliquet sapien vel scelerisque suscipit. Donec eu rhoncus massa. Vestibulum id metus id libero aliquet dapibus eu et lorem. Sed tristique nibh eu malesuada feugiat. Donec sagittis, lectus sit amet scelerisque viverra, ipsum erat varius orci, id condimentum nisi leo eu arcu. Vivamus et nisl sit amet nunc varius commodo aliquet quis odio. Cras elementum augue sit amet magna tempus, a vulputate dui posuere.
 
 Nullam nunc quam, pharetra vel facilisis eu, convallis ac nisl. Donec ullamcorper mauris a enim dignissim, nec tempus nisl aliquet. Phasellus et arcu dui. Donec id lectus in metus ultricies vehicula sed vel diam. Donec ac dolor sem. Pellentesque venenatis ex eu sodales porttitor. Mauris vel erat et urna pulvinar lobortis vel id lectus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis pulvinar, est a suscipit mattis, metus neque lobortis odio, non fermentum metus libero vitae eros. Nulla sit amet diam porta, dapibus magna a, luctus enim. Cras eu cursus purus, nec molestie lorem.
