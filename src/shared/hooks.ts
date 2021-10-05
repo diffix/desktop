@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { ComputedData } from '../types';
 
@@ -31,4 +31,22 @@ export function useMemoStable<T>(factory: () => T, deps: React.DependencyList): 
 export function useStaticValue<T>(factory: () => T): T {
   const [value] = useState(factory);
   return value;
+}
+
+type MaybeUndefined<T> = { readonly [K in keyof T]: T[K] | undefined };
+
+export function useEffectWithChanges<TDeps extends readonly unknown[]>(
+  effect: (previousDeps: MaybeUndefined<TDeps>) => void | (() => void),
+  deps: readonly [...TDeps],
+): void {
+  const previousDeps = useRef<readonly [...TDeps]>();
+  useEffect(() => {
+    const disposer = effect(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      previousDeps.current ?? (deps.map(() => undefined) as any),
+    );
+    previousDeps.current = deps;
+    return disposer;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
 }
