@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { ComputedData } from '../types';
 
@@ -31,4 +31,12 @@ export function useMemoStable<T>(factory: () => T, deps: React.DependencyList): 
 export function useStaticValue<T>(factory: () => T): T {
   const [value] = useState(factory);
   return value;
+}
+
+export function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T>();
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
 }
