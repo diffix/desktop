@@ -33,20 +33,10 @@ export function useStaticValue<T>(factory: () => T): T {
   return value;
 }
 
-type MaybeUndefined<T> = { readonly [K in keyof T]: T[K] | undefined };
-
-export function useEffectWithChanges<TDeps extends readonly unknown[]>(
-  effect: (previousDeps: MaybeUndefined<TDeps>) => void | (() => void),
-  deps: readonly [...TDeps],
-): void {
-  const previousDeps = useRef<readonly [...TDeps]>();
+export function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T>();
   useEffect(() => {
-    const disposer = effect(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      previousDeps.current ?? (deps.map(() => undefined) as any),
-    );
-    previousDeps.current = deps;
-    return disposer;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
+    ref.current = value;
+  }, [value]);
+  return ref.current;
 }
