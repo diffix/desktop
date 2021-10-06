@@ -19,6 +19,8 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+const ALLOWED_DOMAINS = ['https://open-diffix.org', 'https://github.com'];
+
 const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 800,
@@ -30,9 +32,14 @@ const createWindow = (): void => {
     icon: path.join(app.getAppPath(), resourcesLocation, 'assets', 'icon.png'),
   });
 
-  mainWindow.webContents.on('new-window', function (e, url) {
-    e.preventDefault();
-    shell.openExternal(url);
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (ALLOWED_DOMAINS.some((domain) => url.startsWith(domain))) {
+      shell.openExternal(url);
+    } else {
+      console.warn(`Blocked URL ${url} by setWindowOpenHandler.`);
+    }
+
+    return { action: 'deny' };
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
