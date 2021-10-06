@@ -1,39 +1,92 @@
-# Introduction
+# Operation
 
-## Section 1
+> To report feature requests or problem, please contact us at [feedback@open-diffix.org](mailto:feedback@open-diffix.org).
 
-### Subsection 1
+Easy Diffix has three phases of operation:
+- Load and configure table from CSV
+- Select data and adjust quality
+  - Select columns for anonymization
+  - Select amount of data generalization
+  - Examine data quality and adjust selected columns and generalization as needed
+- Export anonymized data as CSV
 
-![Optional caption](images/icon.png)
+An unlimited number of anonymized views of the data may be exported without compromising anonymity.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus posuere interdum. Fusce tempor lacus sit amet libero accumsan, id convallis tortor mollis. Mauris ullamcorper, mauris id dapibus blandit, arcu metus pharetra velit, a suscipit lacus leo viverra neque. Ut commodo feugiat odio, in ultricies turpis pulvinar et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris tempor nulla vel purus tincidunt blandit. Donec aliquet sapien vel scelerisque suscipit. Donec eu rhoncus massa. Vestibulum id metus id libero aliquet dapibus eu et lorem. Sed tristique nibh eu malesuada feugiat. Donec sagittis, lectus sit amet scelerisque viverra, ipsum erat varius orci, id condimentum nisi leo eu arcu. Vivamus et nisl sit amet nunc varius commodo aliquet quis odio. Cras elementum augue sit amet magna tempus, a vulputate dui posuere.
+![Optional caption](images/overview.png)
 
-Nullam nunc quam, pharetra vel facilisis eu, convallis ac nisl. Donec ullamcorper mauris a enim dignissim, nec tempus nisl aliquet. Phasellus et arcu dui. Donec id lectus in metus ultricies vehicula sed vel diam. Donec ac dolor sem. Pellentesque venenatis ex eu sodales porttitor. Mauris vel erat et urna pulvinar lobortis vel id lectus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis pulvinar, est a suscipit mattis, metus neque lobortis odio, non fermentum metus libero vitae eros. Nulla sit amet diam porta, dapibus magna a, luctus enim. Cras eu cursus purus, nec molestie lorem.
+## Load table from CSV
 
-### Subsection 2
+Easy Diffix only accepts CSV files as input.
 
-Sed id ante sodales, rutrum lacus sit amet, consequat turpis. Donec mi lacus, aliquam eget dapibus eget, pellentesque ut eros. Maecenas sollicitudin mi at mi blandit, eu tempus est convallis. Maecenas tincidunt orci in pharetra ultrices. Curabitur viverra lectus et massa accumsan scelerisque. Sed non enim enim. Mauris tempus magna ut mi laoreet tempor. Suspendisse vel feugiat lorem. Nulla mi velit, commodo a nibh accumsan, varius scelerisque turpis. Ut rhoncus eu risus nec tristique. Duis maximus tortor quis pellentesque maximus. Donec mollis, sapien vitae feugiat cursus, augue orci rutrum dolor, eu viverra arcu urna at velit. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+Easy Diffix interprets the first row of the CSV file as column names.
 
-Suspendisse porta sit amet elit sit amet malesuada. Quisque consectetur velit mauris, ac tempor enim pharetra ac. Nulla nec tincidunt tellus. Donec ac lectus non sapien egestas tincidunt. Phasellus sed nulla bibendum, malesuada mi quis, mattis velit. Etiam vel enim bibendum ante dictum lobortis. Etiam ac libero ut urna blandit hendrerit. Donec vulputate tincidunt tortor eu porttitor.
+Easy Diffix auto-detects the CSV separator. All standard separators are accepted.
 
-### Subsection 3
+Easy Diffix auto-detects data types as text or numeric. Text columns are generalized with substring selection, and numeric columns are generalized with numeric ranges.
 
-Integer euismod in neque non laoreet. Cras sem augue, elementum eu erat a, auctor commodo mauris. Proin non libero velit. Suspendisse egestas tortor id iaculis scelerisque. Nunc metus purus, facilisis accumsan leo et, euismod pellentesque augue. Suspendisse eget erat vehicula, malesuada massa vel, sollicitudin libero. Aenean ut bibendum lacus. Aliquam a est mollis risus rhoncus hendrerit et et dui. Nam ut congue purus. Nunc rhoncus nisl tincidunt metus fermentum varius. Fusce tempor viverra lorem eu fermentum. Proin lacinia nibh ipsum, et semper justo blandit sed. Ut eu tempor ex, nec tristique mi. Etiam eget est dui. Curabitur porttitor tristique mauris.
+After loading, Easy Diffix displays the column names and the first 1000 rows of the table. This data may be inspected to validate that the CSV file was loaded correctly.
 
-## Section 2
+## IMPORTANT: Configure the Protected Entity Identifier Column
 
-### Subsection 1
+In order for Easy Diffix to anonymize properly, the column containing the protected entity identifier must be correctly configured.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque maximus posuere interdum. Fusce tempor lacus sit amet libero accumsan, id convallis tortor mollis. Mauris ullamcorper, mauris id dapibus blandit, arcu metus pharetra velit, a suscipit lacus leo viverra neque. Ut commodo feugiat odio, in ultricies turpis pulvinar et. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris tempor nulla vel purus tincidunt blandit. Donec aliquet sapien vel scelerisque suscipit. Donec eu rhoncus massa. Vestibulum id metus id libero aliquet dapibus eu et lorem. Sed tristique nibh eu malesuada feugiat. Donec sagittis, lectus sit amet scelerisque viverra, ipsum erat varius orci, id condimentum nisi leo eu arcu. Vivamus et nisl sit amet nunc varius commodo aliquet quis odio. Cras elementum augue sit amet magna tempus, a vulputate dui posuere.
+The **protected entity** is the entity whose privacy is being protected. A protected entity is usually a person, but it could be something else, for instance an account, a family, or even an organization.
 
-Nullam nunc quam, pharetra vel facilisis eu, convallis ac nisl. Donec ullamcorper mauris a enim dignissim, nec tempus nisl aliquet. Phasellus et arcu dui. Donec id lectus in metus ultricies vehicula sed vel diam. Donec ac dolor sem. Pellentesque venenatis ex eu sodales porttitor. Mauris vel erat et urna pulvinar lobortis vel id lectus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Duis pulvinar, est a suscipit mattis, metus neque lobortis odio, non fermentum metus libero vitae eros. Nulla sit amet diam porta, dapibus magna a, luctus enim. Cras eu cursus purus, nec molestie lorem.
+Some data sets have one row of data per protected entity. Examples include survey data, demographic data, and census data. For example:
 
-### Subsection 2
+| Gender | Zip Code | Age | Education | Job | ... |
+| --- | --- | --- | --- | --- | --- |
+| M | 12345 | 46 | High School | Plumber | ... |
+| O | 54321 | 23 | Bachelor | None | ... |
+| F | 48572 | 32 | PhD | Professor | ... |
 
-Sed id ante sodales, rutrum lacus sit amet, consequat turpis. Donec mi lacus, aliquam eget dapibus eget, pellentesque ut eros. Maecenas sollicitudin mi at mi blandit, eu tempus est convallis. Maecenas tincidunt orci in pharetra ultrices. Curabitur viverra lectus et massa accumsan scelerisque. Sed non enim enim. Mauris tempus magna ut mi laoreet tempor. Suspendisse vel feugiat lorem. Nulla mi velit, commodo a nibh accumsan, varius scelerisque turpis. Ut rhoncus eu risus nec tristique. Duis maximus tortor quis pellentesque maximus. Donec mollis, sapien vitae feugiat cursus, augue orci rutrum dolor, eu viverra arcu urna at velit. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+These *one-row* data sets often do not have any kind identifier column. The Protected Entity Identifier Column may be set to `None`. Easy Diffix treats each row as a protected entity.
 
-Suspendisse porta sit amet elit sit amet malesuada. Quisque consectetur velit mauris, ac tempor enim pharetra ac. Nulla nec tincidunt tellus. Donec ac lectus non sapien egestas tincidunt. Phasellus sed nulla bibendum, malesuada mi quis, mattis velit. Etiam vel enim bibendum ante dictum lobortis. Etiam ac libero ut urna blandit hendrerit. Donec vulputate tincidunt tortor eu porttitor.
+Other data sets have multiple rows of data per protected entity. Examples include time series data like geo-location, hospital visits, and website visits. These data sets usually have one or more columns that identify the protected identity. For instance, the following is a geo-location data set where the IMEI (International Mobile Equipment Identifier) identifies the protected entity. In this case, the protected entity itself is a mobile device, but this serves as a proxy for a person.
 
-### Subsection 3
+| IMEI | Time | Latitude | Longitude |
+| --- | --- | --- | --- |
+| 123 | 2021-10-01 21:34:19 | 43.27366 | 81.36623 |
+| 123 | 2021-10-01 21:36:21 | 43.43884 | 81.39229 |
+| 123 | 2021-10-01 22:02:51 | 43.81922 | 81.40221 |
+| ... | ... | ... | ... |
+| 456 | 2021-02-13 17:34:19 | -17.27366 | 67.36623 |
+| 456 | 2021-02-13 17:36:21 | -17.43884 | 67.39229 |
+| 456 | 2021-02-13 17:02:51 | -17.67883 | 81.40221 |
+| ... | ... | ... | ... |
 
-Integer euismod in neque non laoreet. Cras sem augue, elementum eu erat a, auctor commodo mauris. Proin non libero velit. Suspendisse egestas tortor id iaculis scelerisque. Nunc metus purus, facilisis accumsan leo et, euismod pellentesque augue. Suspendisse eget erat vehicula, malesuada massa vel, sollicitudin libero. Aenean ut bibendum lacus. Aliquam a est mollis risus rhoncus hendrerit et et dui. Nam ut congue purus. Nunc rhoncus nisl tincidunt metus fermentum varius. Fusce tempor viverra lorem eu fermentum. Proin lacinia nibh ipsum, et semper justo blandit sed. Ut eu tempor ex, nec tristique mi. Etiam eget est dui. Curabitur porttitor tristique mauris.
+For this *multi-row* data set, the IMEI column is configured in Easy Diffix as the Protected Entity Identifier Column. If a different column were configured as the Protected Entity Identifier Column, then Easy Diffix would not anonymize correctly.
+
+In some multi-row data sets, a single row may pertain to multiple different protected entities. Examples include bank transactions, email records, and call records. Here is an example of a data set for email records:
+
+|Record ID | Sender email | Receiver email | Time | ... |
+| 1234 | a@b.com | c@d.com | 2021-10-01 21:34:19 | ... |
+| 1235 | a@b.com | e@f.com | 2021-10-01 21:36:21 | ... |
+| 1236 | c@d.com | e@f.com | 2021-10-01 22:02:51 | ... |
+| ... | ... | ... | ... | ... |
+
+The `Sender email` and `Receiver email` each identify a different protected entity.
+
+> **This version of Easy Diffix does not protect a data set where there are multiple protected entities per row**
+
+A data set with multiple protected entities needs to be pre-processed to have one protected entity per row before loading into Easy Diffix. For example, the above email data set could be split into two data sets, one without the `Receiver email` column, and the other without the `Sender email` column. Note in particular that simply pseudonymizing one or the other of the email columns would **not** suffice in providing strong anonymity: the complete column must be removed.
+
+A future version of Easy Diffix will support data sets with multiple protected entities per row. Please contact us at
+[feedback@open-diffix.org](mailto:feedback@open-diffix.org) if this feature is important to you.
+
+## Select columns and generalization
+
+Like all data anonymization mechanisms, Diffix distorts and hides data. The more columns included and the finer the data granularity, the more distortion and hiding. Diffix distorts by adding *noise* to counts, and hides data by *suppressing* bins that pertain to too few protected entities.
+
+Easy Diffix lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and raw data. Through an iterative process of column selection and generalization, and anonymized data inspection, Easy Diffix simplifies the task of data anonymization.
+
+![Optional caption](images/quality-iterate.png)
+
+Columns are selected for inclusion in the anonymized data output using the radial buttons. As soon as a column is selected, Easy Diffix starts computing the anonymized output. If another column is selected or de-selected before the computing finishes, then the computation is halted and a new computation started.
+
+When a column is selected, the generalization input is exposed. For text columns, you can select a substring by offset and number of characters. For numeric columns, you can select a bin size.
+
+> More generalization (larger substrings or no substring, and larger bins) leads to less suppression and less relative noise.
+
+## How to interpret the distortion summary
+
