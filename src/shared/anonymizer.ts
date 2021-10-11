@@ -50,7 +50,7 @@ class DiffixAnonymizer implements Anonymizer {
   }
 
   private makeBinSQL = (columnName: string, { binSize }: NumericGeneralization) => {
-    return `floor(cast(${columnName} AS real) / ${binSize}) * ${binSize}`;
+    return `floor_by(cast(${columnName} AS real), ${binSize})`;
   };
 
   private makeSubstringSQL = (columnName: string, { substringStart, substringLength }: StringGeneralization) => {
