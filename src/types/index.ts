@@ -125,5 +125,6 @@ declare global {
     callService(request: unknown, signal: AbortSignal): Promise<Response>;
     selectExportFile(defaultPath: string): Promise<string | null>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;
+    openDocsHandler: () => void;
   }
 }
