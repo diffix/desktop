@@ -36,6 +36,8 @@ const docsPages = [
 
 export type PageId = typeof docsPages[number]['id'];
 
+export const allPageIds = docsPages.map((p) => p.id);
+
 function findDocsPage(id: PageId) {
   const page = find(docsPages, { id });
   invariant(page, `Page with ID ${id} must exist.`);

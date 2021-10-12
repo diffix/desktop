@@ -1,9 +1,48 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Divider, Typography } from 'antd';
 import { Components } from 'react-markdown';
 import classNames from 'classnames';
 
-const { Paragraph, Text, Title } = Typography;
+import { allPageIds, PageId } from './Docs';
+import { DocsLink } from './DocsLink';
+
+const { Link, Paragraph, Text, Title } = Typography;
+
+type SectionLinkProps = {
+  className?: string;
+  section: string | null;
+};
+
+// Link which scrolls to section smoothly.
+const SectionLink: FunctionComponent<SectionLinkProps> = ({ className, section, children }) => {
+  return (
+    <Link
+      className={classNames('SectionLink', className)}
+      href={`#${section || ''}`}
+      onClick={(e) => {
+        e.preventDefault();
+
+        if (!section) {
+          window.scroll(0, 0);
+          return;
+        }
+
+        const element = document.getElementById(section);
+        if (!element) {
+          console.warn(`Section '${section}' not found`);
+          return;
+        }
+
+        element.scrollIntoView({
+          block: 'start',
+          behavior: 'smooth',
+        });
+      }}
+    >
+      {children}
+    </Link>
+  );
+};
 
 // Removes annoying `onClick` type mismatch error and discards the `node` prop.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,9 +51,53 @@ function wrap<TArgs>(fn: (props: TArgs & { onClick: any }) => JSX.Element) {
   return (({ node: _, ...props }: any) => fn(props)) as (args: TArgs) => JSX.Element;
 }
 
+type LinkInfo = { type: 'external' } | { type: 'local'; path: string; hash: string };
+
+function parseHref(href: string): LinkInfo {
+  const dummyHostname = 'open-diffix.local';
+  const url = new URL(href, `https://${dummyHostname}`);
+  if (url.hostname === dummyHostname) {
+    return { type: 'local', path: url.pathname, hash: url.hash };
+  } else {
+    return { type: 'external' };
+  }
+}
+
+function parsePage(path: string): PageId | '/' | null {
+  path = path.replace(/^\//, '').replace(/\.md$/i, '');
+  if (path === '') {
+    return '/';
+  } else if (allPageIds.includes(path as PageId)) {
+    return path as PageId;
+  } else {
+    return null;
+  }
+}
+
+function parseSection(hash: string): string | null {
+  if (!hash) return null;
+  return hash.replace(/^#/, '');
+}
+
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export const components: Components = {
-  // todo: a, img, li?
+  // todo: img, li?
+  a: wrap((props) => {
+    const linkInfo = parseHref(props.href || '#');
+    if (linkInfo.type === 'external') {
+      return <a {...props} target={'_blank'} />;
+    } else {
+      const page = parsePage(linkInfo.path);
+      if (page === '/') {
+        return <SectionLink {...props} section={parseSection(linkInfo.hash)} />;
+      } else if (page) {
+        return <DocsLink {...props} page={page} section={parseSection(linkInfo.hash)} />;
+      } else {
+        console.warn(`Page '${linkInfo.path}' not found`);
+        return <a {...props} href="#" />;
+      }
+    }
+  }),
   blockquote: wrap((props) => <blockquote {...props} className={classNames(props.className, 'ant-typography')} />),
   code: wrap(({ inline, ...props }) => {
     if (inline) {
