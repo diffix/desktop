@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, protocol } from 'electron';
 import { execFile } from 'child_process';
 import util from 'util';
 import fs from 'fs';
@@ -19,9 +19,18 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+protocol.registerSchemesAsPrivileged([{ scheme: 'docs', privileges: { bypassCSP: true } }]);
+
+function registerProtocols() {
+  protocol.registerFileProtocol('docs', (request, callback) => {
+    const url = request.url.substr('docs://'.length);
+    callback(path.resolve(path.normalize(`${resourcesLocation}/docs/${url}`)));
+  });
+}
+
 const ALLOWED_DOMAINS = ['https://open-diffix.org', 'https://github.com'];
 
-const createWindow = (): void => {
+function createWindow() {
   const mainWindow = new BrowserWindow({
     height: 800,
     width: 1400,
@@ -47,9 +56,12 @@ const createWindow = (): void => {
   if (!app.isPackaged) {
     mainWindow.webContents.openDevTools();
   }
-};
+}
 
-app.on('ready', createWindow);
+app.on('ready', () => {
+  registerProtocols();
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

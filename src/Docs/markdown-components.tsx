@@ -81,7 +81,6 @@ function parseSection(hash: string): string | null {
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export const components: Components = {
-  // todo: img, li?
   a: wrap((props) => {
     const linkInfo = parseHref(props.href || '#');
     if (linkInfo.type === 'external') {
@@ -114,6 +113,14 @@ export const components: Components = {
   h5: wrap((props) => <Title {...props} level={5} />),
   h6: wrap((props) => <Title {...props} level={5} />),
   hr: wrap((props) => <Divider {...props} />),
+  img: wrap((props) => {
+    const linkInfo = parseHref(props.src || '');
+    if (linkInfo.type === 'external' || !linkInfo.path) {
+      return <img {...props} />;
+    } else {
+      return <img {...props} src={`docs://${linkInfo.path}`} />;
+    }
+  }),
   ol: wrap(({ depth, ordered, ...props }) => (
     <ol {...props} className={classNames(props.className, 'ant-typography')} />
   )),
