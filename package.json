@@ -25,7 +25,8 @@
       "packagerConfig": {
         "extraResource": [
           "bin",
-          "assets"
+          "assets",
+          "docs"
         ],
         "name": "easy_diffix",
         "icon": "assets/icon"
