@@ -36,8 +36,8 @@ window.hashFile = (fileName: string, signal: AbortSignal) =>
     return ipcRenderer.invoke('hash_file', taskId, fileName);
   });
 
+window.onOpenDocs = () => {};
+
 ipcRenderer.on('open_docs', () => {
-  if (typeof window.openDocsHandler === 'function') {
-    window.openDocsHandler();
-  }
+  window.onOpenDocs();
 });

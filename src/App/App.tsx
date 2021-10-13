@@ -119,7 +119,7 @@ export const App: FunctionComponent = () => {
     },
   }));
 
-  window.openDocsHandler = () => docsFunctions.openDocs(defaultPage);
+  window.onOpenDocs = () => docsFunctions.openDocs(defaultPage);
 
   const { tabs, activeTab } = state;
 
