@@ -35,3 +35,9 @@ window.hashFile = (fileName: string, signal: AbortSignal) =>
   newTask(signal, (taskId) => {
     return ipcRenderer.invoke('hash_file', taskId, fileName);
   });
+
+window.onOpenDocs = () => {};
+
+ipcRenderer.on('open_docs', () => {
+  window.onOpenDocs();
+});

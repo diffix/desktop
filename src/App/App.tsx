@@ -5,7 +5,7 @@ import { useImmer } from 'use-immer';
 import { find, findIndex } from 'lodash';
 
 import { AnonymizerContext, anonymizer, useStaticValue } from '../shared';
-import { Docs, DocsFunctionsContext, PageId } from '../Docs';
+import { defaultPage, Docs, DocsFunctionsContext, PageId } from '../Docs';
 import { Notebook } from '../Notebook';
 
 import './App.css';
@@ -118,6 +118,8 @@ export const App: FunctionComponent = () => {
       });
     },
   }));
+
+  window.onOpenDocs = () => docsFunctions.openDocs(defaultPage);
 
   const { tabs, activeTab } = state;
 

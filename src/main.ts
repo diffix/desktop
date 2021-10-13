@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, shell, protocol } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, protocol, Menu, MenuItemConstructorOptions } from 'electron';
 import { execFile } from 'child_process';
 import util from 'util';
 import fs from 'fs';
@@ -12,12 +12,43 @@ const asyncPipeline = util.promisify(stream.pipeline);
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-const resourcesLocation = app.isPackaged ? '..' : '.';
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+const isMac = process.platform === 'darwin';
+const resourcesLocation = app.isPackaged ? '..' : '.';
+
+// App menu
+
+function setupMenu() {
+  const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
+  const template: MenuItemConstructorOptions[] = [
+    ...(isMac ? [macAppMenu] : []),
+    { role: 'fileMenu' },
+    { role: 'editMenu' },
+    { role: 'viewMenu' },
+    { role: 'windowMenu' },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Documentation',
+          click: () => {
+            const mainWindow = BrowserWindow.getAllWindows()[0];
+            mainWindow?.webContents.send('open_docs');
+          },
+        },
+      ],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+
+// Protocol for docs file serving (docs://)
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'docs', privileges: { bypassCSP: true } }]);
 
@@ -27,6 +58,8 @@ function registerProtocols() {
     callback(path.resolve(path.normalize(`${resourcesLocation}/docs/${url}`)));
   });
 }
+
+// Main window
 
 const ALLOWED_DOMAINS = ['https://open-diffix.org', 'https://github.com'];
 
@@ -58,13 +91,16 @@ function createWindow() {
   }
 }
 
+// IPC
+
 app.on('ready', () => {
+  setupMenu();
   registerProtocols();
   createWindow();
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (!isMac) {
     app.quit();
   }
 });
