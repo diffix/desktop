@@ -28,10 +28,11 @@
 .ColumnSelectionStep-td-switch {
   padding: 8px 16px;
   text-align: center;
+  white-space: nowrap;
 }
 
-.ColumnSelectionStep-td-count {
-  border-top: 1px solid black;
+.ColumnSelectionStep-tr-count td {
+  padding: 16px;
 }
 
 .ColumnSelectionStep-td-clear-generalization button {
