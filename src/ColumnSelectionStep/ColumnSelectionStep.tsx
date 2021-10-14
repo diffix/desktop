@@ -218,11 +218,11 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
               );
             })}
             {hasAidColumn && (
-              <tr key={columns.length}>
-                <td className="ColumnSelectionStep-td-name ColumnSelectionStep-td-count" title="Type: integer">
+              <tr key={columns.length} className="ColumnSelectionStep-tr-count">
+                <td className="ColumnSelectionStep-td-name" title="Type: integer">
                   <strong>Count</strong>
                 </td>
-                <td className="ColumnSelectionStep-td-switch ColumnSelectionStep-td-count">
+                <td className="ColumnSelectionStep-td-switch">
                   <Radio.Group
                     value={countInput}
                     size="small"
@@ -233,8 +233,6 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                     <Radio.Button value="Entities">Entities</Radio.Button>
                   </Radio.Group>
                 </td>
-                <td className="ColumnSelectionStep-td-generalization ColumnSelectionStep-td-count"></td>
-                <td className="ColumnSelectionStep-td-clear-generalization ColumnSelectionStep-td-count"></td>
               </tr>
             )}
           </tbody>
