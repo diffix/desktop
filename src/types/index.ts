@@ -50,6 +50,8 @@ export type BucketColumn =
   | (TextColumn & { generalization: StringGeneralization | null })
   | BooleanColumn;
 
+export type CountInput = 'Rows' | 'Entities';
+
 // Query results
 
 export type AnonymizationSummary = {
@@ -110,8 +112,19 @@ export type AnonymizedAggregate = {
 
 export type Anonymizer = {
   loadSchema(file: File): Task<TableSchema>;
-  anonymize(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult>;
-  export(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[], outFileName: string): Task<void>;
+  anonymize(
+    schema: TableSchema,
+    aidColumn: string,
+    bucketColumns: BucketColumn[],
+    countInput: CountInput,
+  ): Task<AnonymizedQueryResult>;
+  export(
+    schema: TableSchema,
+    aidColumn: string,
+    bucketColumns: BucketColumn[],
+    countInput: CountInput,
+    outFileName: string,
+  ): Task<void>;
 };
 
 export type Task<T> = {

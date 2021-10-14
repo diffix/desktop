@@ -4,7 +4,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { anonymizer, formatPercentage, useCachedData } from '../shared';
-import { AnonymizationSummary, AnonymizedQueryResult, BucketColumn, TableSchema } from '../types';
+import { AnonymizationSummary, AnonymizedQueryResult, BucketColumn, CountInput, TableSchema } from '../types';
 import { AnonymizedResultsTable } from './AnonymizedResultsTable';
 import { useQuery } from './use-query';
 
@@ -18,6 +18,7 @@ type CommonProps = {
   schema: TableSchema;
   aidColumn: string;
   bucketColumns: BucketColumn[];
+  countInput: CountInput;
   result: AnonymizedQueryResult;
   loading: boolean;
 };
@@ -72,7 +73,12 @@ function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
   );
 }
 
-async function exportResult(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[]) {
+async function exportResult(
+  schema: TableSchema,
+  aidColumn: string,
+  bucketColumns: BucketColumn[],
+  countInput: CountInput,
+) {
   const defaultPath = schema.file.path.replace(/\.\w*$/, '') + '_anonymized.csv';
   const filePath = await window.selectExportFile(defaultPath);
   if (!filePath) return;
@@ -80,7 +86,7 @@ async function exportResult(schema: TableSchema, aidColumn: string, bucketColumn
   message.loading({ content: `Exporting anonymized data to ${filePath}...`, key: filePath, duration: 0 });
 
   try {
-    const exportTask = anonymizer.export(schema, aidColumn, bucketColumns, filePath);
+    const exportTask = anonymizer.export(schema, aidColumn, bucketColumns, countInput, filePath);
     await exportTask.result;
 
     message.success({ content: 'Anonymized data exported successfully!', key: filePath, duration: 10 });
@@ -90,7 +96,7 @@ async function exportResult(schema: TableSchema, aidColumn: string, bucketColumn
   }
 }
 
-function AnonymizationResults({ schema, aidColumn, bucketColumns, result, loading }: CommonProps) {
+function AnonymizationResults({ schema, aidColumn, bucketColumns, countInput, result, loading }: CommonProps) {
   const [exported, setExported] = useState(false);
   useEffect(() => {
     setExported(false);
@@ -120,7 +126,7 @@ function AnonymizationResults({ schema, aidColumn, bucketColumns, result, loadin
           size="large"
           disabled={loading || !result.rows.length}
           onClick={() => {
-            exportResult(schema, aidColumn, bucketColumns);
+            exportResult(schema, aidColumn, bucketColumns, countInput);
             setExported(true);
           }}
         >
@@ -136,10 +142,16 @@ export type AnonymizationStepProps = {
   bucketColumns: BucketColumn[];
   schema: TableSchema;
   aidColumn: string;
+  countInput: CountInput;
 };
 
-export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ bucketColumns, schema, aidColumn }) => {
-  const computedResult = useQuery(schema, aidColumn, bucketColumns);
+export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({
+  bucketColumns,
+  schema,
+  aidColumn,
+  countInput,
+}) => {
+  const computedResult = useQuery(schema, aidColumn, bucketColumns, countInput);
   const cachedResult = useCachedData(computedResult, emptyQueryResult);
 
   switch (computedResult.state) {
@@ -152,6 +164,7 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ b
             schema={schema}
             aidColumn={aidColumn}
             bucketColumns={bucketColumns}
+            countInput={countInput}
             result={cachedResult}
             loading={loading}
           />
@@ -160,6 +173,7 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({ b
             schema={schema}
             aidColumn={aidColumn}
             bucketColumns={bucketColumns}
+            countInput={countInput}
             result={cachedResult}
             loading={loading}
           />

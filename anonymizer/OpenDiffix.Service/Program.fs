@@ -56,16 +56,21 @@ let handlePreview
     Rows = rows
     Salt = salt
     Buckets = buckets
+    CountInput = countInput
   }
   =
   let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
+
+  let countInput =
+    match countInput with
+    | Rows -> "*"
+    | Entities -> $"distinct %s{aidColumn}"
 
   let query =
     $"""
       SELECT
         diffix_low_count(%s{aidColumn}),
-        count(*),
-        diffix_count(%s{aidColumn}),
+        count(%s{countInput}), diffix_count(%s{countInput}, %s{aidColumn}),
         %s{String.join ", " buckets}
       FROM table
       GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
@@ -117,16 +122,22 @@ let handleExport
     AidColumn = aidColumn
     Salt = salt
     Buckets = buckets
+    CountInput = countInput
     OutputPath = outputPath
   }
   =
   let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
 
+  let countInput =
+    match countInput with
+    | Rows -> "*"
+    | Entities -> $"distinct %s{aidColumn}"
+
   let query =
     $"""
       SELECT
         %s{String.join ", " buckets},
-        diffix_count(%s{aidColumn})
+        diffix_count(%s{countInput}, %s{aidColumn})
       FROM table
       GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
       HAVING NOT diffix_low_count(%s{aidColumn})
