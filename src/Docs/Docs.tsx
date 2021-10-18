@@ -12,6 +12,7 @@ import './Docs.css';
 import introductionSource from '../../docs/introduction.md';
 import notebookStepsSource from '../../docs/notebook-steps.md';
 import anonymizationSource from '../../docs/anonymization.md';
+import licenseSource from '../../LICENSE.md';
 
 const { Link } = Anchor;
 const { Title } = Typography;
@@ -31,6 +32,11 @@ const docsPages = [
     id: 'anonymization',
     title: 'Anonymization',
     source: anonymizationSource,
+  },
+  {
+    id: 'license',
+    title: 'License',
+    source: licenseSource,
   },
 ] as const;
 

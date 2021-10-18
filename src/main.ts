@@ -43,6 +43,10 @@ function setupMenu() {
           label: 'Documentation',
           click: () => open_docs('introduction'),
         },
+        {
+          label: 'License',
+          click: () => open_docs('license'),
+        },
       ],
     },
   ];

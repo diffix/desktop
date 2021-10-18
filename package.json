@@ -19,7 +19,7 @@
     "format": "prettier --write src && cd anonymizer && dotnet fantomas -r OpenDiffix.Service"
   },
   "keywords": [],
-  "license": "UNLICENSED",
+  "license": "BUSL-1.1",
   "config": {
     "forge": {
       "packagerConfig": {
