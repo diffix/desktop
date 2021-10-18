@@ -23,7 +23,7 @@ const resourcesLocation = app.isPackaged ? '..' : '.';
 
 // App menu
 
-function open_docs(page: PageId) {
+function openDocs(page: PageId) {
   const mainWindow = BrowserWindow.getAllWindows()[0];
   mainWindow?.webContents.send('open_docs', page);
 }
@@ -41,11 +41,11 @@ function setupMenu() {
       submenu: [
         {
           label: 'Documentation',
-          click: () => open_docs('introduction'),
+          click: () => openDocs('introduction'),
         },
         {
           label: 'License',
-          click: () => open_docs('license'),
+          click: () => openDocs('license'),
         },
       ],
     },
