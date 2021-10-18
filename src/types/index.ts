@@ -1,4 +1,5 @@
 import { RcFile } from 'antd/lib/upload';
+import { PageId } from '../Docs';
 
 // UI State
 
@@ -138,6 +139,6 @@ declare global {
     callService(request: unknown, signal: AbortSignal): Promise<Response>;
     selectExportFile(defaultPath: string): Promise<string | null>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;
-    onOpenDocs: () => void;
+    onOpenDocs: (page: PageId) => void;
   }
 }

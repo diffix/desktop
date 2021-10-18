@@ -5,6 +5,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
 import stream from 'stream';
+import { PageId } from './Docs';
 
 const asyncExecFile = util.promisify(execFile);
 const asyncPipeline = util.promisify(stream.pipeline);
@@ -22,6 +23,11 @@ const resourcesLocation = app.isPackaged ? '..' : '.';
 
 // App menu
 
+function open_docs(page: PageId) {
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  mainWindow?.webContents.send('open_docs', page);
+}
+
 function setupMenu() {
   const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
   const template: MenuItemConstructorOptions[] = [
@@ -35,10 +41,7 @@ function setupMenu() {
       submenu: [
         {
           label: 'Documentation',
-          click: () => {
-            const mainWindow = BrowserWindow.getAllWindows()[0];
-            mainWindow?.webContents.send('open_docs');
-          },
+          click: () => open_docs('introduction'),
         },
       ],
     },

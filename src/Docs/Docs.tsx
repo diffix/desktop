@@ -52,8 +52,6 @@ function renderLink(link: TableOfContentsLink) {
   );
 }
 
-export const defaultPage = docsPages[0].id;
-
 export type DocsProps = {
   page: PageId;
   section: string | null;
