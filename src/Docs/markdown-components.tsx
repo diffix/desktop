@@ -106,12 +106,10 @@ export const components: Components = {
     }
   }),
   em: wrap((props) => <Text {...props} italic />),
-  h1: wrap((props) => <Title {...props} level={1} />),
-  h2: wrap((props) => <Title {...props} level={2} />),
-  h3: wrap((props) => <Title {...props} level={3} />),
-  h4: wrap((props) => <Title {...props} level={4} />),
-  h5: wrap((props) => <Title {...props} level={5} />),
-  h6: wrap((props) => <Title {...props} level={5} />),
+  h1: wrap((props) => <Title {...props} level={2} />),
+  h2: wrap((props) => <Title {...props} level={3} />),
+  h3: wrap((props) => <Title {...props} level={4} />),
+  h4: wrap((props) => <Title {...props} level={5} />),
   hr: wrap((props) => <Divider {...props} />),
   img: wrap((props) => {
     const linkInfo = parseHref(props.src || '');

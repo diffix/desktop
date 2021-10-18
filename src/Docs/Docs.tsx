@@ -12,6 +12,7 @@ import './Docs.css';
 import introductionSource from '../../docs/introduction.md';
 import notebookStepsSource from '../../docs/notebook-steps.md';
 import anonymizationSource from '../../docs/anonymization.md';
+import licenseSource from '../../LICENSE.md';
 
 const { Link } = Anchor;
 const { Title } = Typography;
@@ -32,6 +33,11 @@ const docsPages = [
     title: 'Anonymization',
     source: anonymizationSource,
   },
+  {
+    id: 'license',
+    title: 'License',
+    source: licenseSource,
+  },
 ] as const;
 
 export type PageId = typeof docsPages[number]['id'];
@@ -51,8 +57,6 @@ function renderLink(link: TableOfContentsLink) {
     </Link>
   );
 }
-
-export const defaultPage = docsPages[0].id;
 
 export type DocsProps = {
   page: PageId;
@@ -105,7 +109,7 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
   return (
     <Layout className="Docs">
       <Layout.Sidebar className="Docs-sidebar">
-        <Title level={4}>User documentation </Title>
+        <Title level={4}>Documentation</Title>
         {docsPages.map((page) =>
           page.id === pageId ? (
             <Anchor
