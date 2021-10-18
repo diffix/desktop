@@ -103,7 +103,7 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
   return (
     <Layout className="Docs">
       <Layout.Sidebar className="Docs-sidebar">
-        <Title level={4}>User documentation </Title>
+        <Title level={4}>Documentation</Title>
         {docsPages.map((page) =>
           page.id === pageId ? (
             <Anchor
