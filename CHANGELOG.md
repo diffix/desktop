@@ -3,6 +3,8 @@
 - Added support for datasets with multiple rows per entity.
 - Fixed crash when bucketizing empty values.
 - Major performance optimizations.
+- Added support for counting entities.
+- Added license.
 
 ### Version 0.2.3
 
