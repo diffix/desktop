@@ -160,9 +160,22 @@ ipcMain.handle('call_service', (_event, taskId: string, request: string) =>
     promise.child.stdin?.write(request);
     promise.child.stdin?.end();
 
-    // Throws stderr output on error.
-    const { stdout } = await promise;
-    return stdout;
+    try {
+      const { stdout, stderr } = await promise;
+      console.log(stderr.trimEnd());
+      return stdout;
+    } catch (err) {
+      if ((err as Error)?.name === 'AbortError') {
+        throw 'Service call aborted.';
+      }
+
+      const stderr = (err as { stderr?: string })?.stderr;
+      if (stderr) {
+        console.log(stderr.trimEnd());
+      }
+
+      throw 'Service call failed.';
+    }
   }),
 );
 
