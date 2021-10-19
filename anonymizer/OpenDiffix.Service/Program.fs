@@ -15,7 +15,7 @@ let runQuery query filePath anonParams =
 
   let context =
     QueryContext.make anonParams dataProvider
-    |> QueryContext.withLogger (LogMessage.toString >> eprintf "%s")
+    |> QueryContext.withLogger (LogMessage.toString >> eprintfn "%s")
 
   try
     QueryEngine.run context query
