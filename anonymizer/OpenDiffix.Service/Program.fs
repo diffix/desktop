@@ -1,4 +1,4 @@
-﻿open System
+open System
 open System.IO
 open OpenDiffix.Core
 open OpenDiffix.Core.QueryEngine
@@ -13,9 +13,14 @@ let toSalt =
 let runQuery query filePath anonParams =
   use dataProvider = new CSV.DataProvider(filePath) :> IDataProvider
 
-  let context = EvaluationContext.make anonParams dataProvider
+  let context =
+    QueryContext.make anonParams dataProvider
+    |> QueryContext.withLogger (LogMessage.toString >> eprintfn "%s")
 
-  QueryEngine.run context query
+  try
+    QueryEngine.run context query
+  finally
+    eprintfn "%s" (context.Metadata.ToString())
 
 let quoteString (string: string) =
   "\"" + string.Replace("\"", "\"\"") + "\""
@@ -159,5 +164,5 @@ let main argv =
 
   with
   | e ->
-    eprintfn $"ERROR: %s{e.Message}"
+    eprintfn $"ERROR: {e.ToString()}"
     1
