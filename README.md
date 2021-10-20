@@ -9,7 +9,7 @@ Run `git submodule update --init && npm run build` to get and build the anonymiz
 
 Following the setup, run `npm start` to start the development environment with hot code reloading.
 
-Before committing, make sure to lint and format your code with `npm run lint` and `npm run prettier`.
+Before committing, make sure to lint and format your code with `npm run lint` and `npm run format`.
 
 ## Making a release
 
