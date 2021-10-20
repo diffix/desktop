@@ -41,7 +41,7 @@ export function ResponsiveTable<T extends AnyRecord = AnyRecord>(props: Responsi
   return (
     <div className="ResponsiveTable" ref={ref}>
       <div style={{ maxWidth: maxWidth(columnCount) }}>
-        <AntTable size="middle" bordered {...props} {...layoutProps} />
+        <AntTable size="middle" bordered pagination={{ showSizeChanger: true }} {...props} {...layoutProps} />
       </div>
     </div>
   );
