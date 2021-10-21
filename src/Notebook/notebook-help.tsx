@@ -56,9 +56,13 @@ function ColumnSelectionHelp() {
   return (
     <div>
       <Title level={4}>Column Selection</Title>
+      <Paragraph>Select which columns appear in the anonymized results.</Paragraph>
       <Paragraph>
-        Select which columns appear in the anonymized results. Numeric columns may be generalized as bins. Non-numeric
-        columns may be generalized by selecting a substring (offset and number of characters).
+        Numeric columns may be generalized as bins. Non-numeric columns may be generalized by selecting a substring
+        (offset and number of characters).
+      </Paragraph>
+      <Paragraph>
+        If an ID column was previously selected, you can choose between counting rows or counting protected entities.
       </Paragraph>
     </div>
   );
