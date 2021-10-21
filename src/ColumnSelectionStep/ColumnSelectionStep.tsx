@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Form, Button, Divider, InputNumber, Radio, Switch, Typography } from 'antd';
+import { Form, Button, Divider, InputNumber, Radio, Switch, Typography, Tooltip } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
 import { assign } from 'lodash';
@@ -229,8 +229,12 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                     buttonStyle="solid"
                     onChange={(e) => setCountInput(e.target.value)}
                   >
-                    <Radio.Button value="Rows">Rows</Radio.Button>
-                    <Radio.Button value="Entities">Entities</Radio.Button>
+                    <Tooltip title="Count rows">
+                      <Radio.Button value="Rows">Rows</Radio.Button>
+                    </Tooltip>
+                    <Tooltip title="Count protected entities">
+                      <Radio.Button value="Entities">Entities</Radio.Button>
+                    </Tooltip>
                   </Radio.Group>
                 </td>
               </tr>
