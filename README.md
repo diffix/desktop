@@ -4,6 +4,7 @@ Desktop application to anonymize data with Open Diffix Elm.
 
 ## Development
 
+Run `asdf install` to install `node` via `asdf`.
 Run `npm install` to install dependencies.
 Run `git submodule update --init && npm run build` to get and build the anonymizer.
 
