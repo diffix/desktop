@@ -28,6 +28,10 @@ function openDocs(page: PageId) {
   mainWindow?.webContents.send('open_docs', page);
 }
 
+function openURL(url: string) {
+  shell.openExternal(url);
+}
+
 function setupMenu() {
   const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
   const template: MenuItemConstructorOptions[] = [
@@ -42,6 +46,14 @@ function setupMenu() {
         {
           label: 'Documentation',
           click: () => openDocs('introduction'),
+        },
+        {
+          label: 'Issues',
+          click: () => openURL('https://github.com/diffix/publisher/issues'),
+        },
+        {
+          label: 'Discussions',
+          click: () => openURL('https://github.com/diffix/publisher/discussions'),
         },
         {
           label: 'License',
