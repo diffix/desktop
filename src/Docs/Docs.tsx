@@ -9,9 +9,7 @@ import { Markdown, TableOfContents, TableOfContentsLink } from './Markdown';
 import './Docs.css';
 
 // Placeholder doc files
-import introductionSource from '../../docs/introduction.md';
-import notebookStepsSource from '../../docs/notebook-steps.md';
-import anonymizationSource from '../../docs/anonymization.md';
+import operationSource from '../../docs/operation.md';
 
 const { Link } = Anchor;
 const { Title } = Typography;
@@ -24,19 +22,9 @@ type DocsPage = {
 
 const docsPages: DocsPage[] = [
   {
-    id: 'introduction',
-    title: 'Introduction',
-    source: introductionSource,
-  },
-  {
-    id: 'notebook-steps',
-    title: 'Notebook Steps',
-    source: notebookStepsSource,
-  },
-  {
-    id: 'anonymization',
-    title: 'Anonymization',
-    source: anonymizationSource,
+    id: 'operation',
+    title: 'Operation',
+    source: operationSource,
   },
 ];
 
