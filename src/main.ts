@@ -48,16 +48,25 @@ function setupMenu() {
           click: () => openDocs('introduction'),
         },
         {
-          label: 'Issues',
-          click: () => openURL('https://github.com/diffix/publisher/issues'),
+          label: 'License',
+          click: () => openDocs('license'),
+        },
+        { type: 'separator' },
+        {
+          label: 'Learn More',
+          click: () => openURL('https://open-diffix.org'),
         },
         {
-          label: 'Discussions',
+          label: 'Community Discussions',
           click: () => openURL('https://github.com/diffix/publisher/discussions'),
         },
         {
-          label: 'License',
-          click: () => openDocs('license'),
+          label: 'Search Issues',
+          click: () => openURL('https://github.com/diffix/publisher/issues'),
+        },
+        {
+          label: 'Latest Releases',
+          click: () => openURL('https://github.com/diffix/publisher/releases'),
         },
       ],
     },
