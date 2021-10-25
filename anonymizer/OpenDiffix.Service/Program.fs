@@ -12,15 +12,8 @@ let toSalt =
 
 let runQuery query filePath anonParams =
   use dataProvider = new CSV.DataProvider(filePath) :> IDataProvider
-
-  let context =
-    QueryContext.make anonParams dataProvider
-    |> QueryContext.withLogger (LogMessage.toString >> eprintfn "%s")
-
-  try
-    QueryEngine.run context query
-  finally
-    eprintfn "%s" (context.Metadata.ToString())
+  let context = QueryContext.make anonParams dataProvider
+  QueryEngine.run context query
 
 let quoteString (string: string) =
   "\"" + string.Replace("\"", "\"\"") + "\""
@@ -154,6 +147,8 @@ let handleExport
 
 [<EntryPoint>]
 let main argv =
+  Logger.backend <- Logger.LogMessage.toString >> eprintfn "%s"
+
   try
     match Console.In.ReadToEnd() |> decodeRequest with
     | Load load -> handleLoad load
