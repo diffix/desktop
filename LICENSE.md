@@ -12,7 +12,7 @@ License text copyright (c) 2017 MariaDB Corporation Ab, All Rights Reserved.
 
 Licensor:             __Max Planck Gesellschaft (MPG)__
 
-Licensed Work:        __Easy Diffix Publisher__
+Licensed Work:        __Easy Diffix Publisher 1.0__
 
 Additional Use Grant:
 
@@ -21,7 +21,7 @@ Additional Use Grant:
   interface, or access to the analytics results in exchange for considerations, monetary or non-monetary.
   You are granted a LIMITED right of use for our patents insofar as use of the software strictly under this
   license would infringe such patent. No grant of patent for any other use is granted.
-  [Reminder: The basic BUSL already gives the right for non-commercial use.]__
+  [Reminder: The basic BSL already gives the right for non-commercial use.]__
 
 Change Date:          __Four years from release date__
 
