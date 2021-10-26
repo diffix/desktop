@@ -34,8 +34,13 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleCh
                   <AidSelectionStep schema={schema}>
                     {({ aidColumn }) => (
                       <ColumnSelectionStep schema={schema} aidColumn={aidColumn}>
-                        {({ bucketColumns }) => (
-                          <AnonymizationStep bucketColumns={bucketColumns} schema={schema} aidColumn={aidColumn} />
+                        {({ bucketColumns, countInput }) => (
+                          <AnonymizationStep
+                            bucketColumns={bucketColumns}
+                            schema={schema}
+                            aidColumn={aidColumn}
+                            countInput={countInput}
+                          />
                         )}
                       </ColumnSelectionStep>
                     )}

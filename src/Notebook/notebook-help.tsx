@@ -1,17 +1,20 @@
 import React from 'react';
 import { Typography } from 'antd';
-import { NotebookNavStep, useNavState } from './notebook-nav';
 
-const { Link, Paragraph, Text, Title } = Typography;
+import { NotebookNavStep, useNavState } from './notebook-nav';
+import { DocsLink } from '../Docs';
+
+const { Paragraph, Text, Title } = Typography;
 
 function CsvImportHelp() {
   return (
     <div>
       <Title level={4}>CSV Import</Title>
       <Paragraph>
-        Easy Diffix auto-detects the CSV deliminter, as well as the field type
-        (text and numeric).
-        <DocsLink page="operation" section="load-table-from-csv">Click here for details.</DocsLink>
+        Easy Diffix auto-detects the CSV deliminter, as well as the field type (text and numeric).{' '}
+        <DocsLink page="operation" section="load-table-from-csv">
+          Click here for details.
+        </DocsLink>
       </Paragraph>
     </div>
   );
@@ -31,15 +34,12 @@ function AidSelectionHelp() {
     <div>
       <Title level={4}>ID Selection</Title>
       <Paragraph>
-        <strong>WARNING:</strong> If this configuration is not done correctly, the data will
-        not be properly anonymized.
+        <strong>WARNING:</strong> If this configuration is not done correctly, the data will not be properly anonymized.
       </Paragraph>
       <Paragraph>
-        If the data has one row per protected entity, then no entity identifier column
-        need be selected. Otherwise,
-        select a column containing a unique ID per protected entity.
-        <DocsLink page="operation"
-          section="important:-configure-the-protected-entity-identifier-column">
+        If the data has one row per protected entity, then no entity identifier column need be selected. Otherwise,
+        select a column containing a unique ID per protected entity.{' '}
+        <DocsLink page="operation" section="important-configure-the-protected-entity-identifier-column">
           Click here for details.
         </DocsLink>
       </Paragraph>
@@ -51,17 +51,17 @@ function ColumnSelectionHelp() {
   return (
     <div>
       <Title level={4}>Column Selection</Title>
+      <Paragraph>Select which columns appear in the anonymized results.</Paragraph>
       <Paragraph>
         Select which columns appear in the anonymized results. Numeric columns may be generalized as bins. Non-numeric
-        columns may be generalized by selecting a substring (offset and number of characters).
-        <DocsLink page="operation"
-          section="select-columns-and-generalization">
+        columns may be generalized by selecting a substring (offset and number of characters).{' '}
+        <DocsLink page="operation" section="select-columns-and-generalization">
           Click here for details.
         </DocsLink>
       </Paragraph>
       <Paragraph>
-        The <Text code>Count</Text> toggle below the column selection selects whether to count
-        rows or to count the number of protected entities for each bin in the anonymized output.
+        The <Text code>Count</Text> toggle below the column selection selects whether to count rows or to count the
+        number of protected entities for each bin in the anonymized output.
       </Paragraph>
     </div>
   );
@@ -75,9 +75,8 @@ function AnonymizationSummaryHelp() {
         Easy Diffix distorts the data in two ways. It perturbs counts, and it suppresses data that pertains to too few
         protected entities. The summary is useful for determining the overall quality of the anonymized data: the
         relative count distortion and the amount of suppression. Data quality may be improved by selecting fewer
-        columns, or by generalizing.
-        <DocsLink page="operation"
-          section="how-to-interpret-the-anonymization-summary">
+        columns, or by generalizing.{' '}
+        <DocsLink page="operation" section="how-to-interpret-the-anonymization-summary">
           Click here for details.
         </DocsLink>
       </Paragraph>
@@ -95,9 +94,8 @@ function AnonymizedResultsHelp() {
         button. Suppressed bins are shaded in grey. Non-suppressed bins give the true count side-by-side with the
         anonymized count, and display the relative count distortion. This combined view is useful for determining the
         precise causes of distortion and suppression, and for deciding in detail if the quality of the anonymized data
-        is satisfactory.
-        <DocsLink page="operation"
-          section="anonymized-data">
+        is satisfactory.{' '}
+        <DocsLink page="operation" section="anonymized-data">
           Click here for details.
         </DocsLink>
       </Paragraph>

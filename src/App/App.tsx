@@ -4,19 +4,31 @@ import { Button, Empty, Tabs } from 'antd';
 import { useImmer } from 'use-immer';
 import { find, findIndex } from 'lodash';
 
-import { AnonymizerContext, anonymizer } from '../shared';
-import { Docs } from '../Docs';
+import { AnonymizerContext, anonymizer, useStaticValue } from '../shared';
+import { Docs, DocsFunctionsContext, PageId } from '../Docs';
 import { Notebook } from '../Notebook';
 
 import './App.css';
 
 const { TabPane } = Tabs;
 
-type TabInfo = {
+type CommonTabData = {
   id: string;
   title: string;
-  type: 'notebook' | 'docs';
 };
+
+type NotebookTab = CommonTabData & {
+  type: 'notebook';
+};
+
+type DocsTab = CommonTabData & {
+  type: 'docs';
+  page: PageId;
+  section: string | null;
+  scrollInvalidator: number; // Triggers a scroll when changed
+};
+
+type TabInfo = NotebookTab | DocsTab;
 
 type AppState = {
   tabs: TabInfo[];
@@ -29,14 +41,21 @@ function newNotebookTab(): TabInfo {
   return { id: (nextTabId++).toString(), title: 'New Notebook', type: 'notebook' };
 }
 
-function newDocsTab(): TabInfo {
-  return { id: (nextTabId++).toString(), title: 'Documentation', type: 'docs' };
+function newDocsTab(page: PageId, section: string | null): TabInfo {
+  return {
+    id: (nextTabId++).toString(),
+    title: 'Documentation',
+    type: 'docs',
+    page,
+    section,
+    scrollInvalidator: 0,
+  };
 }
 
 const initialNotebook = newNotebookTab();
 
 const initialAppState: AppState = {
-  tabs: [initialNotebook, newDocsTab()],
+  tabs: [initialNotebook],
   activeTab: initialNotebook.id,
 };
 
@@ -82,31 +101,66 @@ export const App: FunctionComponent = () => {
     });
   }
 
+  const docsFunctions = useStaticValue(() => ({
+    openDocs(page: PageId, section: string | null = null) {
+      updateState((state) => {
+        const existingTab = state.tabs.find((t) => t.type === 'docs') as DocsTab | undefined;
+        if (existingTab) {
+          existingTab.page = page;
+          existingTab.section = section;
+          existingTab.scrollInvalidator++;
+          state.activeTab = existingTab.id;
+        } else {
+          const newTab = newDocsTab(page, section);
+          state.tabs.push(newTab);
+          state.activeTab = newTab.id;
+        }
+      });
+    },
+  }));
+
+  window.onOpenDocs = (page) => docsFunctions.openDocs(page);
+
   const { tabs, activeTab } = state;
 
   return (
     <AnonymizerContext.Provider value={anonymizer}>
-      <div className="App">
-        {tabs.length !== 0 ? (
-          <Tabs type="editable-card" activeKey={activeTab} onChange={setActiveTab} onEdit={onEdit}>
-            {tabs.map((tab) => (
-              <TabPane tab={tab.title} key={tab.id}>
-                {tab.type === 'notebook' ? (
-                  <Notebook isActive={activeTab === tab.id} onTitleChange={(title) => setTitle(tab.id, title)} />
-                ) : (
-                  <Docs onTitleChange={(title) => setTitle(tab.id, title)} />
-                )}
-              </TabPane>
-            ))}
-          </Tabs>
-        ) : (
-          <Empty className="App-empty" description="No open notebooks">
-            <Button type="primary" onClick={() => onEdit(null, 'add')}>
-              Create New
-            </Button>
-          </Empty>
-        )}
-      </div>
+      <DocsFunctionsContext.Provider value={docsFunctions}>
+        <div className="App">
+          {tabs.length !== 0 ? (
+            <Tabs type="editable-card" activeKey={activeTab} onChange={setActiveTab} onEdit={onEdit}>
+              {tabs.map((tab) => (
+                <TabPane tab={tab.title} key={tab.id}>
+                  {tab.type === 'notebook' ? (
+                    <Notebook isActive={activeTab === tab.id} onTitleChange={(title) => setTitle(tab.id, title)} />
+                  ) : (
+                    <Docs
+                      onTitleChange={(title) => setTitle(tab.id, title)}
+                      page={tab.page}
+                      onPageChange={(page) =>
+                        updateState((state) => {
+                          const docsTab = find(state.tabs, { id: tab.id }) as DocsTab;
+                          docsTab.page = page;
+                          docsTab.section = null;
+                          docsTab.scrollInvalidator++;
+                        })
+                      }
+                      section={tab.section}
+                      scrollInvalidator={tab.scrollInvalidator}
+                    />
+                  )}
+                </TabPane>
+              ))}
+            </Tabs>
+          ) : (
+            <Empty className="App-empty" description="No open notebooks">
+              <Button type="primary" onClick={() => onEdit(null, 'add')}>
+                Create New
+              </Button>
+            </Empty>
+          )}
+        </div>
+      </DocsFunctionsContext.Provider>
     </AnonymizerContext.Provider>
   );
 };

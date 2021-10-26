@@ -1,10 +1,11 @@
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, protocol, Menu, MenuItemConstructorOptions } from 'electron';
 import { execFile } from 'child_process';
 import util from 'util';
 import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
 import stream from 'stream';
+import { PageId } from './Docs';
 
 const asyncExecFile = util.promisify(execFile);
 const asyncPipeline = util.promisify(stream.pipeline);
@@ -12,14 +13,85 @@ const asyncPipeline = util.promisify(stream.pipeline);
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-const resourcesLocation = app.isPackaged ? '..' : '.';
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-const createWindow = (): void => {
+const isMac = process.platform === 'darwin';
+const resourcesLocation = app.isPackaged ? '..' : '.';
+
+// App menu
+
+function openDocs(page: PageId) {
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  mainWindow?.webContents.send('open_docs', page);
+}
+
+function openURL(url: string) {
+  shell.openExternal(url);
+}
+
+function setupMenu() {
+  const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
+  const template: MenuItemConstructorOptions[] = [
+    ...(isMac ? [macAppMenu] : []),
+    { role: 'fileMenu' },
+    { role: 'editMenu' },
+    { role: 'viewMenu' },
+    { role: 'windowMenu' },
+    {
+      role: 'help',
+      submenu: [
+        {
+          label: 'Documentation',
+          click: () => openDocs('operation'),
+        },
+        {
+          label: 'License',
+          click: () => openDocs('license'),
+        },
+        { type: 'separator' },
+        {
+          label: 'Learn More',
+          click: () => openURL('https://open-diffix.org'),
+        },
+        {
+          label: 'Community Discussions',
+          click: () => openURL('https://github.com/diffix/publisher/discussions'),
+        },
+        {
+          label: 'Search Issues',
+          click: () => openURL('https://github.com/diffix/publisher/issues'),
+        },
+        {
+          label: 'Latest Releases',
+          click: () => openURL('https://github.com/diffix/publisher/releases'),
+        },
+      ],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+
+// Protocol for docs file serving (docs://)
+
+protocol.registerSchemesAsPrivileged([{ scheme: 'docs', privileges: { bypassCSP: true } }]);
+
+function registerProtocols() {
+  protocol.registerFileProtocol('docs', (request, callback) => {
+    const url = request.url.substr('docs://'.length);
+    callback(path.resolve(path.normalize(`${resourcesLocation}/docs/${url}`)));
+  });
+}
+
+// Main window
+
+const ALLOWED_DOMAINS = ['https://open-diffix.org', 'https://github.com'];
+
+function createWindow() {
   const mainWindow = new BrowserWindow({
     height: 800,
     width: 1400,
@@ -30,9 +102,14 @@ const createWindow = (): void => {
     icon: path.join(app.getAppPath(), resourcesLocation, 'assets', 'icon.png'),
   });
 
-  mainWindow.webContents.on('new-window', function (e, url) {
-    e.preventDefault();
-    shell.openExternal(url);
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (ALLOWED_DOMAINS.some((domain) => url.startsWith(domain))) {
+      shell.openExternal(url);
+    } else {
+      console.warn(`Blocked URL ${url} by setWindowOpenHandler.`);
+    }
+
+    return { action: 'deny' };
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
@@ -40,12 +117,18 @@ const createWindow = (): void => {
   if (!app.isPackaged) {
     mainWindow.webContents.openDevTools();
   }
-};
+}
 
-app.on('ready', createWindow);
+// IPC
+
+app.on('ready', () => {
+  setupMenu();
+  registerProtocols();
+  createWindow();
+});
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (!isMac) {
     app.quit();
   }
 });
@@ -98,9 +181,22 @@ ipcMain.handle('call_service', (_event, taskId: string, request: string) =>
     promise.child.stdin?.write(request);
     promise.child.stdin?.end();
 
-    // Throws stderr output on error.
-    const { stdout } = await promise;
-    return stdout;
+    try {
+      const { stdout, stderr } = await promise;
+      console.log(stderr.trimEnd());
+      return stdout;
+    } catch (err) {
+      if ((err as Error)?.name === 'AbortError') {
+        throw 'Service call aborted.';
+      }
+
+      const stderr = (err as { stderr?: string })?.stderr;
+      if (stderr) {
+        console.log(stderr.trimEnd());
+      }
+
+      throw 'Service call failed.';
+    }
   }),
 );
 

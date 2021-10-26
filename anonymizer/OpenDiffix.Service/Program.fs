@@ -1,4 +1,4 @@
-﻿open System
+open System
 open System.IO
 open OpenDiffix.Core
 open OpenDiffix.Core.QueryEngine
@@ -12,9 +12,7 @@ let toSalt =
 
 let runQuery query filePath anonParams =
   use dataProvider = new CSV.DataProvider(filePath) :> IDataProvider
-
-  let context = EvaluationContext.make anonParams dataProvider
-
+  let context = QueryContext.make anonParams dataProvider
   QueryEngine.run context query
 
 let quoteString (string: string) =
@@ -56,16 +54,21 @@ let handlePreview
     Rows = rows
     Salt = salt
     Buckets = buckets
+    CountInput = countInput
   }
   =
   let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
+
+  let countInput =
+    match countInput with
+    | Rows -> "*"
+    | Entities -> $"distinct %s{aidColumn}"
 
   let query =
     $"""
       SELECT
         diffix_low_count(%s{aidColumn}),
-        count(*),
-        diffix_count(%s{aidColumn}),
+        count(%s{countInput}), diffix_count(%s{countInput}, %s{aidColumn}),
         %s{String.join ", " buckets}
       FROM table
       GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
@@ -117,16 +120,22 @@ let handleExport
     AidColumn = aidColumn
     Salt = salt
     Buckets = buckets
+    CountInput = countInput
     OutputPath = outputPath
   }
   =
   let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
 
+  let countInput =
+    match countInput with
+    | Rows -> "*"
+    | Entities -> $"distinct %s{aidColumn}"
+
   let query =
     $"""
       SELECT
         %s{String.join ", " buckets},
-        diffix_count(%s{aidColumn})
+        diffix_count(%s{countInput}, %s{aidColumn})
       FROM table
       GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
       HAVING NOT diffix_low_count(%s{aidColumn})
@@ -138,6 +147,8 @@ let handleExport
 
 [<EntryPoint>]
 let main argv =
+  Logger.backend <- Logger.LogMessage.toString >> eprintfn "%s"
+
   try
     match Console.In.ReadToEnd() |> decodeRequest with
     | Load load -> handleLoad load
@@ -148,5 +159,5 @@ let main argv =
 
   with
   | e ->
-    eprintfn $"ERROR: %s{e.Message}"
+    eprintfn $"ERROR: {e.ToString()}"
     1

@@ -6,6 +6,7 @@ import {
   Anonymizer,
   BucketColumn,
   ColumnType,
+  CountInput,
   File,
   LoadResponse,
   NumericGeneralization,
@@ -50,7 +51,7 @@ class DiffixAnonymizer implements Anonymizer {
   }
 
   private makeBinSQL = (columnName: string, { binSize }: NumericGeneralization) => {
-    return `floor(cast(${columnName} AS real) / ${binSize}) * ${binSize}`;
+    return `floor_by(cast(${columnName} AS real), ${binSize})`;
   };
 
   private makeSubstringSQL = (columnName: string, { substringStart, substringLength }: StringGeneralization) => {
@@ -97,7 +98,12 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  anonymize(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[]): Task<AnonymizedQueryResult> {
+  anonymize(
+    schema: TableSchema,
+    aidColumn: string,
+    bucketColumns: BucketColumn[],
+    countInput: CountInput,
+  ): Task<AnonymizedQueryResult> {
     return runTask(async (signal) => {
       const request = {
         type: 'Preview',
@@ -105,6 +111,7 @@ class DiffixAnonymizer implements Anonymizer {
         aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
         buckets: this.mapBucketsToSQL(bucketColumns),
+        countInput,
         rows: 1000,
       };
       const result = (await window.callService(request, signal)) as PreviewResponse;
@@ -123,7 +130,13 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  export(schema: TableSchema, aidColumn: string, bucketColumns: BucketColumn[], outFileName: string): Task<void> {
+  export(
+    schema: TableSchema,
+    aidColumn: string,
+    bucketColumns: BucketColumn[],
+    countInput: CountInput,
+    outFileName: string,
+  ): Task<void> {
     return runTask(async (signal) => {
       const request = {
         type: 'Export',
@@ -131,6 +144,7 @@ class DiffixAnonymizer implements Anonymizer {
         aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
         buckets: this.mapBucketsToSQL(bucketColumns),
+        countInput,
         outputPath: outFileName,
       };
       await window.callService(request, signal);

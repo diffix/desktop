@@ -1,12 +1,19 @@
-import React, { FunctionComponent } from 'react';
-import { Form, Button, Divider, InputNumber, Switch, Typography } from 'antd';
+import React, { FunctionComponent, useState } from 'react';
+import { Form, Button, Divider, InputNumber, Radio, Switch, Typography, Tooltip } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
 import { assign } from 'lodash';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { useMemoStable } from '../shared';
-import { BucketColumn, ColumnType, NumericGeneralization, StringGeneralization, TableSchema } from '../types';
+import {
+  BucketColumn,
+  ColumnType,
+  CountInput,
+  NumericGeneralization,
+  StringGeneralization,
+  TableSchema,
+} from '../types';
 
 import './ColumnSelectionStep.css';
 
@@ -20,6 +27,7 @@ export type ColumnSelectionStepProps = {
 
 export type ColumnSelectionStepData = {
   bucketColumns: BucketColumn[];
+  countInput: CountInput;
 };
 
 type ColumnState = {
@@ -148,7 +156,11 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
     [columns, aidColumn],
   );
 
+  const [countInput, setCountInput] = useState<CountInput>('Rows');
+
   const anySelected = columns.some((c) => c.selected);
+
+  const hasAidColumn = aidColumn !== 'RowIndex';
 
   return (
     <>
@@ -205,6 +217,28 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                 </tr>
               );
             })}
+            {hasAidColumn && (
+              <tr key={columns.length} className="ColumnSelectionStep-tr-count">
+                <td className="ColumnSelectionStep-td-name" title="Type: integer">
+                  <strong>Count</strong>
+                </td>
+                <td className="ColumnSelectionStep-td-switch">
+                  <Radio.Group
+                    value={countInput}
+                    size="small"
+                    buttonStyle="solid"
+                    onChange={(e) => setCountInput(e.target.value)}
+                  >
+                    <Tooltip title="Count rows">
+                      <Radio.Button value="Rows">Rows</Radio.Button>
+                    </Tooltip>
+                    <Tooltip title="Count protected entities">
+                      <Radio.Button value="Entities">Entities</Radio.Button>
+                    </Tooltip>
+                  </Radio.Group>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -213,7 +247,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
         {bucketColumns.length !== 0 && (
           <>
             <Divider />
-            {children({ bucketColumns })}
+            {children({ bucketColumns, countInput: hasAidColumn ? countInput : 'Rows' })}
           </>
         )}
       </div>

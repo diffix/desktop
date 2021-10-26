@@ -274,7 +274,7 @@ const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[]; focusedStep
         />
         <Step
           status={status(NotebookNavStep.AidSelection)}
-          title={mapText('AID Selection', focusedStep === NotebookNavStep.AidSelection)}
+          title={mapText('ID Selection', focusedStep === NotebookNavStep.AidSelection)}
           description="Select the entity identifier column"
         />
         <Step

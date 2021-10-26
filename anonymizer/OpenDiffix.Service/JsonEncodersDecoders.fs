@@ -19,6 +19,10 @@ type PreviewResponse = { Summary: Summary; Rows: Row list }
 
 type LoadRequest = { InputPath: string; Rows: int }
 
+type CountInput =
+  | Rows
+  | Entities
+
 type PreviewRequest =
   {
     InputPath: string
@@ -26,6 +30,7 @@ type PreviewRequest =
     Rows: int
     Salt: string
     Buckets: string []
+    CountInput: CountInput
   }
 
 type ExportRequest =
@@ -35,6 +40,7 @@ type ExportRequest =
     Salt: string
     Buckets: string []
     OutputPath: string
+    CountInput: CountInput
   }
 
 type Request =
@@ -64,16 +70,16 @@ let private encodeType = typeName >> Encode.string
 
 let private generateDecoder<'T> = Decode.Auto.generateDecoder<'T> CamelCase
 
-let private extraEncoders =
+let private extraCoders =
   Extra.empty
   |> Extra.withCustom encodeType generateDecoder<ExpressionType>
   |> Extra.withCustom encodeValue generateDecoder<Value>
 
 let private decodeType request =
-  Decode.Auto.unsafeFromString (request, caseStrategy = CamelCase)
+  Decode.Auto.unsafeFromString (request, caseStrategy = CamelCase, extra = extraCoders)
 
 let encodeResponse response =
-  Encode.Auto.toString (2, response, caseStrategy = CamelCase, extra = extraEncoders)
+  Encode.Auto.toString (2, response, caseStrategy = CamelCase, extra = extraCoders)
 
 let decodeRequest request =
   match Decode.unsafeFromString (Decode.field "type" Decode.string) request with

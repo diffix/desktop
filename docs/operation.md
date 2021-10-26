@@ -12,7 +12,7 @@ Easy Diffix has three phases of operation:
 
 An unlimited number of anonymized views of the data may be exported without compromising anonymity.
 
-![Optional caption](images/overview.png)
+![](images/overview.png#480)
 
 ## Load table from CSV
 
@@ -34,36 +34,37 @@ The **protected entity** is the entity whose privacy is being protected. A prote
 
 Some data sets have one row of data per protected entity. Examples include survey data, demographic data, and census data. For example:
 
-| Gender | Zip Code | Age | Education | Job | ... |
-| --- | --- | --- | --- | --- | --- |
-| M | 12345 | 46 | High School | Plumber | ... |
-| O | 54321 | 23 | Bachelor | None | ... |
-| F | 48572 | 32 | PhD | Professor | ... |
+| Gender | Zip Code | Age | Education   | Job       | ... |
+| ------ | -------- | --- | ----------- | --------- | --- |
+| M      | 12345    | 46  | High School | Plumber   | ... |
+| O      | 54321    | 23  | Bachelor    | None      | ... |
+| F      | 48572    | 32  | PhD         | Professor | ... |
 
 These *one-row* data sets often do not have any kind identifier column. The Protected Entity Identifier Column may be set to `None`. Easy Diffix treats each row as a protected entity.
 
 Other data sets have multiple rows of data per protected entity. Examples include time series data like geo-location, hospital visits, and website visits. These data sets usually have one or more columns that identify the protected identity. For instance, the following is a geo-location data set where the IMEI (International Mobile Equipment Identifier) identifies the protected entity. In this case, the protected entity itself is a mobile device, but in most cases this effectively represents a person.
 
-| IMEI | Time | Latitude | Longitude |
-| --- | --- | --- | --- |
-| 123 | 2021-10-01 21:34:19 | 43.27366 | 81.36623 |
-| 123 | 2021-10-01 21:36:21 | 43.43884 | 81.39229 |
-| 123 | 2021-10-01 22:02:51 | 43.81922 | 81.40221 |
-| ... | ... | ... | ... |
-| 456 | 2021-02-13 17:34:19 | -17.27366 | 67.36623 |
-| 456 | 2021-02-13 17:36:21 | -17.43884 | 67.39229 |
-| 456 | 2021-02-13 17:02:51 | -17.67883 | 81.40221 |
-| ... | ... | ... | ... |
+| IMEI | Time                | Latitude  | Longitude |
+| ---- | ------------------- | --------- | --------- |
+| 123  | 2021-10-01 21:34:19 | 43.27366  | 81.36623  |
+| 123  | 2021-10-01 21:36:21 | 43.43884  | 81.39229  |
+| 123  | 2021-10-01 22:02:51 | 43.81922  | 81.40221  |
+| ...  | ...                 | ...       | ...       |
+| 456  | 2021-02-13 17:34:19 | -17.27366 | 67.36623  |
+| 456  | 2021-02-13 17:36:21 | -17.43884 | 67.39229  |
+| 456  | 2021-02-13 17:02:51 | -17.67883 | 81.40221  |
+| ...  | ...                 | ...       | ...       |
 
 For this *multi-row* data set, the IMEI column is configured in Easy Diffix as the Protected Entity Identifier Column. If a different column were configured as the Protected Entity Identifier Column, then Easy Diffix would not anonymize correctly.
 
 In some multi-row data sets, a single row may pertain to multiple different protected entities. Examples include bank transactions, email records, and call records. Here is an example of a data set for email records:
 
-|Record ID | Sender email | Receiver email | Time | ... |
-| 1234 | a@b.com | c@d.com | 2021-10-01 21:34:19 | ... |
-| 1235 | a@b.com | e@f.com | 2021-10-01 21:36:21 | ... |
-| 1236 | c@d.com | e@f.com | 2021-10-01 22:02:51 | ... |
-| ... | ... | ... | ... | ... |
+| Record ID | Sender email | Receiver email | Time                | ... |
+| --------- | ------------ | -------------- | ------------------- | --- |
+| 1234      | a@b.com      | c@d.com        | 2021-10-01 21:34:19 | ... |
+| 1235      | a@b.com      | e@f.com        | 2021-10-01 21:36:21 | ... |
+| 1236      | c@d.com      | e@f.com        | 2021-10-01 22:02:51 | ... |
+| ...       | ...          | ...            | ...                 | ... |
 
 The `Sender email` and `Receiver email` each identify a different protected entity.
 
@@ -77,7 +78,7 @@ Like all data anonymization mechanisms, Diffix distorts and hides data. The more
 
 Easy Diffix lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and original data. Through an iterative process of column selection and generalization, and anonymized data inspection, Easy Diffix simplifies the task of data anonymization.
 
-![Optional caption](images/quality-iterate.png)
+![](images/quality-iterate.png#640)
 
 Columns are selected for inclusion in the anonymized data output using the radial buttons. As soon as a column is selected, Easy Diffix starts computing the anonymized output. If another column is selected or de-selected before the computing finishes, then the computation is halted and a new computation started.
 
@@ -102,13 +103,13 @@ The Anonymization Summary has four statistics:
 
 ### Example 1: Almost no distortion
 
-![Optional caption](images/distortion-none.png)
+![](images/distortion-none.png#720)
 
 The above image illustrates the case when there is almost no distortion. No data is suppressed, the median distortion is a small fraction of 1%, and even the maximum distortion is below 1%. Low distortion occurs where relative few output bins, and each bin contains data for a substantial number of protected entities.
 
 ### Example 2: A long tail
 
-![Optional caption](images/distortion-suppressed-bins.png)
+![](images/distortion-suppressed-bins.png#720)
 
 The above image illustrates the case when the output data has a long tail. Most of the data resides in a relatively small number of bins, but a small amount of the data is spread over a large number of bins. In this Anonymization Summary, we see from the `Suppressed Count` that only about 1% of the data is suppressed (4447 rows of a total 440K rows). From the `Suppressed Bins`, however, we see that that 1% of suppressed data is spread over nearly half of the output bins (46%). This may or may not be acceptable data quality, depending on the use case.
 
@@ -116,7 +117,7 @@ The median distortion (relative error) is relatively small (less than 2%), but t
 
 ### Example 3: Bad data quality
 
-![Optional caption](images/distortion-bad.png)
+![](images/distortion-bad.png#720)
 
 The above image illustrates the case when almost all of the data resides in very small bins. 91% of the data is suppressed (`Suppressed Count`), as is 92% of the bins. The median and maximum distortion (relative error) is nearly the same, and both are high (95% and 97%).
 
