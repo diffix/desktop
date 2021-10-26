@@ -42,3 +42,10 @@
 .Markdown img {
   max-width: 100%;
 }
+
+/* Nested lists */
+
+.Markdown ul.nested,
+.Markdown ol.nested {
+  margin-bottom: 0;
+}

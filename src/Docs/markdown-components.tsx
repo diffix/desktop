@@ -135,7 +135,7 @@ export const components: Components = {
   pre: wrap((props) => <pre {...props} className={classNames(props.className, 'ant-typography')} />),
   strong: wrap((props) => <Text {...props} strong />),
   ul: wrap(({ depth, ordered, ...props }) => (
-    <ul {...props} className={classNames(props.className, 'ant-typography')} />
+    <ul {...props} className={classNames(props.className, 'ant-typography', depth > 0 && 'nested')} />
   )),
   // GFM
   del: wrap((props) => <Text {...props} delete />),
