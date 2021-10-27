@@ -12,7 +12,7 @@ License text copyright (c) 2017 MariaDB Corporation Ab, All Rights Reserved.
 
 Licensor:             __Max Planck Gesellschaft (MPG)__
 
-Licensed Work:        __Easy Diffix Publisher 1.0__
+Licensed Work:        __Easy Diffix Publisher 0.3.0__
 
 Additional Use Grant:
 
