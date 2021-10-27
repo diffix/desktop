@@ -19,7 +19,7 @@ if (require('electron-squirrel-startup')) {
 }
 
 const isMac = process.platform === 'darwin';
-const resourcesLocation = app.isPackaged ? '..' : '.';
+const resourcesLocation = path.join(app.getAppPath(), app.isPackaged ? '..' : '.');
 
 // App menu
 
@@ -83,7 +83,7 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'docs', privileges: { bypassCSP:
 function registerProtocols() {
   protocol.registerFileProtocol('docs', (request, callback) => {
     const url = request.url.substr('docs://'.length);
-    callback(path.resolve(path.normalize(`${resourcesLocation}/docs/${url}`)));
+    callback(path.join(resourcesLocation, 'docs', url));
   });
 }
 
@@ -99,7 +99,7 @@ function createWindow() {
       contextIsolation: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
-    icon: path.join(app.getAppPath(), resourcesLocation, 'assets', 'icon.png'),
+    icon: path.join(resourcesLocation, 'assets', 'icon.png'),
   });
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -140,7 +140,7 @@ app.on('activate', () => {
 });
 
 const diffixName = 'OpenDiffix.Service' + (process.platform === 'win32' ? '.exe' : '');
-const diffixPath = path.join(app.getAppPath(), resourcesLocation, 'bin', diffixName);
+const diffixPath = path.join(resourcesLocation, 'bin', diffixName);
 
 const activeTasks = new Map<string, AbortController>();
 
