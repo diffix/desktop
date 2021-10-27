@@ -12,7 +12,7 @@ Easy Diffix has three phases of operation:
 
 An unlimited number of anonymized views of the data may be exported without compromising anonymity.
 
-![](images/overview.png#480)
+![](images/overview.png)
 
 ## Load table from CSV
 
@@ -78,7 +78,7 @@ Like all data anonymization mechanisms, Diffix distorts and hides data. The more
 
 Easy Diffix lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and original data. Through an iterative process of column selection and generalization, and anonymized data inspection, Easy Diffix simplifies the task of data anonymization.
 
-![](images/quality-iterate.png#640)
+![](images/quality-iterate.png)
 
 Columns are selected for inclusion in the anonymized data output using the radial buttons. As soon as a column is selected, Easy Diffix starts computing the anonymized output. If another column is selected or de-selected before the computing finishes, then the computation is halted and a new computation started.
 
@@ -103,13 +103,13 @@ The Anonymization Summary has four statistics:
 
 ### Example 1: Almost no distortion
 
-![](images/distortion-none.png#720)
+![](images/distortion-none.png)
 
 The above image illustrates the case when there is almost no distortion. No data is suppressed, the median distortion is a small fraction of 1%, and even the maximum distortion is below 1%. Low distortion occurs where relative few output bins, and each bin contains data for a substantial number of protected entities.
 
 ### Example 2: A long tail
 
-![](images/distortion-suppressed-bins.png#720)
+![](images/distortion-suppressed-bins.png)
 
 The above image illustrates the case when the output data has a long tail. Most of the data resides in a relatively small number of bins, but a small amount of the data is spread over a large number of bins. In this Anonymization Summary, we see from the `Suppressed Count` that only about 1% of the data is suppressed (4447 rows of a total 440K rows). From the `Suppressed Bins`, however, we see that that 1% of suppressed data is spread over nearly half of the output bins (46%). This may or may not be acceptable data quality, depending on the use case.
 
@@ -117,7 +117,7 @@ The median distortion (relative error) is relatively small (less than 2%), but t
 
 ### Example 3: Bad data quality
 
-![](images/distortion-bad.png#720)
+![](images/distortion-bad.png)
 
 The above image illustrates the case when almost all of the data resides in very small bins. 91% of the data is suppressed (`Suppressed Count`), as is 92% of the bins. The median and maximum distortion (relative error) is nearly the same, and both are high (95% and 97%).
 
