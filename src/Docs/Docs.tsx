@@ -8,10 +8,7 @@ import { Markdown, TableOfContents, TableOfContentsLink } from './Markdown';
 
 import './Docs.css';
 
-// Placeholder doc files
-import introductionSource from '../../docs/introduction.md';
-import notebookStepsSource from '../../docs/notebook-steps.md';
-import anonymizationSource from '../../docs/anonymization.md';
+import operationSource from '../../docs/operation.md';
 import licenseSource from '../../LICENSE.md';
 
 const { Link } = Anchor;
@@ -19,19 +16,9 @@ const { Title } = Typography;
 
 const docsPages = [
   {
-    id: 'introduction',
-    title: 'Introduction',
-    source: introductionSource,
-  },
-  {
-    id: 'notebook-steps',
-    title: 'Notebook Steps',
-    source: notebookStepsSource,
-  },
-  {
-    id: 'anonymization',
-    title: 'Anonymization',
-    source: anonymizationSource,
+    id: 'operation',
+    title: 'Operation',
+    source: operationSource,
   },
   {
     id: 'license',
@@ -75,6 +62,7 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
   }
 
   const prevPageId = usePrevious(pageId);
+  const prevScrollInvalidator = usePrevious(scrollInvalidator);
 
   useEffect(() => {
     if (pageId !== prevPageId) {
@@ -99,7 +87,7 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
     element.scrollIntoView({
       block: 'start',
       // Smooth scroll only when within the same page.
-      behavior: pageId === prevPageId ? 'smooth' : 'auto',
+      behavior: pageId === prevPageId && scrollInvalidator === prevScrollInvalidator ? 'smooth' : 'auto',
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageId, section, scrollInvalidator]);
