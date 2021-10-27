@@ -45,7 +45,7 @@ function setupMenu() {
       submenu: [
         {
           label: 'Documentation',
-          click: () => openDocs('introduction'),
+          click: () => openDocs('operation'),
         },
         {
           label: 'License',

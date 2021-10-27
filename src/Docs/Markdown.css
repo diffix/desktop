@@ -36,3 +36,16 @@
   padding-left: 1em;
   border-left: 0.25em solid rgba(0, 0, 0, 0.06);
 }
+
+/* Images */
+
+.Markdown img {
+  max-width: 100%;
+}
+
+/* Nested lists */
+
+.Markdown ul.nested,
+.Markdown ol.nested {
+  margin-bottom: 0;
+}

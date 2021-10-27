@@ -51,7 +51,7 @@ function wrap<TArgs>(fn: (props: TArgs & { onClick: any }) => JSX.Element) {
   return (({ node: _, ...props }: any) => fn(props)) as (args: TArgs) => JSX.Element;
 }
 
-type LinkInfo = { type: 'external' } | { type: 'local'; path: string; hash: string };
+type LinkInfo = { type: 'external'; hash: string } | { type: 'local'; path: string; hash: string };
 
 function parseHref(href: string): LinkInfo {
   const dummyHostname = 'open-diffix.local';
@@ -59,7 +59,7 @@ function parseHref(href: string): LinkInfo {
   if (url.hostname === dummyHostname) {
     return { type: 'local', path: url.pathname, hash: url.hash };
   } else {
-    return { type: 'external' };
+    return { type: 'external', hash: url.hash };
   }
 }
 
@@ -77,6 +77,14 @@ function parsePage(path: string): PageId | '/' | null {
 function parseSection(hash: string): string | null {
   if (!hash) return null;
   return hash.replace(/^#/, '');
+}
+
+function parseImageStyle(hash: string): React.CSSProperties | undefined {
+  const matches = hash.match(/^#(\d+)$/);
+  if (!matches) return undefined;
+  return {
+    maxWidth: `${matches[1]}px`,
+  };
 }
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -113,10 +121,11 @@ export const components: Components = {
   hr: wrap((props) => <Divider {...props} />),
   img: wrap((props) => {
     const linkInfo = parseHref(props.src || '');
+    const style = parseImageStyle(linkInfo.hash);
     if (linkInfo.type === 'external' || !linkInfo.path) {
-      return <img {...props} />;
+      return <img style={style} {...props} />;
     } else {
-      return <img {...props} src={`docs://${linkInfo.path}`} />;
+      return <img style={style} {...props} src={`docs://${linkInfo.path}`} />;
     }
   }),
   ol: wrap(({ depth, ordered, ...props }) => (
@@ -126,7 +135,7 @@ export const components: Components = {
   pre: wrap((props) => <pre {...props} className={classNames(props.className, 'ant-typography')} />),
   strong: wrap((props) => <Text {...props} strong />),
   ul: wrap(({ depth, ordered, ...props }) => (
-    <ul {...props} className={classNames(props.className, 'ant-typography')} />
+    <ul {...props} className={classNames(props.className, 'ant-typography', depth > 0 && 'nested')} />
   )),
   // GFM
   del: wrap((props) => <Text {...props} delete />),
