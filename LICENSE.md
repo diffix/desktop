@@ -12,7 +12,7 @@ License text copyright (c) 2017 MariaDB Corporation Ab, All Rights Reserved.
 
 Licensor:             __Max Planck Gesellschaft (MPG)__
 
-Licensed Work:        __Easy Diffix Publisher__
+Licensed Work:        __Easy Diffix Publisher 0.3.0__
 
 Additional Use Grant:
 
@@ -21,11 +21,11 @@ Additional Use Grant:
   interface, or access to the analytics results in exchange for considerations, monetary or non-monetary.
   You are granted a LIMITED right of use for our patents insofar as use of the software strictly under this
   license would infringe such patent. No grant of patent for any other use is granted.
-  [Reminder: The basic BUSL already gives the right for non-commercial use.]__
+  [Reminder: The basic BSL already gives the right for non-commercial use.]__
 
 Change Date:          __Four years from release date__
 
-Change License:       __TBD__
+Change License:       __The PostgreSQL License__
 
 -----------------------------------------------------------------------------
 
@@ -105,3 +105,22 @@ other recipients of the licensed work to be provided by Licensor:
 The Business Source License (this document, or the "License") is not an Open
 Source license. However, the Licensed Work will eventually be made available
 under an Open Source License, as stated in this License.
+
+
+## Change License
+
+### The PostgreSQL License
+
+Copyright (c) __2021, Max Planck Gesellschaft (MPG)__
+
+Permission to use, copy, modify, and distribute this software and its documentation for any purpose, without fee, and
+without a written agreement is hereby granted, provided that the above copyright notice and this paragraph and the
+following two paragraphs appear in all copies.
+
+IN NO EVENT SHALL __MPG__ BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES,
+INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF __MPG__ HAS BEEN ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+__MPG__ SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND __MPG__ HAS NO
+OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
