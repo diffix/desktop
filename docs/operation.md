@@ -129,7 +129,7 @@ The `Combined view` additionally shows the original data side-by-side with the a
 
 The combined view displays suppressed bins. The `Count (anonymized)` column is left blank for suppressed bins.
 
-The combined view let's you examine precisely the distortion and suppression. The anonymized data can be sorted by each column. Sorting by `Count (original)` shows the ascending suppressed bins first, and so is useful for examining what has been suppressed. Sorting by `Distortion` descending shows the bins with the most error first, and so is useful for examining which bins have high distortion.
+The combined view lets you examine precisely the distortion and suppression. The anonymized data can be sorted by each column. Sorting by `Count (original)` shows the ascending suppressed bins first, and so is useful for examining what has been suppressed. Sorting by `Distortion` descending shows the bins with the most error first, and so is useful for examining which bins have high distortion.
 
 ### What is safe to release
 
@@ -163,7 +163,7 @@ Note also that other columns strongly correlated with the removed protected enti
 
 ### Hierarchical categorization
 
-Generalization is Easy Diffix is limited to numeric ranges and substrings. A valuable form of generalization is hierarchical categorization. Examples include geographical hierarchy (zip code, county, state, country) and job classification (classify specific jobs as manual, blue collar, unskilled, teaching, executive, research, etc.). If this kind of generalization is needed, the input CSV must be pre-processed to provide it.
+Generalization in Easy Diffix is limited to numeric ranges and substrings. A valuable form of generalization is hierarchical categorization. Examples include geographical hierarchy (zip code, county, state, country) and job classification (classify specific jobs as manual, blue collar, unskilled, teaching, executive, research, etc.). If this kind of generalization is needed, the input CSV must be pre-processed to provide it.
 
 ### Other aggregates
 
