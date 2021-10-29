@@ -10,6 +10,7 @@ import './Docs.css';
 
 import operationSource from '../../docs/operation.md';
 import anonymizationSource from '../../docs/anonymization.md';
+import tipsSource from '../../docs/tips.md';
 import licenseSource from '../../LICENSE.md';
 
 const { Link } = Anchor;
@@ -25,6 +26,11 @@ const docsPages = [
     id: 'anonymization',
     title: 'Anonymization',
     source: anonymizationSource,
+  },
+  {
+    id: 'tips',
+    title: 'Tips and Tricks',
+    source: tipsSource,
   },
   {
     id: 'license',
