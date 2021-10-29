@@ -89,7 +89,7 @@ function registerProtocols() {
 
 // Main window
 
-const ALLOWED_DOMAINS = ['https://open-diffix.org', 'https://github.com'];
+const ALLOWED_DOMAINS = ['https://open-diffix.org', 'https://github.com', 'mailto:'];
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
