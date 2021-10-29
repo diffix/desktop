@@ -15,9 +15,9 @@ Diffix automatically applies these three mechanisms as needed on a query-by-quer
 
 ## Proportional Noise
 
-Diffix adds pseudo-random noise taken from a Normal distribution. The amount of noise (the standard deviation) is proportional to how much is contributed to the count by the heaviest contributors. When counting the number of protected entities, each entity contributes 1, and the noise standard deviation is `SD=1.5`. With high probability, the resulting answer will be with plus or minus 5 of the true answer.
+Diffix adds pseudo-random noise taken from a Normal distribution. The amount of noise (the standard deviation) is proportional to how much is contributed to the count by the heaviest contributors. When counting the number of protected entities, each entity contributes 1, and the noise standard deviation is `SD=1.5`. With high probability, the resulting answer will be within plus or minus 5 of the true answer.
 
-When counting the number of rows, for tables with multiple rows per protected entity, the amount of noise is larger: proportional to the number of rows contributed by the highest contributors. This is similar to the concept of sensitivity in Differential Privacy. Proportional noise protects high contributors in the case where data recipients may have prior knowledge about the heavy contributors.
+When counting the number of rows, the amount of noise is larger: proportional to the number of rows contributed by the highest contributors. This is similar to the concept of sensitivity in Differential Privacy. Proportional noise protects high contributors in the case where data recipients may have prior knowledge about the heavy contributors.
 
 Finally, Diffix removes the excess contributions of extreme outliers (one or two protected entities that contribute far more rows than other protected entities). This prevents data recipients from inferring information about extreme outliers from the amount of noise itself.
 
