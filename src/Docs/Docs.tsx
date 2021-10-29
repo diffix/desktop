@@ -9,6 +9,7 @@ import { Markdown, TableOfContents, TableOfContentsLink } from './Markdown';
 import './Docs.css';
 
 import operationSource from '../../docs/operation.md';
+import anonymizationSource from '../../docs/anonymization.md';
 import licenseSource from '../../LICENSE.md';
 
 const { Link } = Anchor;
@@ -19,6 +20,11 @@ const docsPages = [
     id: 'operation',
     title: 'Operation',
     source: operationSource,
+  },
+  {
+    id: 'anonymization',
+    title: 'Anonymization',
+    source: anonymizationSource,
   },
   {
     id: 'license',
