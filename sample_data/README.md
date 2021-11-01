@@ -12,7 +12,7 @@ Descriptions of the columns may be found
 The protected entity is the taxi driver. There is one row per taxi ride,
 and so multiple rows per protected entity. The
 protected entity column is `protected_entity`. (This has been renamed from
-`hack`, which is a hash of the driver identifier, to simplify configuration.
+`hack`, which is a hash of the driver identifier, to simplify configuration.)
 
 ## census.csv.zip
 
