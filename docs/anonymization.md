@@ -1,6 +1,6 @@
 # Anonymization
 
-Easy Diffix uses Diffix as its underlying anonymization mechanism. Diffix was co-developed by the Max Planck Institute for Software Systems and Aircloak GmbH. Diffix is strong enough to satisfy the GDPR definition of anonymization as non-personal data.
+Diffix for Desktop uses Diffix as its underlying anonymization mechanism. Diffix was co-developed by the Max Planck Institute for Software Systems and Aircloak GmbH. Diffix is strong enough to satisfy the GDPR definition of anonymization as non-personal data.
 
 > If you would like help in getting approval from your Data Protection Officer (DPO) or Data Protection Authority (DPA), please contact us at [feedback@open-diffix.org](mailto:feedback@open-diffix.org).
 

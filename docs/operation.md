@@ -2,7 +2,7 @@
 
 > To report feature requests or problem, please contact us at [feedback@open-diffix.org](mailto:feedback@open-diffix.org).
 
-Easy Diffix has three phases of operation:
+Diffix for Desktop has three phases of operation:
 - Load and configure table from CSV
 - Select data and adjust quality
   - Select columns for anonymization
@@ -16,19 +16,19 @@ An unlimited number of anonymized views of the data may be exported without comp
 
 ## Load table from CSV
 
-Easy Diffix only accepts CSV files as input.
+Diffix for Desktop only accepts CSV files as input.
 
-Easy Diffix interprets the first row of the CSV file as column names.
+Diffix for Desktop interprets the first row of the CSV file as column names.
 
-Easy Diffix auto-detects the CSV separator. All standard separators are accepted.
+Diffix for Desktop auto-detects the CSV separator. All standard separators are accepted.
 
-Easy Diffix auto-detects data types as text or numeric. Text columns are generalized with substring selection, and numeric columns are generalized with numeric ranges.
+Diffix for Desktop auto-detects data types as text or numeric. Text columns are generalized with substring selection, and numeric columns are generalized with numeric ranges.
 
-After loading, Easy Diffix displays the column names and the first 1000 rows of the table. This data may be inspected to validate that the CSV file was loaded correctly.
+After loading, Diffix for Desktop displays the column names and the first 1000 rows of the table. This data may be inspected to validate that the CSV file was loaded correctly.
 
 ## IMPORTANT: Configure the Protected Entity Identifier Column
 
-In order for Easy Diffix to anonymize properly, the column containing the protected entity identifier must be correctly configured.
+In order for Diffix for Desktop to anonymize properly, the column containing the protected entity identifier must be correctly configured.
 
 The **protected entity** is the entity whose privacy is being protected. A protected entity is usually a person, but it could be something else, for instance an account, a family, or even an organization.
 
@@ -40,7 +40,7 @@ Some data sets have one row of data per protected entity. Examples include surve
 | O      | 54321    | 23  | Bachelor    | None      | ... |
 | F      | 48572    | 32  | PhD         | Professor | ... |
 
-These *one-row* data sets often do not have any kind identifier column. The Protected Entity Identifier Column may be set to `None`. Easy Diffix treats each row as a protected entity.
+These *one-row* data sets often do not have any kind identifier column. The Protected Entity Identifier Column may be set to `None`. Diffix for Desktop treats each row as a protected entity.
 
 Other data sets have multiple rows of data per protected entity. Examples include time series data like geo-location, hospital visits, and website visits. These data sets usually have one or more columns that identify the protected identity. For instance, the following is a geo-location data set where the IMEI (International Mobile Equipment Identifier) identifies the protected entity. In this case, the protected entity itself is a mobile device, but in most cases this effectively represents a person.
 
@@ -55,7 +55,7 @@ Other data sets have multiple rows of data per protected entity. Examples includ
 | 456  | 2021-02-13 17:02:51 | -17.67883 | 81.40221  |
 | ...  | ...                 | ...       | ...       |
 
-For this *multi-row* data set, the IMEI column is configured in Easy Diffix as the Protected Entity Identifier Column. If a different column were configured as the Protected Entity Identifier Column, then Easy Diffix would not anonymize correctly.
+For this *multi-row* data set, the IMEI column is configured in Diffix for Desktop as the Protected Entity Identifier Column. If a different column were configured as the Protected Entity Identifier Column, then Diffix for Desktop would not anonymize correctly.
 
 In some multi-row data sets, a single row may pertain to multiple different protected entities. Examples include bank transactions, email records, and call records. Here is an example of a data set for email records:
 
@@ -68,19 +68,19 @@ In some multi-row data sets, a single row may pertain to multiple different prot
 
 The `Sender email` and `Receiver email` each identify a different protected entity.
 
-> **This version of Easy Diffix does not protect a data set where there are multiple protected entities per row**
+> **This version of Diffix for Desktop does not protect a data set where there are multiple protected entities per row**
 
-A data set with multiple protected entities needs to be pre-processed to have one protected entity per row before loading into Easy Diffix. See [Multiple protected entities per row](#multiple-protected-entities-per-row).
+A data set with multiple protected entities needs to be pre-processed to have one protected entity per row before loading into Diffix for Desktop. See [Multiple protected entities per row](#multiple-protected-entities-per-row).
 
 ## Select columns and generalization
 
 Like all data anonymization mechanisms, Diffix distorts and hides data. The more columns included and the finer the data granularity, the more distortion and hiding. Diffix distorts by adding *noise* to counts, and hides data by *suppressing* bins that pertain to too few protected entities.
 
-Easy Diffix lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and original data. Through an iterative process of column selection and generalization, and anonymized data inspection, Easy Diffix simplifies the task of data anonymization.
+Diffix for Desktop lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and original data. Through an iterative process of column selection and generalization, and anonymized data inspection, Diffix for Desktop simplifies the task of data anonymization.
 
 ![](images/quality-iterate.png#640)
 
-Columns are selected for inclusion in the anonymized data output using the radial buttons. As soon as a column is selected, Easy Diffix starts computing the anonymized output. If another column is selected or de-selected before the computing finishes, then the computation is halted and a new computation started.
+Columns are selected for inclusion in the anonymized data output using the radial buttons. As soon as a column is selected, Diffix for Desktop starts computing the anonymized output. If another column is selected or de-selected before the computing finishes, then the computation is halted and a new computation started.
 
 When a column is selected, the generalization input is exposed. For text columns, you can select a substring by offset and number of characters. For numeric columns, you can select a bin size.
 
@@ -88,7 +88,7 @@ When a column is selected, the generalization input is exposed. For text columns
 
 ### Toggle between counting rows and counting protected entities (i.e. persons)
 
-If the input data is multi-row, then Easy Diffix gives you the choice of counting rows or counting protected entities (i.e. persons). The toggle switch may be found at the bottom of the column selection area.
+If the input data is multi-row, then Diffix for Desktop gives you the choice of counting rows or counting protected entities (i.e. persons). The toggle switch may be found at the bottom of the column selection area.
 
 ## How to interpret the Anonymization Summary
 
@@ -133,7 +133,7 @@ The combined view lets you examine precisely the distortion and suppression. The
 
 ### What is safe to release
 
-Note that the data in the `Anonymized` view is the only data that is properly anonymized by Easy Diffix. Note in particular that the Anonymization Summary is not anonymized per se. See [Releasing Anonymization Summary statistics](#releasing-anonymization-summary-statistics).
+Note that the data in the `Anonymized` view is the only data that is properly anonymized by Diffix for Desktop. Note in particular that the Anonymization Summary is not anonymized per se. See [Releasing Anonymization Summary statistics](#releasing-anonymization-summary-statistics).
 
 ## Export anonymized data to CSV
 

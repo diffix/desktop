@@ -1,6 +1,6 @@
-# Easy Diffix
+# Diffix for Desktop
 
-Desktop application to anonymize data with Open Diffix Elm.
+Desktop application for anonymizing data using Open Diffix Elm.
 
 ## Development
 
