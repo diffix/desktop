@@ -26,6 +26,11 @@ Diffix for Desktop auto-detects data types as text or numeric. Text columns are 
 
 After loading, Diffix for Desktop displays the column names and the first 1000 rows of the table. This data may be inspected to validate that the CSV file was loaded correctly.
 
+### Sample CSV files
+
+[Sample CSV files](https://github.com/diffix/desktop/tree/master/sample_data)
+are available for testing.
+
 ## IMPORTANT: Configure the Protected Entity Identifier Column
 
 In order for Diffix for Desktop to anonymize properly, the column containing the protected entity identifier must be correctly configured.
