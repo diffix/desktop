@@ -1,6 +1,6 @@
 # Sample Tables
 
-This folder contains csv files that can be used to test
+This folder contains CSV files that can be used to test
 Diffix for Desktop.
 
 ## taxi.csv.zip

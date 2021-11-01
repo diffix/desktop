@@ -4,11 +4,11 @@ Desktop application to anonymize data with Open Diffix Elm.
 
 ## To use
 
-[Download executable](https://github.com/diffix/desktop/releases) and run.
+Download and run [setup package](https://github.com/diffix/desktop/releases).
 Documentation can be found in the application itself, and also in the `docs`
 folder in this repo.
 
-Sample csv files for playing with the app can be found in the `sample_tables`
+Sample CSV files for playing with the app can be found in the `sample_data`
 folder in this repo.
 
 ## Development

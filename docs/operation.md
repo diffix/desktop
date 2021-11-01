@@ -28,7 +28,7 @@ After loading, Easy Diffix displays the column names and the first 1000 rows of 
 
 ### Sample CSV files
 
-[Sample CSV files](https://github.com/diffix/desktop/tree/master/sample_tables)
+[Sample CSV files](https://github.com/diffix/desktop/tree/master/sample_data)
 are available for testing.
 
 ## IMPORTANT: Configure the Protected Entity Identifier Column
