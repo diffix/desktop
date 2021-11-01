@@ -1,5 +1,5 @@
 {
-  "name": "diffix_desktop",
+  "name": "DiffixForDesktop",
   "productName": "Diffix for Desktop",
   "author": "Open Diffix",
   "version": "0.2.2",
@@ -28,7 +28,7 @@
           "assets",
           "docs"
         ],
-        "name": "Diffix for Desktop",
+        "name": "DiffixForDesktop",
         "icon": "assets/icon"
       },
       "makers": [
