@@ -16,6 +16,12 @@ function CsvImportHelp() {
           Click here for details.
         </DocsLink>
       </Paragraph>
+      <Paragraph>
+        <DocsLink page="operation" section="sample-csv-files">
+          Sample CSV files
+        </DocsLink>
+        are available for testing purposes.
+      </Paragraph>
     </div>
   );
 }
