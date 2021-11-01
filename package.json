@@ -1,9 +1,9 @@
 {
-  "name": "easy_diffix",
-  "productName": "Easy Diffix",
+  "name": "diffix_desktop",
+  "productName": "Diffix for Desktop",
   "author": "Open Diffix",
   "version": "0.2.2",
-  "description": "Desktop app for anonymizing data using Open Diffix Elm",
+  "description": "Desktop application for anonymizing data using Open Diffix Elm.",
   "main": ".webpack/main",
   "scripts": {
     "build": "dotnet publish -o ./bin/ -c Release ./anonymizer/OpenDiffix.Service/ -p:UseAppHost=True",
@@ -28,7 +28,7 @@
           "assets",
           "docs"
         ],
-        "name": "easy_diffix",
+        "name": "Diffix for Desktop",
         "icon": "assets/icon"
       },
       "makers": [
@@ -60,7 +60,7 @@
           "config": {
             "repository": {
               "owner": "diffix",
-              "name": "publisher"
+              "name": "desktop"
             },
             "prerelease": true,
             "draft": true

@@ -58,15 +58,15 @@ function setupMenu() {
         },
         {
           label: 'Community Discussions',
-          click: () => openURL('https://github.com/diffix/publisher/discussions'),
+          click: () => openURL('https://github.com/diffix/desktop/discussions'),
         },
         {
           label: 'Search Issues',
-          click: () => openURL('https://github.com/diffix/publisher/issues'),
+          click: () => openURL('https://github.com/diffix/desktop/issues'),
         },
         {
           label: 'Latest Releases',
-          click: () => openURL('https://github.com/diffix/publisher/releases'),
+          click: () => openURL('https://github.com/diffix/desktop/releases'),
         },
       ],
     },
