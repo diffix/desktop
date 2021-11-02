@@ -5,6 +5,7 @@
 - Major performance optimizations.
 - Added support for counting entities.
 - Added license.
+- Increased low count threshold.
 
 ### Version 0.2.3
 
