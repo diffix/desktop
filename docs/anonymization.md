@@ -2,8 +2,6 @@
 
 __Diffix for Desktop__ uses __Diffix__ as its underlying anonymization mechanism. __Diffix__ was co-developed by the __Max Planck Institute for Software Systems__ and __Aircloak GmbH__. __Diffix__ is strong enough to satisfy the GDPR definition of anonymization as non-personal data.
 
-The technology is made openly available under the [__Open Diffix__](https://open-diffix.org) organization. The latest version of the mechanism is called __Diffix Elm__.
-
 > If you would like help in getting approval from your __Data Protection Officer (DPO)__ or __Data Protection Authority (DPA)__, please contact us at [feedback@open-diffix.org](mailto:feedback@open-diffix.org).
 
 __Diffix__ combines three common anonymization mechanisms:
