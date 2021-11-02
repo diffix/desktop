@@ -124,7 +124,11 @@ let handleExport
     OutputPath = outputPath
   }
   =
-  let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
+  let anonParams =
+    { AnonymizationParams.Default with
+        Salt = Text.Encoding.UTF8.GetBytes(salt)
+        Suppression = { SuppressionParams.Default with LowThreshold = 3 }
+    }
 
   let countInput =
     match countInput with
