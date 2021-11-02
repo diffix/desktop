@@ -1,4 +1,4 @@
-# Sample Tables
+# Sample Data
 
 This folder contains CSV files that can be used to test
 Diffix for Desktop.
