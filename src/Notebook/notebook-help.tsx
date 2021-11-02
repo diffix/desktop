@@ -11,7 +11,8 @@ function CsvImportHelp() {
     <div>
       <Title level={4}>CSV Import</Title>
       <Paragraph>
-        Diffix for Desktop auto-detects the CSV deliminter, as well as the field type (text and numeric).{' '}
+        <strong>Diffix for Desktop</strong> auto-detects the CSV deliminter, as well as the field type (text and
+        numeric).{' '}
         <DocsLink page="operation" section="load-table-from-csv">
           Click here for details.
         </DocsLink>
@@ -78,10 +79,10 @@ function AnonymizationSummaryHelp() {
     <div>
       <Title level={4}>Anonymization Summary</Title>
       <Paragraph>
-        Diffix for Desktop distorts the data in two ways. It perturbs counts, and it suppresses data that pertains to
-        too few protected entities. The summary is useful for determining the overall quality of the anonymized data:
-        the relative count distortion and the amount of suppression. Data quality may be improved by selecting fewer
-        columns, or by generalizing.{' '}
+        <strong>Diffix for Desktop</strong> distorts the data in two ways. It perturbs counts, and it suppresses data
+        that pertains to too few protected entities. The summary is useful for determining the overall quality of the
+        anonymized data: the relative count distortion and the amount of suppression. Data quality may be improved by
+        selecting fewer columns, or by generalizing.{' '}
         <DocsLink page="operation" section="how-to-interpret-the-anonymization-summary">
           Click here for details.
         </DocsLink>

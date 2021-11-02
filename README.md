@@ -1,6 +1,6 @@
 # Diffix for Desktop
 
-Desktop application for anonymizing data using Open Diffix Elm.
+Desktop application for anonymizing data using __Open Diffix Elm__.
 
 ## To use
 
