@@ -1,3 +1,7 @@
+### Version 0.3.1
+
+- Added section about misusage to docs.
+
 ### Version 0.3.0
 
 - Added support for datasets with multiple rows per entity.
