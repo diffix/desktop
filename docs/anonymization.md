@@ -2,6 +2,17 @@
 
 __Diffix for Desktop__ uses __Diffix__ as its underlying anonymization mechanism. __Diffix__ was co-developed by the __Max Planck Institute for Software Systems__ and __Aircloak GmbH__. __Diffix__ is strong enough to satisfy the GDPR definition of anonymization as non-personal data.
 
+Users of __Diffix for Desktop__ are trusted: they have access to the original
+data and are trusted protect the original data.
+__Diffix for Desktop__ protects against *accidental* release of personal
+data. In other words, when used simply to provide useful data, and not
+with an explicit and willful intent to generate a non-anonymous output, 
+the exported CSV of __Diffix for Desktop__ is anonymous. Having said that,
+there are two types of output sequences that can lead to personal data
+being released. [These are listed](#output-sequences-to-avoid) at the end of this section.
+
+## Overview of basic mechanisms
+
 > If you would like help in getting approval from your __Data Protection Officer (DPO)__ or __Data Protection Authority (DPA)__, please contact us at [feedback@open-diffix.org](mailto:feedback@open-diffix.org).
 
 __Diffix__ combines three common anonymization mechanisms:
@@ -34,3 +45,42 @@ __Diffix__ suppresses bins with fewer than 4 protected entities *on average*. __
 Unlike proportional noise and suppression, __Diffix__ does not automate and enforce generalization. This is because the amount of acceptable generalization depends on the analytic goals of each use case. For instance, in some cases year-of-birth may be required, whereas in others decade-of-birth may be acceptable. __Diffix__ has no way of knowing what level of generalization to choose. Rather, this is left to the analyst so that data quality can be tailored to the specific use case.
 
 As a general rule, noise and suppression force analysts to generalize. If data is too fine-grained, then each output bin will have very few protected entities. In these cases, the bins may be suppressed, or if not suppressed the signal-to-noise may be too low.
+
+## Output sequences to avoid
+
+The following two output sequences must be avoided to ensure that the
+CSV exports of __Diffix for Desktop__ are anonymous. Note that a user
+acting as normal would have no reason to accidentally generate these output
+sequences.
+
+### Range increments
+
+For numeric columns, the user must avoid a series of outputs where each
+subsequent output modifies the generalization range by a tiny amount.
+For instance, suppose there is a `salary` column. The user must avoid
+a series of outputs where the generalization field is set to `1000.01`,
+`1000.02`, `1000.03`, etc. Doing this would effectively allow the
+receiver of the outputs to eliminate some of the noise and detect when
+a protected entity with a known salary moves from one bin to another.
+
+### Substring increments on columns with inherent randomness
+
+Sometimes a text column may have some inherent randomness: for instance a
+column containing UUID values. The user must avoid a sequence of outputs
+where many of different substrings (10s of substrings) are specified.
+For instance:
+
+```
+substring start 1, substring length 1
+substring start 2, substring length 1
+substring start 3, substring length 1
+...
+substring start 1, substring length 2
+substring start 2, substring length 2
+substring start 3, substring length 2
+...
+substring start 1, substring length 3
+substring start 2, substring length 3
+substring start 3, substring length 3
+...
+```
