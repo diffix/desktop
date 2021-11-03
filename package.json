@@ -2,7 +2,7 @@
   "name": "DiffixForDesktop",
   "productName": "Diffix for Desktop",
   "author": "Open Diffix",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Desktop application for anonymizing data using Open Diffix Elm.",
   "main": ".webpack/main",
   "scripts": {
