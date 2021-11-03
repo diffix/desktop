@@ -140,5 +140,6 @@ declare global {
     selectExportFile(defaultPath: string): Promise<string | null>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;
     onOpenDocs: (page: PageId) => void;
+    setMainWindowTitle: (title: string) => void;
   }
 }

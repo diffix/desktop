@@ -38,6 +38,10 @@ window.hashFile = (fileName: string, signal: AbortSignal) =>
 
 window.onOpenDocs = (_page) => {};
 
+window.setMainWindowTitle = (title: string) => {
+  ipcRenderer.invoke('set_main_window_title', title);
+};
+
 ipcRenderer.on('open_docs', (_event, page) => {
   window.onOpenDocs(page);
 });
