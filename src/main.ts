@@ -102,6 +102,10 @@ function createWindow() {
     icon: path.join(resourcesLocation, 'assets', 'icon.png'),
   });
 
+  mainWindow.on('page-title-updated', function (e) {
+    e.preventDefault();
+  });
+
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (ALLOWED_DOMAINS.some((domain) => url.startsWith(domain))) {
       shell.openExternal(url);
@@ -224,3 +228,8 @@ ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
     return hash.digest('hex');
   }),
 );
+
+ipcMain.handle('set_main_window_title', (_event, title: string) => {
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  mainWindow?.setTitle(title);
+});

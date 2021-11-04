@@ -59,6 +59,15 @@ const initialAppState: AppState = {
   activeTab: initialNotebook.id,
 };
 
+function setWindowTitle(state: AppState) {
+  const tab = find(state.tabs, { id: state.activeTab });
+  if (tab) {
+    window.setMainWindowTitle(tab.title + ' - Diffix for Desktop');
+  } else {
+    window.setMainWindowTitle('Diffix for Desktop');
+  }
+}
+
 export const App: FunctionComponent = () => {
   const [state, updateState] = useImmer(initialAppState);
 
@@ -69,6 +78,7 @@ export const App: FunctionComponent = () => {
           const addedNotebook = newNotebookTab();
           state.tabs.push(addedNotebook);
           state.activeTab = addedNotebook.id;
+          setWindowTitle(state);
         });
         return;
 
@@ -83,6 +93,7 @@ export const App: FunctionComponent = () => {
           if (id === state.activeTab && tabs.length !== 0) {
             state.activeTab = tabs[Math.min(index, tabs.length - 1)].id;
           }
+          setWindowTitle(state);
         });
         return;
     }
@@ -91,13 +102,17 @@ export const App: FunctionComponent = () => {
   function setActiveTab(id: string) {
     updateState((state) => {
       state.activeTab = id;
+      setWindowTitle(state);
     });
   }
 
   function setTitle(id: string, title: string) {
-    updateState(({ tabs }) => {
-      const tab = find(tabs, { id });
-      if (tab) tab.title = title;
+    updateState((state) => {
+      const tab = find(state.tabs, { id });
+      if (tab) {
+        tab.title = title;
+      }
+      setWindowTitle(state);
     });
   }
 
@@ -115,6 +130,7 @@ export const App: FunctionComponent = () => {
           state.tabs.push(newTab);
           state.activeTab = newTab.id;
         }
+        setWindowTitle(state);
       });
     },
   }));
