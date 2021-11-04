@@ -74,7 +74,12 @@ export type PreviewResponse = {
   rows: ResultRow[];
 };
 
-export type Response = LoadResponse | PreviewResponse;
+export type CheckNullAidsResponse = {
+  columns: ResultColumn[];
+  rows: ResultRow[];
+};
+
+export type Response = LoadResponse | PreviewResponse | CheckNullAidsResponse;
 
 export type ResultColumn = {
   name: string;
@@ -126,6 +131,7 @@ export type Anonymizer = {
     countInput: CountInput,
     outFileName: string,
   ): Task<void>;
+  hasNullAid(schema: TableSchema, aidColumn: string): Task<boolean>;
 };
 
 export type Task<T> = {

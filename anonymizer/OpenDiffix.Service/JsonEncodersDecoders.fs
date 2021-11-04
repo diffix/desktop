@@ -43,10 +43,13 @@ type ExportRequest =
     CountInput: CountInput
   }
 
+type FindNullsRequest = { InputPath: string; AidColumn: string }
+
 type Request =
   | Load of LoadRequest
   | Preview of PreviewRequest
   | Export of ExportRequest
+  | FindNulls of FindNullsRequest
 
 let rec private encodeValue =
   function
@@ -86,4 +89,5 @@ let decodeRequest request =
   | "Load" -> Load(decodeType request)
   | "Preview" -> Preview(decodeType request)
   | "Export" -> Export(decodeType request)
+  | "FindNulls" -> FindNulls(decodeType request)
   | unknownType -> failwith $"Unknown request type: %s{unknownType}"

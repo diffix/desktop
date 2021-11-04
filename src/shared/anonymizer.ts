@@ -5,6 +5,7 @@ import {
   AnonymizedResultRow,
   Anonymizer,
   BucketColumn,
+  CheckNullAidsResponse,
   ColumnType,
   CountInput,
   File,
@@ -148,6 +149,19 @@ class DiffixAnonymizer implements Anonymizer {
         outputPath: outFileName,
       };
       await window.callService(request, signal);
+    });
+  }
+
+  hasNullAid(schema: TableSchema, aidColumn: string): Task<boolean> {
+    return runTask(async (signal) => {
+      const request = {
+        type: 'FindNulls',
+        inputPath: schema.file.path,
+        aidColumn: `"${aidColumn}"`,
+      };
+      const result = (await window.callService(request, signal)) as CheckNullAidsResponse;
+
+      return result.rows.length > 0;
     });
   }
 }

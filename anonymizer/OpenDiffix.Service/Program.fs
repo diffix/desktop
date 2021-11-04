@@ -149,6 +149,25 @@ let handleExport
 
   File.WriteAllText(outputPath, output)
 
+let handleFindNulls
+  {
+    FindNullsRequest.InputPath = inputPath
+    FindNullsRequest.AidColumn = aidColumn
+  }
+  =
+  let anonParams = AnonymizationParams.Default
+
+  let query =
+    $"""
+      SELECT %s{aidColumn}
+      FROM table
+      WHERE %s{aidColumn} is NULL or %s{aidColumn} = ''
+      LIMIT 1
+    """
+
+  let output = anonParams |> runQuery query inputPath |> encodeResponse
+  printfn $"%s{output}"
+
 [<EntryPoint>]
 let main argv =
   Logger.backend <- Logger.LogMessage.toString >> eprintfn "%s"
@@ -158,6 +177,7 @@ let main argv =
     | Load load -> handleLoad load
     | Preview preview -> handlePreview preview
     | Export export -> handleExport export
+    | FindNulls findNulls -> handleFindNulls findNulls
 
     0
 

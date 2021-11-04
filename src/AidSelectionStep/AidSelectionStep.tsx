@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Divider, Typography, Select, Alert } from 'antd';
+import { Typography, Select, Alert } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
@@ -59,12 +59,7 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
       </div>
       <div className="AidSelectionStep-reserved-space">
         {/* Render next step */}
-        {aidColumn && (
-          <>
-            <Divider />
-            {children({ aidColumn })}
-          </>
-        )}
+        {aidColumn && <>{children({ aidColumn })}</>}
       </div>
     </>
   );
