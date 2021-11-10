@@ -92,10 +92,14 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
         </Select>
       </div>
       <NullsInAidWarning schema={schema} aidColumn={aidColumn} />
-      <Divider />
       <div className="AidSelectionStep-reserved-space">
         {/* Render next step */}
-        {aidColumn && <>{children({ aidColumn })}</>}
+        {aidColumn && (
+          <>
+            <Divider />
+            {children({ aidColumn })}
+          </>
+        )}
       </div>
     </>
   );
