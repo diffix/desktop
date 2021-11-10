@@ -22,7 +22,7 @@ const MissingAidWarning: FunctionComponent<MissingAidWarningProps> = ({ schema, 
 
   return computedResult.state === 'completed' && computedResult.value ? (
     <Alert
-      className="AidSelectionStep-notice"
+      className="MissingAidWarning"
       message={
         <>
           <strong>CAUTION:</strong>The protected entity identifier column contains missing values.
