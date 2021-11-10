@@ -20,28 +20,20 @@ type MissingAidWarningProps = {
 const MissingAidWarning: FunctionComponent<MissingAidWarningProps> = ({ schema, aidColumn }) => {
   const computedResult = useMissingAid(schema, aidColumn);
 
-  switch (computedResult.state) {
-    case 'completed': {
-      return computedResult.value ? (
-        <Alert
-          className="ColumnSelectionStep-notice"
-          message={
-            <>
-              <strong>CAUTION:</strong>The protected entity identifier column contains missing values.
-            </>
-          }
-          type="warning"
-          showIcon
-          icon={<InfoCircleOutlined />}
-          closable
-        />
-      ) : null;
-    }
-
-    case 'in_progress':
-    case 'failed':
-      return null;
-  }
+  return computedResult.state === 'completed' && computedResult.value ? (
+    <Alert
+      className="ColumnSelectionStep-notice"
+      message={
+        <>
+          <strong>CAUTION:</strong>The protected entity identifier column contains missing values.
+        </>
+      }
+      type="warning"
+      showIcon
+      icon={<InfoCircleOutlined />}
+      closable
+    />
+  ) : null;
 };
 
 type AidSelectionProps = {
