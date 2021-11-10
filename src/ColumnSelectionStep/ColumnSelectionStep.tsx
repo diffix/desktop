@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Form, Button, Divider, InputNumber, Radio, Switch, Typography, Tooltip, Alert } from 'antd';
-import { CloseCircleOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Form, Button, Divider, InputNumber, Radio, Switch, Typography, Tooltip } from 'antd';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import { useImmer } from 'use-immer';
 import { assign } from 'lodash';
 
@@ -14,7 +14,6 @@ import {
   StringGeneralization,
   TableSchema,
 } from '../types';
-import { useNullAid } from './use-null-aid';
 
 import './ColumnSelectionStep.css';
 
@@ -124,35 +123,6 @@ function GeneralizationControls({
   }
 }
 
-function NullsInAidWarning(schema: TableSchema, aidColumn: string) {
-  const computedResult = useNullAid(schema, aidColumn);
-
-  switch (computedResult.state) {
-    case 'completed': {
-      return computedResult.value ? (
-        <>
-          <Alert
-            className="ColumnSelectionStep-notice"
-            message={
-              <>
-                <strong>CAUTION:</strong>The protected entity identifier column contains NULL or empty values.
-              </>
-            }
-            type="warning"
-            showIcon
-            icon={<InfoCircleOutlined />}
-            closable
-          />
-        </>
-      ) : null;
-    }
-
-    case 'in_progress':
-    case 'failed':
-      return null;
-  }
-}
-
 export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema, aidColumn }) => {
   const [columns, setColumns] = useImmer<ColumnState[]>(() =>
     schema.columns.map(({ name, type }) => ({
@@ -194,8 +164,6 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
 
   return (
     <>
-      {NullsInAidWarning(schema, aidColumn)}
-      <Divider />
       <div className="ColumnSelectionStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.ColumnSelection} status={anySelected ? 'done' : 'active'} />
         <Title level={3}>Select columns for anonymization</Title>

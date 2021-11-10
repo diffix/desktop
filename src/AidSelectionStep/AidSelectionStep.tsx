@@ -1,14 +1,48 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Typography, Select, Alert } from 'antd';
+import { Typography, Select, Divider, Alert } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { TableSchema } from '../types';
 
+import { useNullAid } from './use-null-aid';
+
 import './AidSelectionStep.css';
 
 const { Title } = Typography;
 const { Option } = Select;
+
+type NullsInAidWarningProps = {
+  schema: TableSchema;
+  aidColumn: string;
+};
+
+const NullsInAidWarning: FunctionComponent<NullsInAidWarningProps> = ({ schema, aidColumn }) => {
+  const computedResult = useNullAid(schema, aidColumn);
+
+  switch (computedResult.state) {
+    case 'completed': {
+      return computedResult.value ? (
+        <Alert
+          className="ColumnSelectionStep-notice"
+          message={
+            <>
+              <strong>CAUTION:</strong>The protected entity identifier column contains NULL or empty values.
+            </>
+          }
+          type="warning"
+          showIcon
+          icon={<InfoCircleOutlined />}
+          closable
+        />
+      ) : null;
+    }
+
+    case 'in_progress':
+    case 'failed':
+      return null;
+  }
+};
 
 type AidSelectionProps = {
   schema: TableSchema;
@@ -57,6 +91,8 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
           ))}
         </Select>
       </div>
+      <NullsInAidWarning schema={schema} aidColumn={aidColumn} />
+      <Divider />
       <div className="AidSelectionStep-reserved-space">
         {/* Render next step */}
         {aidColumn && <>{children({ aidColumn })}</>}
