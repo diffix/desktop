@@ -1,14 +1,40 @@
 import React, { FunctionComponent, useState } from 'react';
-import { Divider, Typography, Select, Alert } from 'antd';
+import { Typography, Select, Divider, Alert } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { TableSchema } from '../types';
 
+import { useMissingAid } from './use-missing-aid';
+
 import './AidSelectionStep.css';
 
 const { Title } = Typography;
 const { Option } = Select;
+
+type MissingAidWarningProps = {
+  schema: TableSchema;
+  aidColumn: string;
+};
+
+const MissingAidWarning: FunctionComponent<MissingAidWarningProps> = ({ schema, aidColumn }) => {
+  const computedResult = useMissingAid(schema, aidColumn);
+
+  return computedResult.state === 'completed' && computedResult.value ? (
+    <Alert
+      className="MissingAidWarning"
+      message={
+        <>
+          <strong>CAUTION:</strong>The protected entity identifier column contains missing values.
+        </>
+      }
+      type="warning"
+      showIcon
+      icon={<InfoCircleOutlined />}
+      closable
+    />
+  ) : null;
+};
 
 type AidSelectionProps = {
   schema: TableSchema;
@@ -57,6 +83,7 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
           ))}
         </Select>
       </div>
+      <MissingAidWarning schema={schema} aidColumn={aidColumn} />
       <div className="AidSelectionStep-reserved-space">
         {/* Render next step */}
         {aidColumn && (

@@ -149,6 +149,27 @@ let handleExport
 
   File.WriteAllText(outputPath, output)
 
+let handleHasMissingValues
+  {
+    HasMissingValuesRequest.InputPath = inputPath
+    HasMissingValuesRequest.AidColumn = aidColumn
+  }
+  =
+  let anonParams = AnonymizationParams.Default
+
+  let query =
+    $"""
+      SELECT %s{aidColumn}
+      FROM table
+      WHERE %s{aidColumn} is NULL or %s{aidColumn} = ''
+      LIMIT 1
+    """
+
+  let queryResult = anonParams |> runQuery query inputPath
+  let output = queryResult.Rows.Length > 0 |> encodeResponse
+
+  printfn $"%s{output}"
+
 [<EntryPoint>]
 let main argv =
   Logger.backend <- Logger.LogMessage.toString >> eprintfn "%s"
@@ -158,6 +179,7 @@ let main argv =
     | Load load -> handleLoad load
     | Preview preview -> handlePreview preview
     | Export export -> handleExport export
+    | HasMissingValues hasMissingValues -> handleHasMissingValues hasMissingValues
 
     0
 

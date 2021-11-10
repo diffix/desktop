@@ -5,6 +5,7 @@ import {
   AnonymizedResultRow,
   Anonymizer,
   BucketColumn,
+  HasMissingValuesResponse,
   ColumnType,
   CountInput,
   File,
@@ -148,6 +149,17 @@ class DiffixAnonymizer implements Anonymizer {
         outputPath: outFileName,
       };
       await window.callService(request, signal);
+    });
+  }
+
+  hasMissingAid(schema: TableSchema, aidColumn: string): Task<boolean> {
+    return runTask(async (signal) => {
+      const request = {
+        type: 'HasMissingValues',
+        inputPath: schema.file.path,
+        aidColumn: `"${aidColumn}"`,
+      };
+      return (await window.callService(request, signal)) as HasMissingValuesResponse;
     });
   }
 }

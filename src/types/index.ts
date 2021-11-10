@@ -74,7 +74,9 @@ export type PreviewResponse = {
   rows: ResultRow[];
 };
 
-export type Response = LoadResponse | PreviewResponse;
+export type HasMissingValuesResponse = boolean;
+
+export type Response = LoadResponse | PreviewResponse | HasMissingValuesResponse;
 
 export type ResultColumn = {
   name: string;
@@ -126,6 +128,7 @@ export type Anonymizer = {
     countInput: CountInput,
     outFileName: string,
   ): Task<void>;
+  hasMissingAid(schema: TableSchema, aidColumn: string): Task<boolean>;
 };
 
 export type Task<T> = {
