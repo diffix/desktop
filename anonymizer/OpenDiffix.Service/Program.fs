@@ -149,10 +149,10 @@ let handleExport
 
   File.WriteAllText(outputPath, output)
 
-let handleFindNulls
+let handleHasMissingValues
   {
-    FindNullsRequest.InputPath = inputPath
-    FindNullsRequest.AidColumn = aidColumn
+    HasMissingValuesRequest.InputPath = inputPath
+    HasMissingValuesRequest.AidColumn = aidColumn
   }
   =
   let anonParams = AnonymizationParams.Default
@@ -165,7 +165,9 @@ let handleFindNulls
       LIMIT 1
     """
 
-  let output = anonParams |> runQuery query inputPath |> encodeResponse
+  let queryResult = anonParams |> runQuery query inputPath
+  let output = { HasMissingValues = queryResult.Rows.Length > 0 } |> encodeResponse
+
   printfn $"%s{output}"
 
 [<EntryPoint>]
@@ -177,7 +179,7 @@ let main argv =
     | Load load -> handleLoad load
     | Preview preview -> handlePreview preview
     | Export export -> handleExport export
-    | FindNulls findNulls -> handleFindNulls findNulls
+    | HasMissingValues hasMissingValues -> handleHasMissingValues hasMissingValues
 
     0
 

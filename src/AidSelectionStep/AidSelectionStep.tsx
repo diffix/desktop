@@ -5,20 +5,20 @@ import { InfoCircleOutlined } from '@ant-design/icons';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { TableSchema } from '../types';
 
-import { useNullAid } from './use-null-aid';
+import { useMissingAid } from './use-missing-aid';
 
 import './AidSelectionStep.css';
 
 const { Title } = Typography;
 const { Option } = Select;
 
-type NullsInAidWarningProps = {
+type MissingAidWarningProps = {
   schema: TableSchema;
   aidColumn: string;
 };
 
-const NullsInAidWarning: FunctionComponent<NullsInAidWarningProps> = ({ schema, aidColumn }) => {
-  const computedResult = useNullAid(schema, aidColumn);
+const MissingAidWarning: FunctionComponent<MissingAidWarningProps> = ({ schema, aidColumn }) => {
+  const computedResult = useMissingAid(schema, aidColumn);
 
   switch (computedResult.state) {
     case 'completed': {
@@ -27,7 +27,7 @@ const NullsInAidWarning: FunctionComponent<NullsInAidWarningProps> = ({ schema, 
           className="ColumnSelectionStep-notice"
           message={
             <>
-              <strong>CAUTION:</strong>The protected entity identifier column contains NULL or empty values.
+              <strong>CAUTION:</strong>The protected entity identifier column contains missing values.
             </>
           }
           type="warning"
@@ -91,7 +91,7 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
           ))}
         </Select>
       </div>
-      <NullsInAidWarning schema={schema} aidColumn={aidColumn} />
+      <MissingAidWarning schema={schema} aidColumn={aidColumn} />
       <div className="AidSelectionStep-reserved-space">
         {/* Render next step */}
         {aidColumn && (

@@ -74,12 +74,11 @@ export type PreviewResponse = {
   rows: ResultRow[];
 };
 
-export type CheckNullAidsResponse = {
-  columns: ResultColumn[];
-  rows: ResultRow[];
+export type HasMissingValuesResponse = {
+  hasMissingValues: boolean;
 };
 
-export type Response = LoadResponse | PreviewResponse | CheckNullAidsResponse;
+export type Response = LoadResponse | PreviewResponse | HasMissingValuesResponse;
 
 export type ResultColumn = {
   name: string;
@@ -131,7 +130,7 @@ export type Anonymizer = {
     countInput: CountInput,
     outFileName: string,
   ): Task<void>;
-  hasNullAid(schema: TableSchema, aidColumn: string): Task<boolean>;
+  hasMissingAid(schema: TableSchema, aidColumn: string): Task<boolean>;
 };
 
 export type Task<T> = {

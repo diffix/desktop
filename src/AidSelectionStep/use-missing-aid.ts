@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { inProgressState, useAnonymizer } from '../shared';
 import { ComputedData, TableSchema } from '../types';
 
-export function useNullAid(schema: TableSchema, aidColumn: string): ComputedData<boolean> {
+export function useMissingAid(schema: TableSchema, aidColumn: string): ComputedData<boolean> {
   const anonymizer = useAnonymizer();
   const [result, setResult] = useState<ComputedData<boolean>>({ state: 'completed', value: false });
 
@@ -16,7 +16,7 @@ export function useNullAid(schema: TableSchema, aidColumn: string): ComputedData
 
       let canceled = false;
 
-      const task = anonymizer.hasNullAid(schema, aidColumn);
+      const task = anonymizer.hasMissingAid(schema, aidColumn);
 
       task.result
         .then((result) => {

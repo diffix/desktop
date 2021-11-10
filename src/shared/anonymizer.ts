@@ -5,7 +5,7 @@ import {
   AnonymizedResultRow,
   Anonymizer,
   BucketColumn,
-  CheckNullAidsResponse,
+  HasMissingValuesResponse,
   ColumnType,
   CountInput,
   File,
@@ -152,16 +152,16 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  hasNullAid(schema: TableSchema, aidColumn: string): Task<boolean> {
+  hasMissingAid(schema: TableSchema, aidColumn: string): Task<boolean> {
     return runTask(async (signal) => {
       const request = {
-        type: 'FindNulls',
+        type: 'HasMissingValues',
         inputPath: schema.file.path,
         aidColumn: `"${aidColumn}"`,
       };
-      const result = (await window.callService(request, signal)) as CheckNullAidsResponse;
+      const result = (await window.callService(request, signal)) as HasMissingValuesResponse;
 
-      return result.rows.length > 0;
+      return result.hasMissingValues;
     });
   }
 }

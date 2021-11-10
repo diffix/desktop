@@ -43,13 +43,15 @@ type ExportRequest =
     CountInput: CountInput
   }
 
-type FindNullsRequest = { InputPath: string; AidColumn: string }
+type HasMissingValuesRequest = { InputPath: string; AidColumn: string }
+
+type HasMissingValuesResponse = { HasMissingValues: bool }
 
 type Request =
   | Load of LoadRequest
   | Preview of PreviewRequest
   | Export of ExportRequest
-  | FindNulls of FindNullsRequest
+  | HasMissingValues of HasMissingValuesRequest
 
 let rec private encodeValue =
   function
@@ -89,5 +91,5 @@ let decodeRequest request =
   | "Load" -> Load(decodeType request)
   | "Preview" -> Preview(decodeType request)
   | "Export" -> Export(decodeType request)
-  | "FindNulls" -> FindNulls(decodeType request)
+  | "HasMissingValues" -> HasMissingValues(decodeType request)
   | unknownType -> failwith $"Unknown request type: %s{unknownType}"
