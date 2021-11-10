@@ -13,6 +13,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OpenDiffix.Core", "referenc
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OpenDiffix.Core.Tests", "reference\src\OpenDiffix.Core.Tests\OpenDiffix.Core.Tests.fsproj", "{DF1414AD-64F6-4A1F-AD1F-A2D3FBB38992}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OpenDiffix.Service.Tests", "OpenDiffix.Service.Tests\OpenDiffix.Service.Tests.fsproj", "{51B72612-447F-4593-8850-E8244A241939}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,18 @@ Global
 		{DF1414AD-64F6-4A1F-AD1F-A2D3FBB38992}.Release|x64.Build.0 = Release|Any CPU
 		{DF1414AD-64F6-4A1F-AD1F-A2D3FBB38992}.Release|x86.ActiveCfg = Release|Any CPU
 		{DF1414AD-64F6-4A1F-AD1F-A2D3FBB38992}.Release|x86.Build.0 = Release|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Debug|x64.Build.0 = Debug|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Debug|x86.Build.0 = Debug|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Release|x64.ActiveCfg = Release|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Release|x64.Build.0 = Release|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Release|x86.ActiveCfg = Release|Any CPU
+		{51B72612-447F-4593-8850-E8244A241939}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{92BEA02B-144C-464C-87C1-19062529CC3F} = {34361F5F-725E-4F98-B2BC-087B4D0DA7C6}
