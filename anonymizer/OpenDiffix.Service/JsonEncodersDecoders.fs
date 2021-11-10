@@ -45,7 +45,7 @@ type ExportRequest =
 
 type HasMissingValuesRequest = { InputPath: string; AidColumn: string }
 
-type HasMissingValuesResponse = { HasMissingValues: bool }
+type HasMissingValuesResponse = bool
 
 type Request =
   | Load of LoadRequest

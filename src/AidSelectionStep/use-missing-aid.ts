@@ -11,30 +11,30 @@ export function useMissingAid(schema: TableSchema, aidColumn: string): ComputedD
       // For no AID we know immediately that there are no NULL values.
       setResult({ state: 'completed', value: false });
       return;
-    } else {
-      setResult(inProgressState);
-
-      let canceled = false;
-
-      const task = anonymizer.hasMissingAid(schema, aidColumn);
-
-      task.result
-        .then((result) => {
-          if (!canceled) {
-            setResult({ state: 'completed', value: result });
-          }
-        })
-        .catch((error) => {
-          if (!canceled) {
-            setResult({ state: 'failed', error: error.toString() });
-          }
-        });
-
-      return () => {
-        canceled = true;
-        task.cancel();
-      };
     }
+
+    setResult(inProgressState);
+
+    let canceled = false;
+
+    const task = anonymizer.hasMissingAid(schema, aidColumn);
+
+    task.result
+      .then((result) => {
+        if (!canceled) {
+          setResult({ state: 'completed', value: result });
+        }
+      })
+      .catch((error) => {
+        if (!canceled) {
+          setResult({ state: 'failed', error: error.toString() });
+        }
+      });
+
+    return () => {
+      canceled = true;
+      task.cancel();
+    };
   }, [anonymizer, schema, aidColumn]);
 
   return result;

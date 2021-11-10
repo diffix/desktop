@@ -159,9 +159,7 @@ class DiffixAnonymizer implements Anonymizer {
         inputPath: schema.file.path,
         aidColumn: `"${aidColumn}"`,
       };
-      const result = (await window.callService(request, signal)) as HasMissingValuesResponse;
-
-      return result.hasMissingValues;
+      return (await window.callService(request, signal)) as HasMissingValuesResponse;
     });
   }
 }

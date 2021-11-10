@@ -166,7 +166,7 @@ let handleHasMissingValues
     """
 
   let queryResult = anonParams |> runQuery query inputPath
-  let output = { HasMissingValues = queryResult.Rows.Length > 0 } |> encodeResponse
+  let output = queryResult.Rows.Length > 0 |> encodeResponse
 
   printfn $"%s{output}"
 

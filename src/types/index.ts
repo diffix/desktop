@@ -74,9 +74,7 @@ export type PreviewResponse = {
   rows: ResultRow[];
 };
 
-export type HasMissingValuesResponse = {
-  hasMissingValues: boolean;
-};
+export type HasMissingValuesResponse = boolean;
 
 export type Response = LoadResponse | PreviewResponse | HasMissingValuesResponse;
 
