@@ -5,79 +5,62 @@ open FsUnit.Xunit
 
 open OpenDiffix.Service.Program
 
-let private dataDirectory = __SOURCE_DIRECTORY__ + "/../../data/data.sqlite"
+let private dataPath = __SOURCE_DIRECTORY__ + "/../reference/data/customers.csv"
 
-// [<Fact>]
-// let ``Prints version`` () =
-//   [| "--version" |] |> mainCore |> should not' (be Empty)
+type TempFile() =
+  let path = System.IO.Path.GetTempFileName()
+  member this.Path = path
 
-// [<Fact>]
-// let ``Counts all rows`` () =
-//   [| "-f"; dataDirectory; "--aid-columns"; "customers.id"; "-q"; "SELECT count(*) FROM customers" |]
-//   |> mainCore
-//   |> should not' (be Empty)
+  interface System.IDisposable with
+    member this.Dispose() = System.IO.File.Delete(path)
 
-// [<Fact>]
-// let ``Counts in non-anonymized tables`` () =
-//   [| "-f"; dataDirectory; "-q"; "SELECT count(*) FROM purchases" |]
-//   |> mainCore
-//   |> should not' (be Empty)
+[<Fact>]
+let ``Handles Load request`` () =
+  let request =
+    $"""
+    {{"type":"Load","inputPath":"%s{dataPath}","rows":10000}}
+    """
 
-// [<Fact>]
-// let ``Rejects invalid SQL`` () =
-//   shouldFail (fun () ->
-//     [|
-//       "-f"
-//       dataDirectory
-//       "--aid-columns"
-//       "customers.id"
-//       "-q"
-//       "SELECT no_such_column, count(*) FROM customers GROUP BY no_such_column"
-//     |]
-//     |> mainCore
-//     |> ignore
-//   )
+  let response = request |> mainCore |> Option.get
+  response |> should haveSubstring "columns"
+  response |> should haveSubstring "rows"
 
-// [<Fact>]
-// let ``Guards against unknown params`` () =
-//   shouldFail (fun () ->
-//     [| "-f"; dataDirectory; "--foo"; "customers.id"; "-q"; "SELECT count(*) FROM customers" |]
-//     |> mainCore
-//     |> ignore
-//   )
+[<Fact>]
+let ``Handles HasMissingValues request`` () =
+  let request =
+    $"""
+    {{"type":"HasMissingValues","inputPath":"%s{dataPath}","aidColumn":"\"id\""}}
+    """
 
-// [<Fact>]
-// let ``Accepts supported CLI parameters`` () =
-//   [|
-//     "-f"
-//     dataDirectory
-//     "--salt"
-//     "1"
-//     "--json"
-//     "--outlier-count"
-//     "1"
-//     "2"
-//     "--top-count"
-//     "12"
-//     "14"
-//     "--low-threshold"
-//     "3"
-//     "--low-sd"
-//     "1.2"
-//     "--low-mean-gap"
-//     "1"
-//     "--noise-sd"
-//     "2.4"
-//     "--aid-columns"
-//     "customers.id"
-//     "-q"
-//     "SELECT count(*) FROM customers"
-//   |]
-//   |> mainCore
-//   |> should not' (be Empty)
+  [ "true"; "false" ] |> should contain (request |> mainCore |> Option.get)
 
-// [<Fact>]
-// let ``Executes example batch query`` () =
-//   [| "--queries-path"; __SOURCE_DIRECTORY__ + "/../../queries-sample.json" |]
-//   |> mainCore
-//   |> should not' (be Empty)
+[<Fact>]
+let ``Handles Preview request`` () =
+  let request =
+    $"""
+    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"\"id\"","salt":"1","buckets":["\"age\"","\"city\""],"countInput":"Rows","rows":1000}}
+    """
+
+  let response = request |> mainCore |> Option.get
+  response |> should haveSubstring "summary"
+  response |> should haveSubstring "totalBuckets"
+  response |> should haveSubstring "lowCountBuckets"
+  response |> should haveSubstring "totalRows"
+  response |> should haveSubstring "lowCountRows"
+  response |> should haveSubstring "maxDistortion"
+  response |> should haveSubstring "medianDistortion"
+  response |> should haveSubstring "rows"
+
+[<Fact>]
+let ``Handles Export request`` () =
+  use outputFile = new TempFile()
+
+  let request =
+    $"""
+    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"\"id\"","salt":"1","buckets":["\"age\"","\"city\""],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    """
+
+  request |> mainCore |> should equal Option.None
+
+  System.IO.File.ReadAllLines(outputFile.Path)
+  |> should contain "\"age\",\"city\",\"diffix_count\""
