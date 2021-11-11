@@ -20,12 +20,23 @@ jobs:
         run: npm install
       - name: Install Service dependencies
         working-directory: anonymizer
-        run: dotnet tool restore
+        run: |
+          dotnet tool restore
+          dotnet restore
       - name: Check files format
         run: npm run check-format
       - name: Run linter
         run: npm run lint
       - name: Build Service
         run: npm run build
+      - name: Generate test data
+        working-directory: anonymizer
+        run: dotnet fsi reference/data/generate.fsx
+      - name: Test Service
+        working-directory: anonymizer
+        run: dotnet test --no-restore --verbosity normal
+      - name: Check files format for Service
+        working-directory: anonymizer
+        run: dotnet fantomas --check -r .
       - name: Build App
         run: npm run package
