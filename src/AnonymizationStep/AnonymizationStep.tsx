@@ -111,7 +111,7 @@ function AnonymizationResults({ schema, aidColumn, bucketColumns, countInput, re
           <Text>Here is what the result looks like:</Text>
           {result.rows.length === MAX_ROWS && <Text type="secondary"> (only the first {MAX_ROWS} rows are shown)</Text>}
         </div>
-        <AnonymizedResultsTable loading={loading} result={result} />
+        <AnonymizedResultsTable loading={loading} result={result} bucketColumns={bucketColumns} />
       </div>
       <Divider />
       <div className="AnonymizationExports notebook-step">
