@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
+import { Tooltip } from 'antd';
 
 import { columnSorter, formatPercentage, relativeNoise, ResponsiveTable } from '../shared';
 import {
@@ -9,6 +10,7 @@ import {
   DisplayMode,
   RowData,
   Value,
+  TooltipFunction,
 } from '../types';
 import { DisplayModeSwitch } from './DisplayModeSwitch';
 
@@ -21,34 +23,60 @@ type TableRowData = RowData & {
 
 // Columns
 
+function cellTrivialTooltip(displayValue: string) {
+  return <Tooltip title={displayValue}>{displayValue}</Tooltip>;
+}
+
+function cellNullTooltip() {
+  return (
+    <Tooltip title="NULL">
+      <i>NULL</i>
+    </Tooltip>
+  );
+}
+
+function cellTooltip(tooltip: string, displayValue: string) {
+  return <Tooltip title={tooltip}>{displayValue}</Tooltip>;
+}
+
 function renderValue(v: Value) {
+  // we must disable the default `ellipsis: {showTitle: true}` tooltip, so we're serving
+  // a trivial Tooltip node everywhere
   if (v === null) {
-    return <i>NULL</i>;
+    return cellNullTooltip();
   } else {
-    return v.toString();
+    return cellTrivialTooltip(v.toString());
   }
 }
 
+function buildRenderTooltipValue(valueToTooltip: TooltipFunction) {
+  // see note on showTitle above
+  return (v: Value) => {
+    if (v === null) {
+      return cellNullTooltip();
+    } else {
+      return cellTooltip(valueToTooltip(v), v.toString());
+    }
+  };
+}
+
 function renderLowCountValue(v: Value) {
-  return v === null ? '-' : v.toString();
+  // see note on showTitle above
+  return cellTrivialTooltip(v === null ? '-' : v.toString());
 }
 
 function renderRelativeNoiseValue(v: Value) {
-  return v === null ? '-' : formatPercentage(v as number);
+  // see note on showTitle above
+  return cellTrivialTooltip(v === null ? '-' : formatPercentage(v as number));
 }
 
-function makeColumnData(
-  title: string,
-  dataIndex: string,
-  type: ColumnType,
-  render: (v: Value) => React.ReactNode = renderValue,
-) {
+function makeColumnData(title: string, dataIndex: string, type: ColumnType, render: (v: Value) => React.ReactNode) {
   return {
     title,
     dataIndex,
     render,
     sorter: columnSorter(type, dataIndex),
-    ellipsis: true,
+    ellipsis: { showTitle: false },
   };
 }
 
@@ -58,17 +86,22 @@ const mapColumn = (mode: DisplayMode) => (column: AnonymizedResultColumn, i: num
   if (column.type === 'aggregate') {
     switch (mode) {
       case 'anonymized':
-        return [makeColumnData(column.name, i + '_anon', AGG_COLUMN_TYPE)];
+        return [makeColumnData(column.name, i + '_anon', AGG_COLUMN_TYPE, renderValue)];
       case 'combined':
         return [
           makeColumnData(column.name + ' (anonymized)', i + '_anon', AGG_COLUMN_TYPE, renderLowCountValue),
-          makeColumnData(column.name + ' (original)', i + '_real', AGG_COLUMN_TYPE),
+          makeColumnData(column.name + ' (original)', i + '_real', AGG_COLUMN_TYPE, renderValue),
           makeColumnData('Distortion', i + '_diff', 'real', renderRelativeNoiseValue),
         ];
     }
   }
 
-  return [makeColumnData(column.name, i.toString(), column.type)];
+  if (column.type === 'integer' || column.type === 'real') {
+    let renderTooltipValue = buildRenderTooltipValue(column.valueToTooltip);
+    return [makeColumnData(column.name, i.toString(), column.type, renderTooltipValue)];
+  } else {
+    return [makeColumnData(column.name, i.toString(), column.type, renderValue)];
+  }
 };
 
 // Rows

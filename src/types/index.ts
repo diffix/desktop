@@ -31,8 +31,12 @@ export type TextColumn = { name: string; type: 'text' };
 export type BooleanColumn = { name: string; type: 'boolean' };
 
 export type TableColumn = IntegerColumn | RealColumn | TextColumn | BooleanColumn;
+export type TooltipTableColumn = IntegerColumn | RealColumn;
+export type NoTooltipTableColumn = TextColumn | BooleanColumn;
 
 export type ColumnType = TableColumn['type'];
+export type TooltipColumnType = TooltipTableColumn['type'];
+export type NoTooltipColumnType = NoTooltipTableColumn['type'];
 
 // Query request
 
@@ -46,8 +50,8 @@ export type StringGeneralization = {
 };
 
 export type BucketColumn =
-  | (IntegerColumn & { generalization: NumericGeneralization | null })
-  | (RealColumn & { generalization: NumericGeneralization | null })
+  | (IntegerColumn & { generalization: NumericGeneralization | null; valueToTooltip: TooltipFunction })
+  | (RealColumn & { generalization: NumericGeneralization | null; valueToTooltip: TooltipFunction })
   | (TextColumn & { generalization: StringGeneralization | null })
   | BooleanColumn;
 
@@ -85,7 +89,10 @@ export type ResultColumn = {
 
 export type ResultRow = Value[];
 
+export type NonNullValue = boolean | number | string;
 export type Value = boolean | number | string | null;
+
+export type TooltipFunction = (v: NonNullValue) => string;
 
 // Anonymized query results
 
@@ -95,12 +102,18 @@ export type AnonymizedQueryResult = {
   summary: AnonymizationSummary;
 };
 
-export type AnonymizedResultColumn = {
-  name: string;
-  type: AnonymizedColumnType;
-};
+export type AnonymizedResultColumn =
+  | {
+      name: string;
+      type: TooltipColumnType;
+      valueToTooltip: TooltipFunction;
+    }
+  | {
+      name: string;
+      type: AnonymizedColumnType;
+    };
 
-export type AnonymizedColumnType = ColumnType | 'aggregate';
+export type AnonymizedColumnType = NoTooltipColumnType | 'aggregate';
 
 export type AnonymizedResultRow = { lowCount: boolean; values: AnonymizedValue[] };
 

@@ -10,9 +10,11 @@ import {
   BucketColumn,
   ColumnType,
   CountInput,
+  NonNullValue,
   NumericGeneralization,
   StringGeneralization,
   TableSchema,
+  TooltipFunction,
 } from '../types';
 
 import './ColumnSelectionStep.css';
@@ -49,9 +51,17 @@ function minBinSize(columnType: ColumnType) {
   return columnType === 'real' ? MIN_BIN_SIZE_REAL : MIN_BIN_SIZE_INTEGER;
 }
 
+function numericGeneralizationTooltip(binSize: number, binStart: number) {
+  return binStart.toString() + '-' + (binStart + binSize).toString();
+}
+
 function getNumericGeneralization({ binSize, type }: ColumnState): NumericGeneralization | null {
   if (typeof binSize !== 'number' || binSize < minBinSize(type)) return null;
   return { binSize };
+}
+
+function getNumericGeneralizationTooltip({ binSize }: ColumnState): TooltipFunction {
+  return binSize ? (v) => numericGeneralizationTooltip(binSize, v as number) : (v: NonNullValue) => v.toString();
 }
 
 function getStringGeneralization({ substringStart, substringLength }: ColumnState): StringGeneralization | null {
@@ -146,7 +156,12 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
           switch (type) {
             case 'integer':
             case 'real':
-              return { name, type, generalization: getNumericGeneralization(c) };
+              return {
+                name,
+                type,
+                generalization: getNumericGeneralization(c),
+                valueToTooltip: getNumericGeneralizationTooltip(c),
+              };
             case 'text':
               return { name, type, generalization: getStringGeneralization(c) };
             case 'boolean':
