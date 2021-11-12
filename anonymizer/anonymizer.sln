@@ -5,10 +5,6 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OpenDiffix.Service", "OpenDiffix.Service\OpenDiffix.Service.fsproj", "{FC0A89BF-A464-4964-A88D-8D226EBBC233}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "reference", "reference", "{34361F5F-725E-4F98-B2BC-087B4D0DA7C6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{92BEA02B-144C-464C-87C1-19062529CC3F}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OpenDiffix.Core", "reference\src\OpenDiffix.Core\OpenDiffix.Core.fsproj", "{D87E4C74-8EBF-40D7-B92F-FD69B48688D5}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OpenDiffix.Service.Tests", "OpenDiffix.Service.Tests\OpenDiffix.Service.Tests.fsproj", "{51B72612-447F-4593-8850-E8244A241939}"
@@ -62,10 +58,5 @@ Global
 		{51B72612-447F-4593-8850-E8244A241939}.Release|x64.Build.0 = Release|Any CPU
 		{51B72612-447F-4593-8850-E8244A241939}.Release|x86.ActiveCfg = Release|Any CPU
 		{51B72612-447F-4593-8850-E8244A241939}.Release|x86.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{92BEA02B-144C-464C-87C1-19062529CC3F} = {34361F5F-725E-4F98-B2BC-087B4D0DA7C6}
-		{D87E4C74-8EBF-40D7-B92F-FD69B48688D5} = {92BEA02B-144C-464C-87C1-19062529CC3F}
-		{DF1414AD-64F6-4A1F-AD1F-A2D3FBB38992} = {92BEA02B-144C-464C-87C1-19062529CC3F}
 	EndGlobalSection
 EndGlobal
