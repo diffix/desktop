@@ -40,7 +40,7 @@ let csvFormatter result =
 let handleLoad ({ InputPath = inputPath; Rows = rows }: LoadRequest) =
   let query = $"SELECT * FROM table LIMIT %d{rows}"
 
-  Some(AnonymizationParams.Default |> runQuery query inputPath |> encodeResponse)
+  AnonymizationParams.Default |> runQuery query inputPath |> encodeResponse
 
 let unwrapCount count =
   match count with
@@ -111,7 +111,7 @@ let handlePreview
       MedianDistortion = distortions.[anonBuckets / 2]
     }
 
-  Some(encodeResponse { Summary = summary; Rows = List.truncate rows result.Rows })
+  encodeResponse { Summary = summary; Rows = List.truncate rows result.Rows }
 
 let handleExport
   {
@@ -148,7 +148,7 @@ let handleExport
 
   File.WriteAllText(outputPath, output)
 
-  None
+  ""
 
 let handleHasMissingValues
   {
@@ -167,7 +167,7 @@ let handleHasMissingValues
     """
 
   let queryResult = anonParams |> runQuery query inputPath
-  Some(queryResult.Rows.Length > 0 |> encodeResponse)
+  queryResult.Rows.Length > 0 |> encodeResponse
 
 let mainCore consoleInput =
   match consoleInput |> decodeRequest with
@@ -182,7 +182,7 @@ let main argv =
 
   try
     // Option.map because we don't want a newline at the end on empty response
-    Console.In.ReadToEnd() |> mainCore |> Option.iter (printfn "%s")
+    Console.In.ReadToEnd() |> mainCore |> printf "%s"
     0
 
   with

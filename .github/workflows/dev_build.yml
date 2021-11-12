@@ -35,8 +35,5 @@ jobs:
       - name: Test Service
         working-directory: anonymizer
         run: dotnet test --no-restore --verbosity normal
-      - name: Check files format for Service
-        working-directory: anonymizer
-        run: dotnet fantomas --check -r .
       - name: Build App
         run: npm run package

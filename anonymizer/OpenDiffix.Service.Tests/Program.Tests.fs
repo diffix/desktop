@@ -21,7 +21,7 @@ let ``Handles Load request`` () =
     {{"type":"Load","inputPath":"%s{dataPath}","rows":10000}}
     """
 
-  let response = request |> mainCore |> Option.get
+  let response = request |> mainCore
   response |> should haveSubstring "columns"
   response |> should haveSubstring "rows"
 
@@ -32,7 +32,7 @@ let ``Handles HasMissingValues request`` () =
     {{"type":"HasMissingValues","inputPath":"%s{dataPath}","aidColumn":"\"id\""}}
     """
 
-  [ "true"; "false" ] |> should contain (request |> mainCore |> Option.get)
+  [ "true"; "false" ] |> should contain (request |> mainCore)
 
 [<Fact>]
 let ``Handles Preview request`` () =
@@ -41,7 +41,7 @@ let ``Handles Preview request`` () =
     {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"\"id\"","salt":"1","buckets":["\"age\"","\"city\""],"countInput":"Rows","rows":1000}}
     """
 
-  let response = request |> mainCore |> Option.get
+  let response = request |> mainCore
   response |> should haveSubstring "summary"
   response |> should haveSubstring "totalBuckets"
   response |> should haveSubstring "lowCountBuckets"
@@ -60,7 +60,8 @@ let ``Handles Export request`` () =
     {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"\"id\"","salt":"1","buckets":["\"age\"","\"city\""],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
-  request |> mainCore |> should equal Option.None
+  request |> mainCore |> should equal ""
 
-  System.IO.File.ReadAllLines(outputFile.Path)
-  |> should contain "\"age\",\"city\",\"diffix_count\""
+  let result = System.IO.File.ReadAllLines(outputFile.Path)
+  result |> should contain "\"age\",\"city\",\"diffix_count\""
+  result.Length |> should equal 2
