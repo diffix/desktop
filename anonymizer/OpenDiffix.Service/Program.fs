@@ -138,7 +138,7 @@ let handleExport
     $"""
       SELECT
         %s{String.join ", " buckets},
-        diffix_count(%s{countInput}, %s{aidColumn})
+        diffix_count(%s{countInput}, %s{aidColumn}) as count
       FROM table
       GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
       HAVING NOT diffix_low_count(%s{aidColumn})

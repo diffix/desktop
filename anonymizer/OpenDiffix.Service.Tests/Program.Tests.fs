@@ -63,5 +63,5 @@ let ``Handles Export request`` () =
   request |> mainCore |> should equal ""
 
   let result = System.IO.File.ReadAllLines(outputFile.Path)
-  result |> should contain "\"age\",\"city\",\"diffix_count\""
+  result |> should contain "\"age\",\"city\",\"count\""
   result.Length |> should equal 2
