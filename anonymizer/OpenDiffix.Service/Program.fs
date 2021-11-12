@@ -1,3 +1,5 @@
+module OpenDiffix.Service.Program
+
 open System
 open System.IO
 open OpenDiffix.Core
@@ -38,9 +40,7 @@ let csvFormatter result =
 let handleLoad ({ InputPath = inputPath; Rows = rows }: LoadRequest) =
   let query = $"SELECT * FROM table LIMIT %d{rows}"
 
-  let output = AnonymizationParams.Default |> runQuery query inputPath |> encodeResponse
-
-  printfn $"%s{output}"
+  AnonymizationParams.Default |> runQuery query inputPath |> encodeResponse
 
 let unwrapCount count =
   match count with
@@ -111,8 +111,7 @@ let handlePreview
       MedianDistortion = distortions.[anonBuckets / 2]
     }
 
-  let output = encodeResponse { Summary = summary; Rows = List.truncate rows result.Rows }
-  printfn $"%s{output}"
+  encodeResponse { Summary = summary; Rows = List.truncate rows result.Rows }
 
 let handleExport
   {
@@ -139,7 +138,7 @@ let handleExport
     $"""
       SELECT
         %s{String.join ", " buckets},
-        diffix_count(%s{countInput}, %s{aidColumn})
+        diffix_count(%s{countInput}, %s{aidColumn}) as count
       FROM table
       GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
       HAVING NOT diffix_low_count(%s{aidColumn})
@@ -148,6 +147,8 @@ let handleExport
   let output = anonParams |> runQuery query inputPath |> csvFormatter
 
   File.WriteAllText(outputPath, output)
+
+  ""
 
 let handleHasMissingValues
   {
@@ -166,21 +167,22 @@ let handleHasMissingValues
     """
 
   let queryResult = anonParams |> runQuery query inputPath
-  let output = queryResult.Rows.Length > 0 |> encodeResponse
+  queryResult.Rows.Length > 0 |> encodeResponse
 
-  printfn $"%s{output}"
+let mainCore consoleInput =
+  match consoleInput |> decodeRequest with
+  | Load load -> handleLoad load
+  | Preview preview -> handlePreview preview
+  | Export export -> handleExport export
+  | HasMissingValues hasMissingValues -> handleHasMissingValues hasMissingValues
 
 [<EntryPoint>]
 let main argv =
   Logger.backend <- Logger.LogMessage.toString >> eprintfn "%s"
 
   try
-    match Console.In.ReadToEnd() |> decodeRequest with
-    | Load load -> handleLoad load
-    | Preview preview -> handlePreview preview
-    | Export export -> handleExport export
-    | HasMissingValues hasMissingValues -> handleHasMissingValues hasMissingValues
-
+    // Option.map because we don't want a newline at the end on empty response
+    Console.In.ReadToEnd() |> mainCore |> printf "%s"
     0
 
   with
