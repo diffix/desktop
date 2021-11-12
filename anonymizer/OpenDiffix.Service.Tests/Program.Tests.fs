@@ -29,7 +29,7 @@ let ``Handles Load request`` () =
 let ``Handles HasMissingValues request`` () =
   let request =
     $"""
-    {{"type":"HasMissingValues","inputPath":"%s{dataPath}","aidColumn":"\"id\""}}
+    {{"type":"HasMissingValues","inputPath":"%s{dataPath}","aidColumn":"id"}}
     """
 
   [ "true"; "false" ] |> should contain (request |> mainCore)
@@ -38,7 +38,7 @@ let ``Handles HasMissingValues request`` () =
 let ``Handles Preview request`` () =
   let request =
     $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"\"id\"","salt":"1","buckets":["\"age\"","\"city\""],"countInput":"Rows","rows":1000}}
+    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","buckets":["age","city"],"countInput":"Rows","rows":1000}}
     """
 
   let response = request |> mainCore
@@ -57,7 +57,7 @@ let ``Handles Export request`` () =
 
   let request =
     $"""
-    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"\"id\"","salt":"1","buckets":["\"age\"","\"city\""],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
   request |> mainCore |> should equal ""
