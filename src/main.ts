@@ -5,6 +5,10 @@ import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
 import stream from 'stream';
+import fetch from 'electron-fetch';
+
+const semver = require('semver');
+
 import { PageId } from './Docs';
 
 const asyncExecFile = util.promisify(execFile);
@@ -232,4 +236,14 @@ ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
 ipcMain.handle('set_main_window_title', (_event, title: string) => {
   const mainWindow = BrowserWindow.getAllWindows()[0];
   mainWindow?.setTitle(title);
+});
+
+ipcMain.handle('check_for_updates', async (_event) => {
+  const response = await fetch('https://api.github.com/repos/diffix/desktop/releases?per_page=1');
+  const data = await response.json();
+  const newestTagName = data[0]['tag_name'];
+  const newestSemVer = semver.coerce(newestTagName);
+  const currentSemVer = semver.coerce(app.getVersion());
+
+  return semver.gt(newestSemVer, currentSemVer) ? newestTagName : null;
 });

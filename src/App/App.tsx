@@ -9,6 +9,7 @@ import { Docs, DocsFunctionsContext, PageId } from '../Docs';
 import { Notebook } from '../Notebook';
 
 import './App.css';
+import { useCheckUpdates } from './use-check-updates';
 
 const { TabPane } = Tabs;
 
@@ -70,6 +71,8 @@ function setWindowTitle(state: AppState) {
 
 export const App: FunctionComponent = () => {
   const [state, updateState] = useImmer(initialAppState);
+
+  useCheckUpdates();
 
   function onEdit(targetKey: unknown, action: 'add' | 'remove'): void {
     switch (action) {
