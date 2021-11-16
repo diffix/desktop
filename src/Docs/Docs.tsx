@@ -12,6 +12,7 @@ import operationSource from '../../docs/operation.md';
 import anonymizationSource from '../../docs/anonymization.md';
 import tipsSource from '../../docs/tips.md';
 import licenseSource from '../../LICENSE.md';
+import changelogSource from '../../CHANGELOG.md';
 
 const { Link } = Anchor;
 const { Title } = Typography;
@@ -31,6 +32,11 @@ const docsPages = [
     id: 'tips',
     title: 'Tips and Tricks',
     source: tipsSource,
+  },
+  {
+    id: 'changelog',
+    title: 'Changelog',
+    source: changelogSource,
   },
   {
     id: 'license',

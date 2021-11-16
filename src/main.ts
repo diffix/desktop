@@ -48,6 +48,10 @@ function setupMenu() {
           click: () => openDocs('operation'),
         },
         {
+          label: 'Changelog',
+          click: () => openDocs('changelog'),
+        },
+        {
           label: 'License',
           click: () => openDocs('license'),
         },
