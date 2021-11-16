@@ -144,5 +144,6 @@ declare global {
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;
     onOpenDocs: (page: PageId) => void;
     setMainWindowTitle: (title: string) => void;
+    checkForUpdates: () => Promise<string | null>;
   }
 }

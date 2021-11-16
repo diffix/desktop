@@ -42,6 +42,10 @@ window.setMainWindowTitle = (title: string) => {
   ipcRenderer.invoke('set_main_window_title', title);
 };
 
+window.checkForUpdates = () => {
+  return ipcRenderer.invoke('check_for_updates');
+};
+
 ipcRenderer.on('open_docs', (_event, page) => {
   window.onOpenDocs(page);
 });

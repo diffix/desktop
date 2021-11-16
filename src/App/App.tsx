@@ -7,6 +7,7 @@ import { find, findIndex } from 'lodash';
 import { AnonymizerContext, anonymizer, useStaticValue } from '../shared';
 import { Docs, DocsFunctionsContext, PageId } from '../Docs';
 import { Notebook } from '../Notebook';
+import { useCheckUpdates } from './use-check-updates';
 
 import './App.css';
 
@@ -70,6 +71,8 @@ function setWindowTitle(state: AppState) {
 
 export const App: FunctionComponent = () => {
   const [state, updateState] = useImmer(initialAppState);
+
+  useCheckUpdates();
 
   function onEdit(targetKey: unknown, action: 'add' | 'remove'): void {
     switch (action) {

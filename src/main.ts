@@ -5,6 +5,9 @@ import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
 import stream from 'stream';
+import fetch from 'electron-fetch';
+import semver from 'semver';
+
 import { PageId } from './Docs';
 
 const asyncExecFile = util.promisify(execFile);
@@ -245,4 +248,18 @@ ipcMain.handle('hash_file', (_event, taskId: string, fileName: string) =>
 ipcMain.handle('set_main_window_title', (_event, title: string) => {
   const mainWindow = BrowserWindow.getAllWindows()[0];
   mainWindow?.setTitle(title);
+});
+
+ipcMain.handle('check_for_updates', async (_event) => {
+  const response = await fetch('https://api.github.com/repos/diffix/desktop/releases/latest');
+
+  // 404 here means there hasn't yet been a full release yet, just prerelases or drafts
+  if (response.status == 404) return null;
+
+  const data = await response.json();
+  const newestTagName = data['tag_name'];
+  const newestSemVer = semver.coerce(newestTagName);
+  const currentSemVer = semver.coerce(app.getVersion());
+
+  return newestSemVer && currentSemVer && semver.gt(newestSemVer, currentSemVer) ? newestTagName : null;
 });
