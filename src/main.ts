@@ -36,12 +36,21 @@ function setupMenu() {
   const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
   const template: MenuItemConstructorOptions[] = [
     ...(isMac ? [macAppMenu] : []),
-    { role: 'fileMenu' },
-    { role: 'editMenu' },
-    { role: 'viewMenu' },
-    { role: 'windowMenu' },
     {
-      role: 'help',
+      label: '&View',
+      submenu: [
+        { role: 'copy' },
+        { role: 'selectAll' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+      ],
+    },
+    {
+      label: '&Help',
       submenu: [
         {
           label: 'Documentation',

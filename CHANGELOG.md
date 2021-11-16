@@ -4,6 +4,7 @@
 
 - Fixed name of "count" column in exported file.
 - Show changelog in UI.
+- Simplified window menu.
 
 ### Version 0.3.1
 
