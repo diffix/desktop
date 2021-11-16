@@ -23,11 +23,14 @@ type TableRowData = RowData & {
 
 // Columns
 
-function cellDefaultTooltip(displayValue: string) {
+// with `ellipsis: { showTitle: false }` set for the column, we're disabling the default tooltip
+// so that the styling of tooltips is more consistent. This forces us to provide Tooltip in all cases
+// even if the tooltip shown is same as the valueCell value.
+function plainStringCell(displayValue: string) {
   return <Tooltip title={displayValue}>{displayValue}</Tooltip>;
 }
 
-function cellNullTooltip() {
+function nullCell() {
   return (
     <Tooltip title="NULL">
       <i>NULL</i>
@@ -35,56 +38,51 @@ function cellNullTooltip() {
   );
 }
 
-function cellNumericGeneralizedTooltip(binSize: number, v: number) {
-  const displayValue = v.toString();
+function numericRangeCell(binSize: number, v: number) {
   const tooltip = `[${v}; ${v + binSize})`;
-  return <Tooltip title={tooltip}>{displayValue}</Tooltip>;
+  return <Tooltip title={tooltip}>{v}</Tooltip>;
 }
 
-function cellTooltip(bucketColumn: BucketColumn | undefined, v: number | boolean | string) {
+function valueCell(bucketColumn: BucketColumn | undefined, v: number | boolean | string) {
   if (
     bucketColumn &&
     (bucketColumn.type === 'integer' || bucketColumn.type === 'real') &&
-    bucketColumn.generalization &&
-    bucketColumn.generalization.binSize
+    bucketColumn.generalization
   ) {
-    return cellNumericGeneralizedTooltip(bucketColumn.generalization.binSize, v as number);
+    return numericRangeCell(bucketColumn.generalization.binSize, v as number);
   } else {
-    return cellDefaultTooltip(v.toString());
+    return plainStringCell(v.toString());
   }
 }
 
 function renderValue(v: Value) {
-  // with `ellipsis: { showTitle: false }` set for the column, we're disabling the default tooltip
-  // so that the styling of tooltips is more consistent. This forces us to provide Tooltip in all cases
-  // even if the tooltip shown is same as the cell value.
   if (v === null) {
-    return cellNullTooltip();
+    return nullCell();
   } else {
-    return cellDefaultTooltip(v.toString());
+    return plainStringCell(v.toString());
   }
 }
 
-function buildRenderTooltipValue(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
+function buildCellRenderer(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
   const bucketColumn = bucketColumns.find((c) => c.name === column.name);
   return (v: Value) => {
     // see note on `ellipsis` above
     if (v === null) {
-      return cellNullTooltip();
+      return nullCell();
     } else {
-      return cellTooltip(bucketColumn, v);
+      return valueCell(bucketColumn, v);
     }
   };
 }
 
 function renderLowCountValue(v: Value) {
   // see note on `ellipsis` above
-  return cellDefaultTooltip(v === null ? '-' : v.toString());
+  return plainStringCell(v === null ? '-' : v.toString());
 }
 
 function renderRelativeNoiseValue(v: Value) {
   // see note on `ellipsis` above
-  return cellDefaultTooltip(v === null ? '-' : formatPercentage(v as number));
+  return plainStringCell(v === null ? '-' : formatPercentage(v as number));
 }
 
 function makeColumnData(title: string, dataIndex: string, type: ColumnType, render: (v: Value) => React.ReactNode) {
@@ -113,7 +111,7 @@ const mapColumn = (mode: DisplayMode, bucketColumns: BucketColumn[]) => (column:
     }
   }
 
-  return [makeColumnData(column.name, i.toString(), column.type, buildRenderTooltipValue(column, bucketColumns))];
+  return [makeColumnData(column.name, i.toString(), column.type, buildCellRenderer(column, bucketColumns))];
 };
 
 // Rows

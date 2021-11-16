@@ -26,7 +26,7 @@ jobs:
       - name: Check files format
         run: npm run check-format
       - name: Run linter
-        run: npm run lint-ci
+        run: npm run lint
       - name: Build Service
         run: npm run build
       - name: Generate test data
