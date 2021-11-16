@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useState } from 'react';
+import { Tooltip } from 'antd';
 
 import { columnSorter, formatPercentage, relativeNoise, ResponsiveTable } from '../shared';
 import {
@@ -9,6 +10,7 @@ import {
   DisplayMode,
   RowData,
   Value,
+  BucketColumn,
 } from '../types';
 import { DisplayModeSwitch } from './DisplayModeSwitch';
 
@@ -21,54 +23,95 @@ type TableRowData = RowData & {
 
 // Columns
 
-function renderValue(v: Value) {
-  if (v === null) {
-    return <i>NULL</i>;
+// with `ellipsis: { showTitle: false }` set for the column, we're disabling the default tooltip
+// so that the styling of tooltips is more consistent. This forces us to provide Tooltip in all cases
+// even if the tooltip shown is same as the valueCell value.
+function plainStringCell(displayValue: string) {
+  return <Tooltip title={displayValue}>{displayValue}</Tooltip>;
+}
+
+function nullCell() {
+  return (
+    <Tooltip title="NULL">
+      <i>NULL</i>
+    </Tooltip>
+  );
+}
+
+function numericRangeCell(binSize: number, v: number) {
+  const tooltip = `[${v}; ${v + binSize})`;
+  return <Tooltip title={tooltip}>{v}</Tooltip>;
+}
+
+function valueCell(bucketColumn: BucketColumn | undefined, v: number | boolean | string) {
+  if (
+    bucketColumn &&
+    (bucketColumn.type === 'integer' || bucketColumn.type === 'real') &&
+    bucketColumn.generalization
+  ) {
+    return numericRangeCell(bucketColumn.generalization.binSize, v as number);
   } else {
-    return v.toString();
+    return plainStringCell(v.toString());
   }
 }
 
+function renderValue(v: Value) {
+  if (v === null) {
+    return nullCell();
+  } else {
+    return plainStringCell(v.toString());
+  }
+}
+
+function buildCellRenderer(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
+  const bucketColumn = bucketColumns.find((c) => c.name === column.name);
+  return (v: Value) => {
+    // see note on `ellipsis` above
+    if (v === null) {
+      return nullCell();
+    } else {
+      return valueCell(bucketColumn, v);
+    }
+  };
+}
+
 function renderLowCountValue(v: Value) {
-  return v === null ? '-' : v.toString();
+  // see note on `ellipsis` above
+  return plainStringCell(v === null ? '-' : v.toString());
 }
 
 function renderRelativeNoiseValue(v: Value) {
-  return v === null ? '-' : formatPercentage(v as number);
+  // see note on `ellipsis` above
+  return plainStringCell(v === null ? '-' : formatPercentage(v as number));
 }
 
-function makeColumnData(
-  title: string,
-  dataIndex: string,
-  type: ColumnType,
-  render: (v: Value) => React.ReactNode = renderValue,
-) {
+function makeColumnData(title: string, dataIndex: string, type: ColumnType, render: (v: Value) => React.ReactNode) {
   return {
     title,
     dataIndex,
     render,
     sorter: columnSorter(type, dataIndex),
-    ellipsis: true,
+    ellipsis: { showTitle: false },
   };
 }
 
 const AGG_COLUMN_TYPE = 'real';
 
-const mapColumn = (mode: DisplayMode) => (column: AnonymizedResultColumn, i: number) => {
+const mapColumn = (mode: DisplayMode, bucketColumns: BucketColumn[]) => (column: AnonymizedResultColumn, i: number) => {
   if (column.type === 'aggregate') {
     switch (mode) {
       case 'anonymized':
-        return [makeColumnData(column.name, i + '_anon', AGG_COLUMN_TYPE)];
+        return [makeColumnData(column.name, i + '_anon', AGG_COLUMN_TYPE, renderValue)];
       case 'combined':
         return [
           makeColumnData(column.name + ' (anonymized)', i + '_anon', AGG_COLUMN_TYPE, renderLowCountValue),
-          makeColumnData(column.name + ' (original)', i + '_real', AGG_COLUMN_TYPE),
+          makeColumnData(column.name + ' (original)', i + '_real', AGG_COLUMN_TYPE, renderValue),
           makeColumnData('Distortion', i + '_diff', 'real', renderRelativeNoiseValue),
         ];
     }
   }
 
-  return [makeColumnData(column.name, i.toString(), column.type)];
+  return [makeColumnData(column.name, i.toString(), column.type, buildCellRenderer(column, bucketColumns))];
 };
 
 // Rows
@@ -112,12 +155,17 @@ function mapRow(row: AnonymizedResultRow, i: number) {
 export type AnonymizedResultsTableProps = {
   loading: boolean;
   result: AnonymizedQueryResult;
+  bucketColumns: BucketColumn[];
 };
 
-export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTableProps> = ({ loading, result }) => {
+export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTableProps> = ({
+  loading,
+  result,
+  bucketColumns,
+}) => {
   const [mode, setMode] = useState<DisplayMode>('anonymized');
 
-  const columns = result.columns.flatMap(mapColumn(mode));
+  const columns = result.columns.flatMap(mapColumn(mode, bucketColumns));
   const data = filterRows(mode, result.rows).map(mapRow);
 
   return (
