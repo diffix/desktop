@@ -6,7 +6,7 @@ async function checkForUpdates() {
     const newerVersion = await window.checkForUpdates();
     if (newerVersion) {
       message.info({
-        content: `New version ${newerVersion} available! See Help -> Latest Releases`,
+        content: `New version ${newerVersion} available! See Help ► Latest Releases`,
         key: 'useCheckUpdates',
         duration: 10,
       });
