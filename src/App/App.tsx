@@ -7,9 +7,9 @@ import { find, findIndex } from 'lodash';
 import { AnonymizerContext, anonymizer, useStaticValue } from '../shared';
 import { Docs, DocsFunctionsContext, PageId } from '../Docs';
 import { Notebook } from '../Notebook';
+import { useCheckUpdates } from './use-check-updates';
 
 import './App.css';
-import { useCheckUpdates } from './use-check-updates';
 
 const { TabPane } = Tabs;
 

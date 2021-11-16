@@ -238,9 +238,13 @@ ipcMain.handle('set_main_window_title', (_event, title: string) => {
 });
 
 ipcMain.handle('check_for_updates', async (_event) => {
-  const response = await fetch('https://api.github.com/repos/diffix/desktop/releases?per_page=1');
+  const response = await fetch('https://api.github.com/repos/diffix/desktop/releases/latest');
+
+  // 404 here means there hasn't yet been a full release yet, just prerelases or drafts
+  if (response.status == 404) return null;
+
   const data = await response.json();
-  const newestTagName = data[0]['tag_name'];
+  const newestTagName = data['tag_name'];
   const newestSemVer = semver.coerce(newestTagName);
   const currentSemVer = semver.coerce(app.getVersion());
 
