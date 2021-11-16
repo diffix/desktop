@@ -6,8 +6,7 @@ import crypto from 'crypto';
 import path from 'path';
 import stream from 'stream';
 import fetch from 'electron-fetch';
-
-const semver = require('semver');
+import semver from 'semver';
 
 import { PageId } from './Docs';
 
@@ -245,5 +244,5 @@ ipcMain.handle('check_for_updates', async (_event) => {
   const newestSemVer = semver.coerce(newestTagName);
   const currentSemVer = semver.coerce(app.getVersion());
 
-  return semver.gt(newestSemVer, currentSemVer) ? newestTagName : null;
+  return newestSemVer && currentSemVer && semver.gt(newestSemVer, currentSemVer) ? newestTagName : null;
 });
