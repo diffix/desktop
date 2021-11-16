@@ -1,3 +1,10 @@
+## Changelog
+
+### Version 1.0.0
+
+- Fixed name of "count" column in exported file.
+- Show changelog in UI.
+
 ### Version 0.3.1
 
 - Added section about misusage to docs.
