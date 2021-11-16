@@ -15,6 +15,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
+    "lint-ci": "eslint --max-warnings 0 --ext .ts,.tsx .",
     "check-format": "prettier --check src && cd anonymizer && dotnet fantomas --check -r .",
     "format": "prettier --write src && cd anonymizer && dotnet fantomas -r ."
   },
