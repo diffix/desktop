@@ -11,10 +11,13 @@ let toSalt =
   | Some (salt: string) -> Text.Encoding.UTF8.GetBytes(salt)
   | _ -> [||]
 
+let ledHook = Some Led.executorHook
 
-let runQuery query filePath anonParams =
+let withHook hook context = { context with ExecutorHook = hook }
+
+let runQuery hook query filePath anonParams =
   use dataProvider = new CSV.DataProvider(filePath) :> IDataProvider
-  let context = QueryContext.make anonParams dataProvider
+  let context = QueryContext.make anonParams dataProvider |> withHook hook
   QueryEngine.run context query
 
 let quoteString (string: string) =
@@ -40,7 +43,7 @@ let csvFormatter result =
 let handleLoad ({ InputPath = inputPath; Rows = rows }: LoadRequest) =
   let query = $"SELECT * FROM table LIMIT %d{rows}"
 
-  AnonymizationParams.Default |> runQuery query inputPath |> encodeResponse
+  AnonymizationParams.Default |> runQuery None query inputPath |> encodeResponse
 
 let unwrapCount count =
   match count with
@@ -92,7 +95,7 @@ let handlePreview
         GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
       """
 
-  let result = runQuery query inputPath anonParams
+  let result = runQuery ledHook query inputPath anonParams
 
   let mutable totalBuckets = 0
   let mutable lowCountBuckets = 0
@@ -162,7 +165,7 @@ let handleExport
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
-  let output = anonParams |> runQuery query inputPath |> csvFormatter
+  let output = anonParams |> runQuery ledHook query inputPath |> csvFormatter
 
   File.WriteAllText(outputPath, output)
 
@@ -184,7 +187,7 @@ let handleHasMissingValues
       LIMIT 1
     """
 
-  let queryResult = anonParams |> runQuery query inputPath
+  let queryResult = anonParams |> runQuery None query inputPath
   queryResult.Rows.Length > 0 |> encodeResponse
 
 let mainCore consoleInput =

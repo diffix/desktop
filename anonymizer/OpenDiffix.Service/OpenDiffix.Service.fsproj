@@ -6,6 +6,7 @@
     <Description>Interface to the Open Diffix Reference anonymizer</Description>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Led.fs" />
     <Compile Include="JsonEncodersDecoders.fs" />
     <Compile Include="CSVDataProvider.fs" />
     <Compile Include="Program.fs" />
