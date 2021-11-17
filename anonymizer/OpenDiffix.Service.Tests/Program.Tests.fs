@@ -52,6 +52,32 @@ let ``Handles Preview request`` () =
   response |> should haveSubstring "rows"
 
 [<Fact>]
+let ``Handles Preview request with explicit null anonParams`` () =
+  let request =
+    $"""
+    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    """
+
+  let requestExplicit =
+    $"""
+    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":null,"buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    """
+
+  (request |> mainCore) |> should equal (requestExplicit |> mainCore)
+
+[<Fact>]
+let ``Handles Preview request with custom anonParams`` () =
+  let requestCustom =
+    $"""
+    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":{{"suppression":{{"lowThreshold":0,"sD":0,"lowMeanGap":0}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    """
+
+  let responseCustom = requestCustom |> mainCore
+  // The custom anonymization params have removed suppression. Assertion checks whether
+  // that's respected by the service
+  responseCustom |> should haveSubstring "\"lowCountRows\": 0"
+
+[<Fact>]
 let ``Handles Export request`` () =
   use outputFile = new TempFile()
 
@@ -65,3 +91,20 @@ let ``Handles Export request`` () =
   let result = System.IO.File.ReadAllLines(outputFile.Path)
   result |> should contain "\"age\",\"city\",\"count\""
   result.Length |> should equal 2
+
+[<Fact>]
+let ``Handles Export request with custom anonParams`` () =
+  use outputFile = new TempFile()
+
+  let requestCustom =
+    $"""
+    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":{{"suppression":{{"lowThreshold":300,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    """
+
+  requestCustom |> mainCore |> should equal ""
+
+  let result = System.IO.File.ReadAllLines(outputFile.Path)
+  // The custom anonymization params have ridiculous supporesion thesshold to suppress all buckets
+  // Assertion checks whether that's respected by the service
+  result |> should contain "\"age\",\"city\",\"count\""
+  result.Length |> should equal 1

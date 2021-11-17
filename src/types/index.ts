@@ -111,6 +111,30 @@ export type AnonymizedAggregate = {
   anonValue: number | null;
 };
 
+// AnonymizationParams
+
+export type Interval = {
+  lower: number;
+  upper: number;
+};
+
+export type SuppressionParams = {
+  lowThreshold: number;
+  sD: number;
+  lowMeanGap: number;
+};
+
+export type AnonymizationParams = {
+  // we're excluding TableSettings and Salt, as compared to `reference`, since
+  // both are handled differently in Diffix for Desktop
+  suppression: SuppressionParams;
+
+  // Count params
+  outlierCount: Interval;
+  topCount: Interval;
+  noiseSD: number;
+};
+
 // API
 
 export type Anonymizer = {
