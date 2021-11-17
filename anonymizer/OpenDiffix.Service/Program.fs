@@ -64,15 +64,22 @@ let handlePreview
     | Rows -> "*"
     | Entities -> $"distinct %s{aidColumn}"
 
-  let query =
+  let countColumns =
     $"""
-      SELECT
-        diffix_low_count(%s{aidColumn}),
-        count(%s{countInput}), diffix_count(%s{countInput}, %s{aidColumn}),
-        %s{String.join ", " buckets}
-      FROM table
-      GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
+      diffix_low_count(%s{aidColumn}),
+      count(%s{countInput}),
+      diffix_count(%s{countInput}, %s{aidColumn})
     """
+
+  let query =
+    if Array.isEmpty buckets then
+      $"SELECT %s{countColumns} FROM table"
+    else
+      $"""
+        SELECT %s{countColumns}, %s{String.join ", " buckets}
+        FROM table
+        GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
+      """
 
   let result = runQuery query inputPath anonParams
 
@@ -134,15 +141,18 @@ let handleExport
     | Rows -> "*"
     | Entities -> $"distinct %s{aidColumn}"
 
+  let countColumn = $"diffix_count(%s{countInput}, %s{aidColumn}) AS count"
+
   let query =
-    $"""
-      SELECT
-        %s{String.join ", " buckets},
-        diffix_count(%s{countInput}, %s{aidColumn}) AS count
-      FROM table
-      GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
-      HAVING NOT diffix_low_count(%s{aidColumn})
-    """
+    if Array.isEmpty buckets then
+      $"SELECT %s{countColumn} FROM table"
+    else
+      $"""
+        SELECT %s{String.join ", " buckets}, %s{countColumn}
+        FROM table
+        GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
+        HAVING NOT diffix_low_count(%s{aidColumn})
+      """
 
   let output = anonParams |> runQuery query inputPath |> csvFormatter
 
