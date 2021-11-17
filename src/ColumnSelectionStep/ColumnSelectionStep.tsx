@@ -242,15 +242,9 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
           </tbody>
         </table>
       </div>
-      <div className="ColumnSelectionStep-reserved-space">
-        {/* Render next step */}
-        {bucketColumns.length !== 0 && (
-          <>
-            <Divider />
-            {children({ bucketColumns, countInput: hasAidColumn ? countInput : 'Rows' })}
-          </>
-        )}
-      </div>
+      {/* Render next step */}
+      <Divider />
+      {children({ bucketColumns, countInput: hasAidColumn ? countInput : 'Rows' })}
     </>
   );
 };

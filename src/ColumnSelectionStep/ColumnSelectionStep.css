@@ -39,10 +39,6 @@
   margin-right: 16px;
 }
 
-.ColumnSelectionStep-reserved-space {
-  min-height: 700px;
-}
-
 .ColumnSelectionStep .ColumnSelectionStep-notice {
   margin-bottom: 16px;
   max-width: 1000px;

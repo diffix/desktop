@@ -3,8 +3,9 @@
 ### Version 1.0.0
 
 - Fixed name of "count" column in exported file.
-- Show changelog in UI.
+- Show the changelog in the "Documentation" tab.
 - Simplified window menu.
+- Added support for global aggregation.
 
 ### Version 0.3.1
 
