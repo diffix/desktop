@@ -15,7 +15,7 @@ let ledHook = Some Led.executorHook
 
 let withHook hook context = { context with ExecutorHook = hook }
 
-let runQuery hook query filePath anonParams =
+let runQuery hook query (filePath: string) anonParams =
   use dataProvider = new CSV.DataProvider(filePath) :> IDataProvider
   let context = QueryContext.make anonParams dataProvider |> withHook hook
   QueryEngine.run context query
