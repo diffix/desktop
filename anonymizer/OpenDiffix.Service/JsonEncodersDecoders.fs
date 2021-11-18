@@ -23,6 +23,16 @@ type CountInput =
   | Rows
   | Entities
 
+type RequestAnonParams =
+  {
+    Suppression: SuppressionParams
+
+    // Count params
+    OutlierCount: Interval
+    TopCount: Interval
+    NoiseSD: float
+  }
+
 type PreviewRequest =
   {
     InputPath: string
@@ -31,6 +41,7 @@ type PreviewRequest =
     Salt: string
     Buckets: string []
     CountInput: CountInput
+    AnonParams: RequestAnonParams
   }
 
 type ExportRequest =
@@ -41,6 +52,7 @@ type ExportRequest =
     Buckets: string []
     OutputPath: string
     CountInput: CountInput
+    AnonParams: RequestAnonParams
   }
 
 type HasMissingValuesRequest = { InputPath: string; AidColumn: string }

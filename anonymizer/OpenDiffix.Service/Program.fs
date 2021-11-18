@@ -47,6 +47,16 @@ let unwrapCount count =
   | Integer count -> count
   | _ -> failwith "Unexpected value type received for count."
 
+let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
+  {
+    TableSettings = Map.empty
+    Salt = Text.Encoding.UTF8.GetBytes(salt)
+    Suppression = requestAnonParams.Suppression
+    OutlierCount = requestAnonParams.OutlierCount
+    TopCount = requestAnonParams.TopCount
+    NoiseSD = requestAnonParams.NoiseSD
+  }
+
 let handlePreview
   {
     InputPath = inputPath
@@ -55,9 +65,10 @@ let handlePreview
     Salt = salt
     Buckets = buckets
     CountInput = countInput
+    AnonParams = requestAnonParams
   }
   =
-  let anonParams = { AnonymizationParams.Default with Salt = Text.Encoding.UTF8.GetBytes(salt) }
+  let anonParams = getAnonParams requestAnonParams salt
 
   let countInput =
     match countInput with
@@ -128,13 +139,10 @@ let handleExport
     Buckets = buckets
     CountInput = countInput
     OutputPath = outputPath
+    AnonParams = requestAnonParams
   }
   =
-  let anonParams =
-    { AnonymizationParams.Default with
-        Salt = Text.Encoding.UTF8.GetBytes(salt)
-        Suppression = { SuppressionParams.Default with LowThreshold = 3 }
-    }
+  let anonParams = getAnonParams requestAnonParams salt
 
   let countInput =
     match countInput with

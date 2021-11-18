@@ -111,6 +111,17 @@ class DiffixAnonymizer implements Anonymizer {
         inputPath: schema.file.path,
         aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
+        // TODO: send optional `anonParams` from the UI:
+        anonParams: {
+          suppression: {
+            lowThreshold: 3,
+            sD: 1.0,
+            lowMeanGap: 2.0,
+          },
+          outlierCount: { lower: 2, upper: 5 },
+          topCount: { lower: 2, upper: 5 },
+          noiseSD: 1.0,
+        },
         buckets: this.mapBucketsToSQL(bucketColumns),
         countInput,
         rows: 1000,
@@ -118,6 +129,8 @@ class DiffixAnonymizer implements Anonymizer {
       const result = (await window.callService(request, signal)) as PreviewResponse;
 
       const rows: AnonymizedResultRow[] = result.rows.map((row) => {
+        // NOTE: the position of `diffix_low_count` and other columns must be kept in sync with the
+        // Preview request's `SELECT` in `anonymizer/OpenDiffix.Service/Program.fs`.
         const lowCount = row[0] as boolean;
         return {
           lowCount,
@@ -144,6 +157,17 @@ class DiffixAnonymizer implements Anonymizer {
         inputPath: schema.file.path,
         aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
+        // TODO: send optional `anonParams` from the UI:
+        anonParams: {
+          suppression: {
+            lowThreshold: 3,
+            sD: 1.0,
+            lowMeanGap: 2.0,
+          },
+          outlierCount: { lower: 2, upper: 5 },
+          topCount: { lower: 2, upper: 5 },
+          noiseSD: 1.0,
+        },
         buckets: this.mapBucketsToSQL(bucketColumns),
         countInput,
         outputPath: outFileName,
