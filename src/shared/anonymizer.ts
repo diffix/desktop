@@ -15,6 +15,7 @@ import {
   StringGeneralization,
   TableSchema,
   Task,
+  AnonymizationParams,
 } from '../types';
 import { runTask } from './utils';
 
@@ -104,6 +105,7 @@ class DiffixAnonymizer implements Anonymizer {
     aidColumn: string,
     bucketColumns: BucketColumn[],
     countInput: CountInput,
+    anonParams: AnonymizationParams,
   ): Task<AnonymizedQueryResult> {
     return runTask(async (signal) => {
       const request = {
@@ -111,17 +113,7 @@ class DiffixAnonymizer implements Anonymizer {
         inputPath: schema.file.path,
         aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
-        // TODO: send optional `anonParams` from the UI:
-        anonParams: {
-          suppression: {
-            lowThreshold: 3,
-            sD: 1.0,
-            lowMeanGap: 2.0,
-          },
-          outlierCount: { lower: 2, upper: 5 },
-          topCount: { lower: 2, upper: 5 },
-          noiseSD: 1.0,
-        },
+        anonParams: anonParams,
         buckets: this.mapBucketsToSQL(bucketColumns),
         countInput,
         rows: 1000,
@@ -150,6 +142,7 @@ class DiffixAnonymizer implements Anonymizer {
     bucketColumns: BucketColumn[],
     countInput: CountInput,
     outFileName: string,
+    anonParams: AnonymizationParams,
   ): Task<void> {
     return runTask(async (signal) => {
       const request = {
@@ -157,17 +150,7 @@ class DiffixAnonymizer implements Anonymizer {
         inputPath: schema.file.path,
         aidColumn: `"${aidColumn}"`,
         salt: schema.salt,
-        // TODO: send optional `anonParams` from the UI:
-        anonParams: {
-          suppression: {
-            lowThreshold: 3,
-            sD: 1.0,
-            lowMeanGap: 2.0,
-          },
-          outlierCount: { lower: 2, upper: 5 },
-          topCount: { lower: 2, upper: 5 },
-          noiseSD: 1.0,
-        },
+        anonParams: anonParams,
         buckets: this.mapBucketsToSQL(bucketColumns),
         countInput,
         outputPath: outFileName,

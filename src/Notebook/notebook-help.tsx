@@ -74,6 +74,22 @@ function ColumnSelectionHelp() {
   );
 }
 
+function AnonParamsSelectionHelp() {
+  return (
+    <div>
+      <Title level={4}>Anonymization Parameters</Title>
+      <Paragraph>
+        The default set of parameters ensures correct anonymization and has maximum analytical utility. It is
+        recommended for the majority of use cases. Select stronger anonymization, if it does not lower the analytical
+        utility of the result.{' '}
+        <DocsLink page="operation" section="adjust-anonymization-parameters">
+          Click here for details.
+        </DocsLink>
+      </Paragraph>
+    </div>
+  );
+}
+
 function AnonymizationSummaryHelp() {
   return (
     <div>
@@ -129,6 +145,8 @@ const NotebookStepHelp = React.memo<{ step: NotebookNavStep }>(({ step }) => {
       return <AidSelectionHelp />;
     case NotebookNavStep.ColumnSelection:
       return <ColumnSelectionHelp />;
+    case NotebookNavStep.AnonParamsSelection:
+      return <AnonParamsSelectionHelp />;
     case NotebookNavStep.AnonymizationSummary:
       return <AnonymizationSummaryHelp />;
     case NotebookNavStep.AnonymizedResults:

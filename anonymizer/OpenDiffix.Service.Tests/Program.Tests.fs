@@ -16,7 +16,7 @@ type TempFile() =
 
 let defaultAnonParams =
   $"""
-  {{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+  {{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"baseNoiseSD":1.0}}
   """
 
 [<Fact>]
@@ -60,7 +60,7 @@ let ``Handles Preview request`` () =
 let ``Handles Preview request with custom anonParams`` () =
   let anonParams =
     $"""
-    {{"suppression":{{"lowThreshold":0,"sD":0,"lowMeanGap":0}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+    {{"suppression":{{"lowThreshold":0,"sD":0,"lowMeanGap":0}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"baseNoiseSD":1.0}}
     """
 
   let requestCustom =
@@ -94,7 +94,7 @@ let ``Handles Export request with custom anonParams`` () =
 
   let anonParams =
     $"""
-    {{"suppression":{{"lowThreshold":300,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+    {{"suppression":{{"lowThreshold":300,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"baseNoiseSD":1.0}}
     """
 
   let requestCustom =

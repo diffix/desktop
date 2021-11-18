@@ -30,7 +30,7 @@ type RequestAnonParams =
     // Count params
     OutlierCount: Interval
     TopCount: Interval
-    NoiseSD: float
+    BaseNoiseSD: float
   }
 
 type PreviewRequest =

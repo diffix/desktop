@@ -17,6 +17,7 @@ export enum NotebookNavStep {
   DataPreview,
   AidSelection,
   ColumnSelection,
+  AnonParamsSelection,
   AnonymizationSummary,
   AnonymizedResults,
   CsvExport,
@@ -281,6 +282,11 @@ const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[]; focusedStep
           status={status(NotebookNavStep.ColumnSelection)}
           title={mapText('Column Selection', focusedStep === NotebookNavStep.ColumnSelection)}
           description="Select columns for anonymization"
+        />
+        <Step
+          status={status(NotebookNavStep.AnonParamsSelection)}
+          title={mapText('Anonymization Parameters', focusedStep === NotebookNavStep.AnonParamsSelection)}
+          description="Adjust the anonymization parameters"
         />
         <Step
           status={status(NotebookNavStep.AnonymizationSummary)}

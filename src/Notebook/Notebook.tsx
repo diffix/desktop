@@ -5,6 +5,7 @@ import { FileLoadStep } from '../FileLoadStep';
 import { SchemaLoadStep } from '../SchemaLoadStep';
 import { AidSelectionStep } from '../AidSelectionStep';
 import { ColumnSelectionStep } from '../ColumnSelectionStep';
+import { AnonParamsSelectionStep } from '../AnonParamsSelectionStep';
 import { AnonymizationStep } from '../AnonymizationStep';
 import { Layout } from '../shared';
 import { NotebookNavProvider, NotebookNav } from './notebook-nav';
@@ -35,12 +36,17 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleCh
                     {({ aidColumn }) => (
                       <ColumnSelectionStep schema={schema} aidColumn={aidColumn}>
                         {({ bucketColumns, countInput }) => (
-                          <AnonymizationStep
-                            bucketColumns={bucketColumns}
-                            schema={schema}
-                            aidColumn={aidColumn}
-                            countInput={countInput}
-                          />
+                          <AnonParamsSelectionStep>
+                            {({ anonParams }) => (
+                              <AnonymizationStep
+                                bucketColumns={bucketColumns}
+                                schema={schema}
+                                aidColumn={aidColumn}
+                                countInput={countInput}
+                                anonParams={anonParams}
+                              />
+                            )}
+                          </AnonParamsSelectionStep>
                         )}
                       </ColumnSelectionStep>
                     )}
