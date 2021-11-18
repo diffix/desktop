@@ -14,6 +14,9 @@ type TempFile() =
   interface System.IDisposable with
     member this.Dispose() = System.IO.File.Delete(path)
 
+let defaultAnonParams =
+  $"""{{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}"""
+
 [<Fact>]
 let ``Handles Load request`` () =
   let request =
@@ -38,7 +41,7 @@ let ``Handles HasMissingValues request`` () =
 let ``Handles Preview request`` () =
   let request =
     $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{defaultAnonParams},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
     """
 
   let response = request |> mainCore
@@ -50,20 +53,6 @@ let ``Handles Preview request`` () =
   response |> should haveSubstring "maxDistortion"
   response |> should haveSubstring "medianDistortion"
   response |> should haveSubstring "rows"
-
-[<Fact>]
-let ``Handles Preview request with explicit null anonParams`` () =
-  let request =
-    $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","buckets":["age","city"],"countInput":"Rows","rows":1000}}
-    """
-
-  let requestExplicit =
-    $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":null,"buckets":["age","city"],"countInput":"Rows","rows":1000}}
-    """
-
-  (request |> mainCore) |> should equal (requestExplicit |> mainCore)
 
 [<Fact>]
 let ``Handles Preview request with custom anonParams`` () =
@@ -83,7 +72,7 @@ let ``Handles Export request`` () =
 
   let request =
     $"""
-    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{defaultAnonParams},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
   request |> mainCore |> should equal ""
@@ -104,7 +93,7 @@ let ``Handles Export request with custom anonParams`` () =
   requestCustom |> mainCore |> should equal ""
 
   let result = System.IO.File.ReadAllLines(outputFile.Path)
-  // The custom anonymization params have ridiculous supporesion thesshold to suppress all buckets
+  // The custom anonymization params have ridiculous suppression threshold to suppress all buckets
   // Assertion checks whether that's respected by the service
   result |> should contain "\"age\",\"city\",\"count\""
   result.Length |> should equal 1

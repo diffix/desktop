@@ -47,22 +47,15 @@ let unwrapCount count =
   | Integer count -> count
   | _ -> failwith "Unexpected value type received for count."
 
-let getAnonParams (requestAnonParams: Option<RequestAnonParams>) (salt: string) =
-  match requestAnonParams with
-  | Some customAnonParams ->
-    {
-      TableSettings = Map.empty
-      Salt = Text.Encoding.UTF8.GetBytes(salt)
-      Suppression = customAnonParams.Suppression
-      OutlierCount = customAnonParams.OutlierCount
-      TopCount = customAnonParams.TopCount
-      NoiseSD = customAnonParams.NoiseSD
-    }
-  | None ->
-    { AnonymizationParams.Default with
-        Salt = Text.Encoding.UTF8.GetBytes(salt)
-        Suppression = { SuppressionParams.Default with LowThreshold = 3 }
-    }
+let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
+  {
+    TableSettings = Map.empty
+    Salt = Text.Encoding.UTF8.GetBytes(salt)
+    Suppression = requestAnonParams.Suppression
+    OutlierCount = requestAnonParams.OutlierCount
+    TopCount = requestAnonParams.TopCount
+    NoiseSD = requestAnonParams.NoiseSD
+  }
 
 let handlePreview
   {
