@@ -15,7 +15,9 @@ type TempFile() =
     member this.Dispose() = System.IO.File.Delete(path)
 
 let defaultAnonParams =
-  $"""{{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}"""
+  $"""
+  {{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+  """
 
 [<Fact>]
 let ``Handles Load request`` () =
@@ -56,9 +58,14 @@ let ``Handles Preview request`` () =
 
 [<Fact>]
 let ``Handles Preview request with custom anonParams`` () =
+  let anonParams =
+    $"""
+    {{"suppression":{{"lowThreshold":0,"sD":0,"lowMeanGap":0}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+    """
+
   let requestCustom =
     $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":{{"suppression":{{"lowThreshold":0,"sD":0,"lowMeanGap":0}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{anonParams},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
     """
 
   let responseCustom = requestCustom |> mainCore
@@ -85,9 +92,14 @@ let ``Handles Export request`` () =
 let ``Handles Export request with custom anonParams`` () =
   use outputFile = new TempFile()
 
+  let anonParams =
+    $"""
+    {{"suppression":{{"lowThreshold":300,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+    """
+
   let requestCustom =
     $"""
-    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":{{"suppression":{{"lowThreshold":300,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{anonParams},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
   requestCustom |> mainCore |> should equal ""
