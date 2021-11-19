@@ -8,8 +8,8 @@ let private findSingleIndex cond arr =
   |> Array.indexed
   |> Array.filter (snd >> cond)
   |> function
-    | [| index, _item |] -> index
-    | _ -> failwith "Cannot find required aggregator for executor hook"
+    | [| index, _item |] -> Some index
+    | _ -> None
 
 let private findAggregator aggFn aggFns =
   aggFns
@@ -18,6 +18,9 @@ let private findAggregator aggFn aggFns =
     | AggregateFunction (fn, _) -> fn = aggFn
     | _ -> false
   )
+  |> function
+    | Some index -> index
+    | None -> failwith "Cannot find required aggregator for executor hook"
 
 let private findSingleNonMatchingColumn max (row1: Row) (row2: Row) =
   let rec compare notEqualAt i =
@@ -27,14 +30,14 @@ let private findSingleNonMatchingColumn max (row1: Row) (row2: Row) =
     else if row1.[i] = row2.[i] then
       // Columns equal, try next one
       compare notEqualAt (i + 1)
-    else if notEqualAt > -1 then
+    else if Option.isSome notEqualAt then
       // A non-equal column already exists, abort
-      -1
+      None
     else
       // Mark current index as not equal and keep going to verify no others are
-      compare i (i + 1)
+      compare (Some i) (i + 1)
 
-  compare -1 0
+  compare None 0
 
 type BucketState =
   {
@@ -45,6 +48,11 @@ type BucketState =
     OutputRow: Row
     mutable IsLowCount: bool
   }
+
+type SiblingPerColumn =
+  | NoBuckets
+  | SingleBucket of BucketState
+  | MultipleBuckets
 
 let private mergeBucket groupingLabelsLength lowCountIndex countIndex destinationBucket fromBucket =
   let lowCountAggregator = destinationBucket.Aggregators.[lowCountIndex]
@@ -153,28 +161,37 @@ let private executeLed executionContext (childPlan, groupingLabels, aggregators)
   |> Array.iteri (fun i victimBucket ->
     if victimBucket.IsLowCount then
       let victimRow = victimBucket.OutputRow
-      let siblingsPerColumn = Array.init groupingLabelsLength (fun _i -> Collections.Generic.List<BucketState>(2))
+      let siblingsPerColumn = Array.create groupingLabelsLength NoBuckets
 
       buckets
       |> Array.iteri (fun j otherBucket ->
         if i <> j then
-          let nonMatchingColumn = findSingleNonMatchingColumn groupingLabelsLength victimRow otherBucket.OutputRow
-
-          if nonMatchingColumn > -1 then
-            let listOfSiblings = siblingsPerColumn.[nonMatchingColumn]
-            // We don't need to store all, just whether there are 0, 1, or more siblings
-            if listOfSiblings.Count < 2 then listOfSiblings.Add(otherBucket)
+          match findSingleNonMatchingColumn groupingLabelsLength victimRow otherBucket.OutputRow with
+          | Some nonMatchingColumn ->
+            // Add bucket to column's siblings
+            siblingsPerColumn.[nonMatchingColumn] <-
+              match siblingsPerColumn.[nonMatchingColumn] with
+              | NoBuckets -> SingleBucket otherBucket
+              | _ -> MultipleBuckets
+          | None -> ()
       )
 
-      let hasUnknownColumn = siblingsPerColumn |> Array.exists (fun list -> list.Count = 0)
+      let hasUnknownColumn =
+        siblingsPerColumn
+        |> Array.exists (
+          function
+          | NoBuckets -> true
+          | _ -> false
+        )
 
       if hasUnknownColumn then
         siblingsPerColumn
-        |> Array.iter (fun list ->
-          if list.Count = 1 && not list.[0].IsLowCount then
-            let siblingBucket = list.[0]
+        |> Array.iter (
+          function
+          | SingleBucket siblingBucket when not siblingBucket.IsLowCount ->
             Logger.debug $"Merging %A{victimRow} into %A{siblingBucket.OutputRow}"
             victimBucket |> mergeBucketInto siblingBucket
+          | _ -> ()
         )
   )
 
