@@ -92,8 +92,8 @@ let private executeLed executionContext (childPlan, groupingLabels, aggregators)
 
   // Group rows into buckets and keep track of low-count/count arguments
   for row in Executor.execute executionContext childPlan do
-    let group = groupingLabels |> Array.map (Expression.evaluate row)
     let argEvaluator = Expression.evaluate row
+    let group = groupingLabels |> Array.map argEvaluator
 
     let bucket =
       match state.TryGetValue(group) with
@@ -136,6 +136,19 @@ let private executeLed executionContext (childPlan, groupingLabels, aggregators)
     |> Seq.toArray
 
   // Merge victim buckets into sibling buckets
+  //
+  // for each low count bucket:
+  //   keep track of siblings per column (initially all empty lists)
+  //
+  //   for each other bucket:
+  //     find index where a single column is different
+  //     if such index:
+  //       add bucket to that column's siblings
+  //
+  //   if column siblings contains an empty list:
+  //     for each list of siblings per column:
+  //       if siblings.length = 1 and not siblings[0].lowCount:
+  //         merge bucket into siblings[0]
   buckets
   |> Array.iteri (fun i victimBucket ->
     if victimBucket.IsLowCount then
