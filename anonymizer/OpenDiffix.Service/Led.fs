@@ -25,7 +25,7 @@ let private findAggregator aggFn aggFns =
 let private findSingleNonMatchingColumn max (row1: Row) (row2: Row) =
   let rec compare notEqualAt i =
     if i = max then
-      // End of comparison, return single index (may be -1)
+      // End of comparison, return matched index (may be None)
       notEqualAt
     else if row1.[i] = row2.[i] then
       // Columns equal, try next one
@@ -153,7 +153,7 @@ let private executeLed executionContext (childPlan, groupingLabels, aggregators)
   //     if such index:
   //       add bucket to that column's siblings
   //
-  //   if column siblings contains an empty list:
+  //   if a column without siblings exists:
   //     for each list of siblings per column:
   //       if siblings.length = 1 and not siblings[0].lowCount:
   //         merge bucket into siblings[0]
