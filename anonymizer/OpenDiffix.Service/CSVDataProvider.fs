@@ -6,7 +6,7 @@ open System.IO
 open CsvHelper
 open OpenDiffix.Core
 
-let private openCSVStream stream =
+let private openCsvStream stream =
   let configuration = Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
 
   configuration.DetectDelimiter <- true
@@ -18,9 +18,10 @@ let private openCSVStream stream =
 
   csv
 
-type DataProvider(dbPath: string) =
-  let stream = new StreamReader(dbPath)
-  let csv = openCSVStream stream
+type DataProvider(stream: TextReader) =
+  let csv = openCsvStream stream
+
+  new(dbPath: string) = new DataProvider(new StreamReader(dbPath))
 
   interface IDisposable with
     member this.Dispose() =
