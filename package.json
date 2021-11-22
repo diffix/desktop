@@ -10,6 +10,8 @@
     "build-win": "dotnet publish -o ./bin/ -c Release ./anonymizer/OpenDiffix.Service/ -r win-x64 --self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true",
     "build-linux": "dotnet publish -o ./bin/ -c Release ./anonymizer/OpenDiffix.Service/ -r linux-x64 --self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true",
     "build-osx": "dotnet publish -o ./bin/ -c Release ./anonymizer/OpenDiffix.Service/ -r osx-x64 --self-contained true -p:PublishReadyToRun=true -p:PublishTrimmed=true",
+    "test-init": "dotnet fsi anonymizer/reference/data/generate.fsx",
+    "test": "dotnet test ./anonymizer/anonymizer.sln",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
