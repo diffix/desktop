@@ -67,10 +67,27 @@ let ``Handles HasMissingValues request`` () =
   [ "true"; "false" ] |> should contain (request |> mainCore)
 
 [<Fact>]
-let ``Handles Preview request`` () =
+let ``Handles Preview request for counting rows`` () =
   let request =
     $"""
     {{"type":"Preview",%s{defaultQueryParams defaultAnonParams},"countInput":"Rows","rows":1000}}
+    """
+
+  let response = request |> mainCore
+  response |> should haveSubstring "summary"
+  response |> should haveSubstring "totalBuckets"
+  response |> should haveSubstring "lowCountBuckets"
+  response |> should haveSubstring "totalRows"
+  response |> should haveSubstring "lowCountRows"
+  response |> should haveSubstring "maxDistortion"
+  response |> should haveSubstring "medianDistortion"
+  response |> should haveSubstring "rows"
+
+[<Fact>]
+let ``Handles Preview request for counting entities`` () =
+  let request =
+    $"""
+    {{"type":"Preview",%s{defaultQueryParams defaultAnonParams},"countInput":"Entities","rows":1000}}
     """
 
   let response = request |> mainCore
@@ -116,12 +133,27 @@ let ``Handles Preview request with custom anonParams`` () =
   responseCustom |> should haveSubstring "\"lowCountRows\": 0"
 
 [<Fact>]
-let ``Handles Export request`` () =
+let ``Handles Export request for counting rows`` () =
   use outputFile = new TempFile()
 
   let request =
     $"""
     {{"type":"Export",%s{defaultQueryParams defaultAnonParams},"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    """
+
+  request |> mainCore |> should equal ""
+
+  let result = System.IO.File.ReadAllLines(outputFile.Path)
+  result |> should contain "\"age\",\"city\",\"count\""
+  result.Length |> should equal 2
+
+[<Fact>]
+let ``Handles Export request for counting entities`` () =
+  use outputFile = new TempFile()
+
+  let request =
+    $"""
+    {{"type":"Export",%s{defaultQueryParams defaultAnonParams},"countInput":"Entities","outputPath":"%s{outputFile.Path}"}}
     """
 
   request |> mainCore |> should equal ""
