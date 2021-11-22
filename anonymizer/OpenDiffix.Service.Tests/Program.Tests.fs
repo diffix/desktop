@@ -17,8 +17,23 @@ type private TempFile() =
     member this.Dispose() = System.IO.File.Delete(path)
 
 let private defaultAnonParams =
-  $"""
-  {{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+  """
+  {
+    "suppression": {
+      "lowThreshold": 3,
+      "sD": 1,
+      "lowMeanGap": 2
+    },
+    "outlierCount": {
+      "lower": 2,
+      "upper": 5
+    },
+    "topCount": {
+      "lower": 2,
+      "upper": 5
+    },
+    "noiseSD": 1.0
+  }
   """
 
 let private defaultQueryParams anonParams =
@@ -70,14 +85,29 @@ let ``Handles Preview request`` () =
 
 [<Fact>]
 let ``Handles Preview request with custom anonParams`` () =
-  let anonParams =
-    $"""
-    {{"suppression":{{"lowThreshold":0,"sD":0,"lowMeanGap":0}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+  let suppressNoneAnonParams =
+    """
+    {
+      "suppression": {
+        "lowThreshold": 0,
+        "sD": 0,
+        "lowMeanGap": 0
+      },
+      "outlierCount": {
+        "lower": 2,
+        "upper": 5
+      },
+      "topCount": {
+        "lower": 2,
+        "upper": 5
+      },
+      "noiseSD": 1.0
+    }
     """
 
   let requestCustom =
     $"""
-    {{"type":"Preview",%s{defaultQueryParams anonParams},"countInput":"Rows","rows":1000}}
+    {{"type":"Preview",%s{defaultQueryParams suppressNoneAnonParams},"countInput":"Rows","rows":1000}}
     """
 
   let responseCustom = requestCustom |> mainCore
@@ -104,14 +134,29 @@ let ``Handles Export request`` () =
 let ``Handles Export request with custom anonParams`` () =
   use outputFile = new TempFile()
 
-  let anonParams =
-    $"""
-    {{"suppression":{{"lowThreshold":300,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+  let suppressAllAnonParams =
+    """
+    {
+      "suppression": {
+        "lowThreshold": 300,
+        "sD": 1,
+        "lowMeanGap": 2
+      },
+      "outlierCount": {
+        "lower": 2,
+        "upper": 5
+        },
+        "topCount": {
+          "lower": 2,
+          "upper": 5
+        },
+        "noiseSD": 1.0
+      }
     """
 
   let requestCustom =
     $"""
-    {{"type":"Export",%s{defaultQueryParams anonParams},"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export",%s{defaultQueryParams suppressAllAnonParams},"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
   requestCustom |> mainCore |> should equal ""
