@@ -9,17 +9,27 @@ let private normalizePath (path: string) = path.Replace('\\', '/')
 
 let private dataPath = normalizePath (__SOURCE_DIRECTORY__) + "/../reference/data/customers.csv"
 
-type TempFile() =
+type private TempFile() =
   let path = System.IO.Path.GetTempFileName() |> normalizePath
   member this.Path = path
 
   interface System.IDisposable with
     member this.Dispose() = System.IO.File.Delete(path)
 
-let defaultAnonParams =
+let private defaultAnonParams =
   $"""
   {{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
   """
+
+let private defaultQueryParams anonParams =
+  $"""
+  "inputPath": "%s{dataPath}",
+  "aidColumn": "id",
+  "salt": "1",
+  "anonParams": %s{anonParams},
+  "buckets": ["age", "city"]
+  """
+
 
 [<Fact>]
 let ``Handles Load request`` () =
@@ -45,7 +55,7 @@ let ``Handles HasMissingValues request`` () =
 let ``Handles Preview request`` () =
   let request =
     $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{defaultAnonParams},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    {{"type":"Preview",%s{defaultQueryParams defaultAnonParams},"countInput":"Rows","rows":1000}}
     """
 
   let response = request |> mainCore
@@ -67,7 +77,7 @@ let ``Handles Preview request with custom anonParams`` () =
 
   let requestCustom =
     $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{anonParams},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    {{"type":"Preview",%s{defaultQueryParams anonParams},"countInput":"Rows","rows":1000}}
     """
 
   let responseCustom = requestCustom |> mainCore
@@ -81,7 +91,7 @@ let ``Handles Export request`` () =
 
   let request =
     $"""
-    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{defaultAnonParams},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export",%s{defaultQueryParams defaultAnonParams},"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
   request |> mainCore |> should equal ""
@@ -101,7 +111,7 @@ let ``Handles Export request with custom anonParams`` () =
 
   let requestCustom =
     $"""
-    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{anonParams},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export",%s{defaultQueryParams anonParams},"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
   requestCustom |> mainCore |> should equal ""
