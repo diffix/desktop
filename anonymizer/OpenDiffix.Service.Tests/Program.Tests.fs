@@ -5,10 +5,12 @@ open FsUnit.Xunit
 
 open OpenDiffix.Service.Program
 
-let private dataPath = __SOURCE_DIRECTORY__ + "/../reference/data/customers.csv"
+let private normalizePath (path: string) = path.Replace('\\', '/')
+
+let private dataPath = normalizePath (__SOURCE_DIRECTORY__) + "/../reference/data/customers.csv"
 
 type TempFile() =
-  let path = System.IO.Path.GetTempFileName()
+  let path = System.IO.Path.GetTempFileName() |> normalizePath
   member this.Path = path
 
   interface System.IDisposable with
