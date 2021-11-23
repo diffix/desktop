@@ -165,7 +165,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
   return (
     <>
       <div className="ColumnSelectionStep notebook-step">
-        <NotebookNavAnchor step={NotebookNavStep.ColumnSelection} status={anySelected ? 'done' : 'active'} />
+        <NotebookNavAnchor step={NotebookNavStep.ColumnSelection} status="done" />
         <Title level={3}>Select columns for anonymization</Title>
         <table className="ColumnSelectionStep-table">
           <thead>

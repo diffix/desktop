@@ -32,7 +32,7 @@ let private defaultAnonParams =
       "lower": 2,
       "upper": 5
     },
-    "noiseSD": 1.0
+    "baseNoiseSD": 1.0
   }
   """
 
@@ -118,7 +118,7 @@ let ``Handles Preview request with custom anonParams`` () =
         "lower": 2,
         "upper": 5
       },
-      "noiseSD": 1.0
+      "baseNoiseSD": 1.0
     }
     """
 
@@ -182,7 +182,7 @@ let ``Handles Export request with custom anonParams`` () =
           "lower": 2,
           "upper": 5
         },
-        "noiseSD": 1.0
+        "baseNoiseSD": 1.0
       }
     """
 

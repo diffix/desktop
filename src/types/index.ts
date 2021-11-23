@@ -113,6 +113,8 @@ export type AnonymizedAggregate = {
 
 // AnonymizationParams
 
+export type AnonParamsPreset = 'P' | 'XP' | 'XXP';
+
 export type Interval = {
   lower: number;
   upper: number;
@@ -132,7 +134,7 @@ export type AnonymizationParams = {
   // Count params
   outlierCount: Interval;
   topCount: Interval;
-  noiseSD: number;
+  baseNoiseSD: number;
 };
 
 // API
@@ -144,6 +146,7 @@ export type Anonymizer = {
     aidColumn: string,
     bucketColumns: BucketColumn[],
     countInput: CountInput,
+    anonParams: AnonymizationParams,
   ): Task<AnonymizedQueryResult>;
   export(
     schema: TableSchema,
@@ -151,6 +154,7 @@ export type Anonymizer = {
     bucketColumns: BucketColumn[],
     countInput: CountInput,
     outFileName: string,
+    anonParams: AnonymizationParams,
   ): Task<void>;
   hasMissingAid(schema: TableSchema, aidColumn: string): Task<boolean>;
 };
