@@ -63,24 +63,22 @@ function summaryDescriptions(summary: AnonymizationSummary) {
 
 function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
   return (
-    <>
+    <div className="AnonymizationSummary notebook-step">
       <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status={loading ? 'loading' : 'done'} />
       <Title level={3}>Anonymization summary</Title>
       {summary === emptySummary ? (
-        <div className="AnonymizationSummary loading notebook-step">
+        <div className="text-center">
           <Space direction="vertical">
             <Spin size="large" />
             <Text type="secondary">Anonymizing data</Text>
           </Space>
         </div>
-      ) : loading ? (
-        <div className="AnonymizationSummary completed notebook-step">
-          <Spin>{summaryDescriptions(summary)}</Spin>
-        </div>
       ) : (
-        <div className="AnonymizationSummary completed notebook-step">{summaryDescriptions(summary)}</div>
+        <div className="AnonymizationSummary-spin-container">
+          <Spin spinning={loading}>{summaryDescriptions(summary)}</Spin>
+        </div>
       )}
-    </>
+    </div>
   );
 }
 
