@@ -1,6 +1,6 @@
 ## Changelog
 
-### Version 1.0.0
+### Next version
 
 - Fixed name of "count" column in exported file.
 - Show the changelog in the "Documentation" tab.
