@@ -1,5 +1,6 @@
-import React, { FunctionComponent } from 'react';
-import { Divider } from 'antd';
+import React, { FunctionComponent, useState } from 'react';
+import { Button, Divider } from 'antd';
+import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
 
 import { FileLoadStep } from '../FileLoadStep';
 import { SchemaLoadStep } from '../SchemaLoadStep';
@@ -19,13 +20,26 @@ export type NotebookProps = {
 };
 
 export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleChange }) => {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
     <NotebookNavProvider isActive={isActive}>
       <Layout className="Notebook">
-        <Layout.Sidebar className="Notebook-sidebar">
-          <NotebookNav />
-          <Divider style={{ margin: '16px 0' }} />
-          <NotebookHelp />
+        <Layout.Sidebar collapsed={collapsed} className="Notebook-sidebar">
+          <div className="Notebook-sidebar-left">
+            <NotebookNav collapsed={collapsed} />
+            {collapsed ? null : (
+              <>
+                <Divider style={{ margin: '16px 0' }} />
+                <NotebookHelp />
+              </>
+            )}
+          </div>
+          <Button
+            className="Notebook-sidebar-right"
+            icon={collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+          />
         </Layout.Sidebar>
         <Layout.Content className="Notebook-content">
           <FileLoadStep onLoad={(file) => onTitleChange(file.name)}>

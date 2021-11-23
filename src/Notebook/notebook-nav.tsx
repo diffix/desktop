@@ -1,6 +1,16 @@
 import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Steps } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import {
+  LoadingOutlined,
+  ImportOutlined,
+  FileSearchOutlined,
+  IdcardOutlined,
+  SettingOutlined,
+  ControlOutlined,
+  DashboardOutlined,
+  TableOutlined,
+  ExportOutlined,
+} from '@ant-design/icons';
 import { useInViewport } from 'react-in-viewport';
 import { useImmer } from 'use-immer';
 import { produce } from 'immer';
@@ -63,6 +73,13 @@ type NotebookNavFunctions = {
   scrollToStep(step: NotebookNavStep): void;
 };
 
+type StepSpec = {
+  step: NotebookNavStep;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+};
+
 const NotebookNavFunctionsContext = React.createContext<NotebookNavFunctions>({
   updateStepStatus: noop,
   updateStepVisibility: noop,
@@ -71,6 +88,27 @@ const NotebookNavFunctionsContext = React.createContext<NotebookNavFunctions>({
 
 function useNavFunctions(): NotebookNavFunctions {
   return useContext(NotebookNavFunctionsContext);
+}
+
+function stepComponentFromSpec(
+  stepSpec: StepSpec,
+  steps: NotebookNavStepState[],
+  collapsed: boolean,
+  focusedStep: NotebookNavStep,
+): React.ReactNode {
+  const status = (step: NotebookNavStep) => mapStatus(steps[step].status);
+  const loadingOrIcon = (step: NotebookNavStep, icon: React.ReactNode) =>
+    steps[step].status === 'loading' ? <LoadingOutlined /> : icon;
+
+  return collapsed ? (
+    <Step status={status(stepSpec.step)} icon={loadingOrIcon(stepSpec.step, stepSpec.icon)} />
+  ) : (
+    <Step
+      status={status(stepSpec.step)}
+      title={mapText(stepSpec.title, focusedStep === stepSpec.step)}
+      description={stepSpec.description}
+    />
+  );
 }
 
 // Context provider
@@ -232,83 +270,102 @@ function mapText(text: string, focused: boolean) {
   else return <>{text}</>;
 }
 
-const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[]; focusedStep: NotebookNavStep }>(
-  ({ steps, focusedStep }) => {
-    const navFunctions = useNavFunctions();
-    const status = (step: NotebookNavStep) => mapStatus(steps[step].status);
+const NotebookNavSteps = React.memo<{
+  collapsed: boolean;
+  steps: NotebookNavStepState[];
+  focusedStep: NotebookNavStep;
+}>(({ collapsed, steps, focusedStep }) => {
+  const navFunctions = useNavFunctions();
+  const stepsSpecs = [
+    {
+      step: NotebookNavStep.CsvImport,
+      icon: <ImportOutlined />,
+      title: 'CSV Import',
+      description: 'Load data from CSV',
+    },
+    {
+      step: NotebookNavStep.DataPreview,
+      icon: <FileSearchOutlined />,
+      title: 'Data Preview',
+      description: 'Preview contents of file',
+    },
+    {
+      step: NotebookNavStep.AidSelection,
+      icon: <IdcardOutlined />,
+      title: 'ID Selection',
+      description: 'Select the entity identifier column',
+    },
+    {
+      step: NotebookNavStep.ColumnSelection,
+      icon: <ControlOutlined />,
+      title: 'Column Selection',
+      description: 'Select columns for anonymization',
+    },
+    {
+      step: NotebookNavStep.AnonParamsSelection,
+      icon: <SettingOutlined />,
+      title: 'Anonymization Parameters',
+      description: 'Adjust the anonymization parameters',
+    },
+    {
+      step: NotebookNavStep.AnonymizationSummary,
+      icon: <DashboardOutlined />,
+      title: 'Anonymization Summary',
+      description: 'Review distortion statistics',
+    },
+    {
+      step: NotebookNavStep.AnonymizedResults,
+      icon: <TableOutlined />,
+      title: 'Anonymized Results',
+      description: 'Preview anonymized results',
+    },
+    {
+      step: NotebookNavStep.CsvExport,
+      icon: <ExportOutlined />,
+      title: 'CSV Export',
+      description: 'Export anonymized data to CSV',
+    },
+  ];
 
-    return (
-      <Steps
-        progressDot={(dot, { index }) =>
-          steps[index].status === 'loading' ? (
-            <span
-              key="loading"
-              className="ant-steps-icon-dot"
-              style={{
-                backgroundColor: 'transparent',
-                color: '#1890ff',
-                left: -5,
-              }}
-            >
-              <LoadingOutlined />
-            </span>
-          ) : (
-            dot
-          )
-        }
-        direction="vertical"
-        current={-1}
-        onChange={(step) => {
-          navFunctions.scrollToStep(step);
-        }}
-        size="small"
-      >
-        <Step
-          status={status(NotebookNavStep.CsvImport)}
-          title={mapText('CSV Import', focusedStep === NotebookNavStep.CsvImport)}
-          description="Load data from CSV"
-        />
-        <Step
-          status={status(NotebookNavStep.DataPreview)}
-          title={mapText('Data Preview', focusedStep === NotebookNavStep.DataPreview)}
-          description="Preview contents of file"
-        />
-        <Step
-          status={status(NotebookNavStep.AidSelection)}
-          title={mapText('ID Selection', focusedStep === NotebookNavStep.AidSelection)}
-          description="Select the entity identifier column"
-        />
-        <Step
-          status={status(NotebookNavStep.ColumnSelection)}
-          title={mapText('Column Selection', focusedStep === NotebookNavStep.ColumnSelection)}
-          description="Select columns for anonymization"
-        />
-        <Step
-          status={status(NotebookNavStep.AnonParamsSelection)}
-          title={mapText('Anonymization Parameters', focusedStep === NotebookNavStep.AnonParamsSelection)}
-          description="Adjust the anonymization parameters"
-        />
-        <Step
-          status={status(NotebookNavStep.AnonymizationSummary)}
-          title={mapText('Anonymization Summary', focusedStep === NotebookNavStep.AnonymizationSummary)}
-          description="Review distortion statistics"
-        />
-        <Step
-          status={status(NotebookNavStep.AnonymizedResults)}
-          title={mapText('Anonymized Results', focusedStep === NotebookNavStep.AnonymizedResults)}
-          description="Preview anonymized results"
-        />
-        <Step
-          status={status(NotebookNavStep.CsvExport)}
-          title={mapText('CSV Export', focusedStep === NotebookNavStep.CsvExport)}
-          description="Export anonymized data to CSV"
-        />
-      </Steps>
-    );
-  },
-);
+  return (
+    <Steps
+      progressDot={
+        collapsed
+          ? undefined
+          : (dot, { index }) =>
+              steps[index].status === 'loading' ? (
+                <span
+                  key="loading"
+                  className="ant-steps-icon-dot"
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: '#1890ff',
+                    left: -5,
+                  }}
+                >
+                  <LoadingOutlined />
+                </span>
+              ) : (
+                dot
+              )
+      }
+      direction="vertical"
+      current={-1}
+      onChange={(step) => {
+        navFunctions.scrollToStep(step);
+      }}
+      size="small"
+    >
+      {stepsSpecs.map((stepSpec) => stepComponentFromSpec(stepSpec, steps, collapsed, focusedStep))}
+    </Steps>
+  );
+});
 
-export const NotebookNav: React.FunctionComponent = () => {
+export type NotebookNavProps = {
+  collapsed: boolean;
+};
+
+export const NotebookNav: React.FunctionComponent<NotebookNavProps> = ({ collapsed }) => {
   const { steps, focusedStep } = useNavState();
-  return <NotebookNavSteps steps={steps} focusedStep={focusedStep} />;
+  return <NotebookNavSteps collapsed={collapsed} steps={steps} focusedStep={focusedStep} />;
 };
