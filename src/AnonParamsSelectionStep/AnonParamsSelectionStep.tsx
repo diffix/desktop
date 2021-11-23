@@ -4,8 +4,6 @@ import { Divider, Radio, Typography, Tooltip } from 'antd';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { AnonParamsPreset, AnonymizationParams } from '../types';
 
-import './AnonParamsSelectionStep.css';
-
 const { Title } = Typography;
 
 export type AnonParamsSelectionStepProps = {
@@ -70,7 +68,7 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
           <Tooltip placement="bottom" title="Strong anonymity, best output utility">
             <Radio.Button value="P">Max utility</Radio.Button>
           </Tooltip>
-          <Tooltip placement="bottom" title="Better anonymity, great output utility">
+          <Tooltip placement="bottom" title="Stronger anonymity, great output utility">
             <Radio.Button value="XP">Balanced</Radio.Button>
           </Tooltip>
           <Tooltip placement="bottom" title="Extreme anonymity, good output utility">
