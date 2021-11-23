@@ -6,8 +6,6 @@ import { File, TableSchema } from '../types';
 import { DataPreviewTable } from './DataPreviewTable';
 import { useSchema } from './use-schema';
 
-import './SchemaLoadStep.css';
-
 const { Text, Title } = Typography;
 
 export type SchemaLoadStepProps = {
@@ -62,7 +60,7 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
 
     case 'in_progress':
       return (
-        <div className="SchemaLoadStep notebook-step loading">
+        <div className="SchemaLoadStep notebook-step text-center">
           <NotebookNavAnchor step={NotebookNavStep.DataPreview} status="loading" />
           <Space direction="vertical">
             <Spin size="large" />

@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Button, Descriptions, Divider, message, Result, Typography } from 'antd';
+import { Button, Descriptions, Divider, message, Result, Space, Spin, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
@@ -42,41 +42,42 @@ const emptySummary: AnonymizationSummary = {
 
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: emptySummary };
 
-function TextPlaceholder() {
-  return <span className="TextPlaceholder" />;
+function summaryDescriptions(summary: AnonymizationSummary) {
+  return (
+    <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
+      <Descriptions.Item label="Suppressed Count">
+        {`${summary.lowCountRows} of ${summary.totalRows} (${formatPercentage(
+          summary.lowCountRows / summary.totalRows,
+        )})`}
+      </Descriptions.Item>
+      <Descriptions.Item label="Suppressed Bins">
+        {`${summary.lowCountBuckets} of ${summary.totalBuckets} (${formatPercentage(
+          summary.lowCountBuckets / summary.totalBuckets,
+        )})`}
+      </Descriptions.Item>
+      <Descriptions.Item label="Median Distortion">{formatPercentage(summary.medianDistortion)}</Descriptions.Item>
+      <Descriptions.Item label="Maximum Distortion">{formatPercentage(summary.maxDistortion)}</Descriptions.Item>
+    </Descriptions>
+  );
 }
 
 function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
   return (
-    <div className="AnonymizationSummary loading notebook-step">
+    <div className="AnonymizationSummary notebook-step">
       <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status={loading ? 'loading' : 'done'} />
       <Title level={3}>Anonymization summary</Title>
-      <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
-        <Descriptions.Item label="Suppressed Count">
-          {!loading ? (
-            `${summary.lowCountRows} of ${summary.totalRows} (${formatPercentage(
-              summary.lowCountRows / summary.totalRows,
-            )})`
-          ) : (
-            <TextPlaceholder />
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label="Suppressed Bins">
-          {!loading ? (
-            `${summary.lowCountBuckets} of ${summary.totalBuckets} (${formatPercentage(
-              summary.lowCountBuckets / summary.totalBuckets,
-            )})`
-          ) : (
-            <TextPlaceholder />
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label="Median Distortion">
-          {!loading ? formatPercentage(summary.medianDistortion) : <TextPlaceholder />}
-        </Descriptions.Item>
-        <Descriptions.Item label="Maximum Distortion">
-          {!loading ? formatPercentage(summary.maxDistortion) : <TextPlaceholder />}
-        </Descriptions.Item>
-      </Descriptions>
+      {summary === emptySummary ? (
+        <div className="text-center">
+          <Space direction="vertical">
+            <Spin size="large" />
+            <Text type="secondary">Anonymizing data</Text>
+          </Space>
+        </div>
+      ) : (
+        <div className="AnonymizationSummary-spin-container">
+          <Spin spinning={loading}>{summaryDescriptions(summary)}</Spin>
+        </div>
+      )}
     </div>
   );
 }
