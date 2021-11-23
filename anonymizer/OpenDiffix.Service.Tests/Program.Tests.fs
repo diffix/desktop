@@ -5,19 +5,46 @@ open FsUnit.Xunit
 
 open OpenDiffix.Service.Program
 
-let private dataPath = __SOURCE_DIRECTORY__ + "/../reference/data/customers.csv"
+let private normalizePath (path: string) = path.Replace('\\', '/')
 
-type TempFile() =
-  let path = System.IO.Path.GetTempFileName()
+let private dataPath = normalizePath (__SOURCE_DIRECTORY__) + "/../reference/data/customers.csv"
+
+type private TempFile() =
+  let path = System.IO.Path.GetTempFileName() |> normalizePath
   member this.Path = path
 
   interface System.IDisposable with
     member this.Dispose() = System.IO.File.Delete(path)
 
-let defaultAnonParams =
-  $"""
-  {{"suppression":{{"lowThreshold":3,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+let private defaultAnonParams =
   """
+  {
+    "suppression": {
+      "lowThreshold": 3,
+      "sD": 1,
+      "lowMeanGap": 2
+    },
+    "outlierCount": {
+      "lower": 2,
+      "upper": 5
+    },
+    "topCount": {
+      "lower": 2,
+      "upper": 5
+    },
+    "noiseSD": 1.0
+  }
+  """
+
+let private defaultQueryParams anonParams =
+  $"""
+  "inputPath": "%s{dataPath}",
+  "aidColumn": "id",
+  "salt": "1",
+  "anonParams": %s{anonParams},
+  "buckets": ["age", "city"]
+  """
+
 
 [<Fact>]
 let ``Handles Load request`` () =
@@ -40,10 +67,27 @@ let ``Handles HasMissingValues request`` () =
   [ "true"; "false" ] |> should contain (request |> mainCore)
 
 [<Fact>]
-let ``Handles Preview request`` () =
+let ``Handles Preview request for counting rows`` () =
   let request =
     $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{defaultAnonParams},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    {{"type":"Preview",%s{defaultQueryParams defaultAnonParams},"countInput":"Rows","rows":1000}}
+    """
+
+  let response = request |> mainCore
+  response |> should haveSubstring "summary"
+  response |> should haveSubstring "totalBuckets"
+  response |> should haveSubstring "lowCountBuckets"
+  response |> should haveSubstring "totalRows"
+  response |> should haveSubstring "lowCountRows"
+  response |> should haveSubstring "maxDistortion"
+  response |> should haveSubstring "medianDistortion"
+  response |> should haveSubstring "rows"
+
+[<Fact>]
+let ``Handles Preview request for counting entities`` () =
+  let request =
+    $"""
+    {{"type":"Preview",%s{defaultQueryParams defaultAnonParams},"countInput":"Entities","rows":1000}}
     """
 
   let response = request |> mainCore
@@ -58,14 +102,29 @@ let ``Handles Preview request`` () =
 
 [<Fact>]
 let ``Handles Preview request with custom anonParams`` () =
-  let anonParams =
-    $"""
-    {{"suppression":{{"lowThreshold":0,"sD":0,"lowMeanGap":0}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+  let suppressNoneAnonParams =
+    """
+    {
+      "suppression": {
+        "lowThreshold": 0,
+        "sD": 0,
+        "lowMeanGap": 0
+      },
+      "outlierCount": {
+        "lower": 2,
+        "upper": 5
+      },
+      "topCount": {
+        "lower": 2,
+        "upper": 5
+      },
+      "noiseSD": 1.0
+    }
     """
 
   let requestCustom =
     $"""
-    {{"type":"Preview","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{anonParams},"buckets":["age","city"],"countInput":"Rows","rows":1000}}
+    {{"type":"Preview",%s{defaultQueryParams suppressNoneAnonParams},"countInput":"Rows","rows":1000}}
     """
 
   let responseCustom = requestCustom |> mainCore
@@ -74,12 +133,27 @@ let ``Handles Preview request with custom anonParams`` () =
   responseCustom |> should haveSubstring "\"lowCountRows\": 0"
 
 [<Fact>]
-let ``Handles Export request`` () =
+let ``Handles Export request for counting rows`` () =
   use outputFile = new TempFile()
 
   let request =
     $"""
-    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{defaultAnonParams},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export",%s{defaultQueryParams defaultAnonParams},"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    """
+
+  request |> mainCore |> should equal ""
+
+  let result = System.IO.File.ReadAllLines(outputFile.Path)
+  result |> should contain "\"age\",\"city\",\"count\""
+  result.Length |> should equal 2
+
+[<Fact>]
+let ``Handles Export request for counting entities`` () =
+  use outputFile = new TempFile()
+
+  let request =
+    $"""
+    {{"type":"Export",%s{defaultQueryParams defaultAnonParams},"countInput":"Entities","outputPath":"%s{outputFile.Path}"}}
     """
 
   request |> mainCore |> should equal ""
@@ -92,14 +166,29 @@ let ``Handles Export request`` () =
 let ``Handles Export request with custom anonParams`` () =
   use outputFile = new TempFile()
 
-  let anonParams =
-    $"""
-    {{"suppression":{{"lowThreshold":300,"sD":1,"lowMeanGap":2}},"outlierCount":{{"lower":2,"upper":5}},"topCount":{{"lower":2,"upper":5}},"noiseSD":1.0}}
+  let suppressAllAnonParams =
+    """
+    {
+      "suppression": {
+        "lowThreshold": 300,
+        "sD": 1,
+        "lowMeanGap": 2
+      },
+      "outlierCount": {
+        "lower": 2,
+        "upper": 5
+        },
+        "topCount": {
+          "lower": 2,
+          "upper": 5
+        },
+        "noiseSD": 1.0
+      }
     """
 
   let requestCustom =
     $"""
-    {{"type":"Export","inputPath":"%s{dataPath}","aidColumn":"id","salt":"1","anonParams":%s{anonParams},"buckets":["age","city"],"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
+    {{"type":"Export",%s{defaultQueryParams suppressAllAnonParams},"countInput":"Rows","outputPath":"%s{outputFile.Path}"}}
     """
 
   requestCustom |> mainCore |> should equal ""
