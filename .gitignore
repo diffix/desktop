@@ -90,6 +90,7 @@ out/
 
 .fake
 .ionide
+.idea
 
 bin/
 obj/

@@ -30,10 +30,8 @@ jobs:
       - name: Build Service
         run: npm run build
       - name: Generate test data
-        working-directory: anonymizer
-        run: dotnet fsi reference/data/generate.fsx
+        run: npm run test-init
       - name: Test Service
-        working-directory: anonymizer
-        run: dotnet test --no-restore --verbosity normal
+        run: npm run test
       - name: Build App
         run: npm run package
