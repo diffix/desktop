@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const fs = require('fs')
+const fs = require('fs');
 
 const version = process.env.npm_package_version;
 const mode = process.argv[2];
@@ -19,7 +19,7 @@ function replaceInFile(path, match, replacement) {
       break;
 
     default:
-      throw 'Error: invalid mode!'
+      throw 'Error: invalid mode!';
   }
 }
 
