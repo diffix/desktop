@@ -23,12 +23,11 @@ Before committing, make sure to lint and format your code with `npm run lint` an
 
 ## Making a release
 
-1. Bump the program version and create a new version tag on GitHub. A draft release will be created automatically.
+1. Make sure there is a new section titled "### Next version" in the changelog, listing the most recent changes.
 
-For example:
-```
-npm version minor
-git push --follow-tags
-```
+2. Execute `npm version [major|minor|patch]` in a clean working folder.
 
-2. After making sure the generated assets are OK, the release can be published manually in the GitHub UI.
+  This will bump and update the app version, create a commit for the new release, tag it and push it to GitHub.
+  A draft release will be then created automatically on GitHub.
+
+3. After making sure the generated assets are OK, the release can be published manually in the GitHub UI.
