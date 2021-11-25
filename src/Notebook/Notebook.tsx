@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from 'react';
 import { Button, Divider } from 'antd';
-import { LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 
 import { FileLoadStep } from '../FileLoadStep';
 import { SchemaLoadStep } from '../SchemaLoadStep';
@@ -26,21 +26,20 @@ export const Notebook: FunctionComponent<NotebookProps> = ({ isActive, onTitleCh
     <NotebookNavProvider isActive={isActive}>
       <Layout className="Notebook">
         <Layout.Sidebar collapsed={collapsed} className="Notebook-sidebar">
-          <div className="Notebook-sidebar-left">
-            <NotebookNav collapsed={collapsed} />
-            {collapsed ? null : (
-              <>
-                <Divider style={{ margin: '16px 0' }} />
-                <NotebookHelp />
-              </>
-            )}
-          </div>
+          <NotebookNav collapsed={collapsed} />
+          {collapsed ? null : (
+            <>
+              <Divider style={{ margin: '16px 0' }} />
+              <NotebookHelp />
+            </>
+          )}
+        </Layout.Sidebar>
+        <Layout.CollapseButton className="Notebook-collapse-button">
           <Button
-            className="Notebook-sidebar-right"
-            icon={collapsed ? <RightCircleOutlined /> : <LeftCircleOutlined />}
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
           />
-        </Layout.Sidebar>
+        </Layout.CollapseButton>
         <Layout.Content className="Notebook-content">
           <FileLoadStep onLoad={(file) => onTitleChange(file.name)}>
             {({ file }) => (

@@ -9,6 +9,7 @@ export type LayoutProps = {
 
 export const Layout: FunctionComponent<LayoutProps> & {
   Sidebar: FunctionComponent<LayoutProps & { collapsed?: boolean }>;
+  CollapseButton: FunctionComponent<LayoutProps>;
   Content: FunctionComponent<LayoutProps & React.RefAttributes<HTMLDivElement>>;
 } = ({ children, className }) => {
   return <div className={classNames('Layout', className)}>{children}</div>;
@@ -20,6 +21,10 @@ Layout.Sidebar = ({ children, className, collapsed = false }) => {
   ) : (
     <div className={classNames('Layout-sidebar', className)}>{children}</div>
   );
+};
+
+Layout.CollapseButton = ({ children, className }) => {
+  return <div className={classNames('Layout-collapse-button', className)}>{children}</div>;
 };
 
 Layout.Content = React.forwardRef<HTMLDivElement, LayoutProps>(({ children, className }, ref) => {
