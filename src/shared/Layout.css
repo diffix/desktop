@@ -22,8 +22,7 @@
 }
 
 .Layout > .Layout-collapse-button .ant-btn {
-  width: 0;
-  border: none;
+  box-shadow: 4px 0px 8px 0px rgb(0 0 0 / 8%);
 }
 
 @media screen and (max-width: 800px) {

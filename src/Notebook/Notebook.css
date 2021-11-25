@@ -3,6 +3,6 @@
 }
 
 .Notebook-content {
-  padding: 0 32px 96px 32px;
+  padding: 0 32px 96px 8px;
   overflow-y: scroll;
 }
