@@ -65,13 +65,25 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
         <NotebookNavAnchor step={NotebookNavStep.AnonParamsSelection} status="done" />
         <Title level={3}>Adjust anonymization parameters</Title>
         <Radio.Group value={preset} size="large" buttonStyle="solid" onChange={(e) => setPreset(e.target.value)}>
-          <Tooltip placement="bottom" title="Strong anonymity, best output utility">
+          <Tooltip
+            placement="bottom"
+            overlayStyle={{ maxWidth: '350px' }}
+            title="Strong anonymity, best output utility"
+          >
             <Radio.Button value="P">Max utility</Radio.Button>
           </Tooltip>
-          <Tooltip placement="bottom" title="Stronger anonymity, great output utility">
+          <Tooltip
+            placement="bottom"
+            overlayStyle={{ maxWidth: '350px' }}
+            title="Stronger anonymity, great output utility"
+          >
             <Radio.Button value="XP">Balanced</Radio.Button>
           </Tooltip>
-          <Tooltip placement="bottom" title="Extreme anonymity, good output utility">
+          <Tooltip
+            placement="bottom"
+            overlayStyle={{ maxWidth: '350px' }}
+            title="Extreme anonymity, good output utility"
+          >
             <Radio.Button value="XXP">Max privacy</Radio.Button>
           </Tooltip>
         </Radio.Group>
