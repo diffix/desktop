@@ -57,7 +57,7 @@ let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
     Suppression = requestAnonParams.Suppression
     OutlierCount = requestAnonParams.OutlierCount
     TopCount = requestAnonParams.TopCount
-    NoiseSD = requestAnonParams.BaseNoiseSD / sqrt 2.0
+    LayerNoiseSD = requestAnonParams.BaseNoiseSD / sqrt 2.0
   }
 
 let handlePreview

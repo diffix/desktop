@@ -6,6 +6,7 @@
 - Show the changelog in the "Documentation" tab.
 - Simplified window menu.
 - Added support for global aggregation.
+- Fixed noise scaling not being applied bug.
 
 ### Version 0.3.1
 
