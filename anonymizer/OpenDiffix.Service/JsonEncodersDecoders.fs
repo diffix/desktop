@@ -6,9 +6,9 @@ open Thoth.Json.Net
 type Summary =
   {
     TotalBuckets: int
-    LowCountBuckets: int
-    TotalRows: int
-    LowCountRows: int
+    SuppressedBuckets: int
+    TotalCount: int
+    SuppressedCount: int
     MaxDistortion: float
     MedianDistortion: float
   }

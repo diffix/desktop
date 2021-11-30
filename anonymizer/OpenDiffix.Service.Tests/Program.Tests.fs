@@ -76,9 +76,9 @@ let ``Handles Preview request for counting rows`` () =
   let response = request |> mainCore
   response |> should haveSubstring "summary"
   response |> should haveSubstring "totalBuckets"
-  response |> should haveSubstring "lowCountBuckets"
-  response |> should haveSubstring "totalRows"
-  response |> should haveSubstring "lowCountRows"
+  response |> should haveSubstring "suppressedBuckets"
+  response |> should haveSubstring "totalCount"
+  response |> should haveSubstring "suppressedCount"
   response |> should haveSubstring "maxDistortion"
   response |> should haveSubstring "medianDistortion"
   response |> should haveSubstring "rows"
@@ -93,9 +93,9 @@ let ``Handles Preview request for counting entities`` () =
   let response = request |> mainCore
   response |> should haveSubstring "summary"
   response |> should haveSubstring "totalBuckets"
-  response |> should haveSubstring "lowCountBuckets"
-  response |> should haveSubstring "totalRows"
-  response |> should haveSubstring "lowCountRows"
+  response |> should haveSubstring "suppressedBuckets"
+  response |> should haveSubstring "totalCount"
+  response |> should haveSubstring "suppressedCount"
   response |> should haveSubstring "maxDistortion"
   response |> should haveSubstring "medianDistortion"
   response |> should haveSubstring "rows"
@@ -130,7 +130,7 @@ let ``Handles Preview request with custom anonParams`` () =
   let responseCustom = requestCustom |> mainCore
   // The custom anonymization params have removed suppression. Assertion checks whether
   // that's respected by the service
-  responseCustom |> should haveSubstring "\"lowCountRows\": 0"
+  responseCustom |> should haveSubstring "\"suppressedCount\": 0"
 
 [<Fact>]
 let ``Handles Export request for counting rows`` () =

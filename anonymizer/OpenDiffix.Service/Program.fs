@@ -98,36 +98,36 @@ let handlePreview
   let result = runQuery ledHook query inputPath anonParams
 
   let mutable totalBuckets = 0
-  let mutable lowCountBuckets = 0
-  let mutable totalRows = 0
-  let mutable lowCountRows = 0
+  let mutable suppressedBuckets = 0
+  let mutable totalCount = 0
+  let mutable suppressedCount = 0
 
   let distortions = Array.create result.Rows.Length 0.0
 
   for row in result.Rows do
     let realCount = int (unwrapCount row.[1])
     totalBuckets <- totalBuckets + 1
-    totalRows <- totalRows + realCount
+    totalCount <- totalCount + realCount
 
     if row.[0] = Boolean true then
-      lowCountBuckets <- lowCountBuckets + 1
-      lowCountRows <- lowCountRows + realCount
+      suppressedBuckets <- suppressedBuckets + 1
+      suppressedCount <- suppressedCount + realCount
     else
       let noisyCount = int (unwrapCount row.[2])
       let distortion = float (abs (noisyCount - realCount)) / float realCount
-      let anonBucket = totalBuckets - lowCountBuckets - 1
+      let anonBucket = totalBuckets - suppressedBuckets - 1
       distortions.[anonBucket] <- distortion
 
-  let anonBuckets = totalBuckets - lowCountBuckets
+  let anonBuckets = totalBuckets - suppressedBuckets
   let distortions = if anonBuckets = 0 then [| 0.0 |] else Array.truncate anonBuckets distortions
   Array.sortInPlace distortions
 
   let summary =
     {
       TotalBuckets = totalBuckets
-      LowCountBuckets = lowCountBuckets
-      TotalRows = totalRows
-      LowCountRows = lowCountRows
+      SuppressedBuckets = suppressedBuckets
+      TotalCount = totalCount
+      SuppressedCount = suppressedCount
       MaxDistortion = Array.last distortions
       MedianDistortion = distortions.[anonBuckets / 2]
     }
