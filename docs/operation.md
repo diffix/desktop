@@ -75,7 +75,7 @@ The `Sender email` and `Receiver email` each identify a different protected enti
 
 > **This version of __Diffix for Desktop__ does not protect a data set where there are multiple protected entities per row**
 
-A data set with multiple protected entities needs to be pre-processed to have one protected entity per row before loading into __Diffix for Desktop__. See [Multiple protected entities per row](#multiple-protected-entities-per-row).
+A data set with multiple protected entities needs to be pre-processed to have one protected entity per row before loading into __Diffix for Desktop__. See [Multiple protected entities per row](tips.md#multiple-protected-entities-per-row).
 
 ## Select columns and generalization
 
@@ -161,7 +161,7 @@ The combined view lets you examine precisely the distortion and suppression. The
 
 ### What is safe to release
 
-Note that the data in the `Anonymized` view is the only data that is properly anonymized by __Diffix for Desktop__. Note in particular that the Anonymization Summary is not anonymized per se. See [Releasing Anonymization Summary statistics](#releasing-anonymization-summary-statistics).
+Note that the data in the `Anonymized` view is the only data that is properly anonymized by __Diffix for Desktop__. Note in particular that the Anonymization Summary is not anonymized per se. See [Releasing Anonymization Summary statistics](tips.md#releasing-anonymization-summary-statistics).
 
 ## Export anonymized data to CSV
 
