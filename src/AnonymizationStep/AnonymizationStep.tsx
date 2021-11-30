@@ -36,6 +36,7 @@ const emptySummary: AnonymizationSummary = {
   suppressedBuckets: 0,
   totalCount: 0,
   suppressedCount: 0,
+  suppressedAnonCount: null,
   maxDistortion: 0,
   medianDistortion: 0,
 };

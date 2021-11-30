@@ -79,6 +79,7 @@ let ``Handles Preview request for counting rows`` () =
   response |> should haveSubstring "suppressedBuckets"
   response |> should haveSubstring "totalCount"
   response |> should haveSubstring "suppressedCount"
+  response |> should haveSubstring "suppressedAnonCount"
   response |> should haveSubstring "maxDistortion"
   response |> should haveSubstring "medianDistortion"
   response |> should haveSubstring "rows"
@@ -96,6 +97,7 @@ let ``Handles Preview request for counting entities`` () =
   response |> should haveSubstring "suppressedBuckets"
   response |> should haveSubstring "totalCount"
   response |> should haveSubstring "suppressedCount"
+  response |> should haveSubstring "suppressedAnonCount"
   response |> should haveSubstring "maxDistortion"
   response |> should haveSubstring "medianDistortion"
   response |> should haveSubstring "rows"
@@ -145,7 +147,10 @@ let ``Handles Export request for counting rows`` () =
 
   let result = System.IO.File.ReadAllLines(outputFile.Path)
   result |> should contain "\"age\",\"city\",\"count\""
-  result.Length |> should equal 2
+  // star bucket comes as first, also note we're not asserting on the count
+  // in order to not depend on data too much
+  result.[1] |> should startWith "\"*\",\"*\","
+  result.Length |> should equal 3
 
 [<Fact>]
 let ``Handles Export request for counting entities`` () =
@@ -160,7 +165,10 @@ let ``Handles Export request for counting entities`` () =
 
   let result = System.IO.File.ReadAllLines(outputFile.Path)
   result |> should contain "\"age\",\"city\",\"count\""
-  result.Length |> should equal 2
+  // star bucket comes as first, also note we're not asserting on the count
+  // in order to not depend on data too much
+  result.[1] |> should startWith "\"*\",\"*\","
+  result.Length |> should equal 3
 
 [<Fact>]
 let ``Handles Export request with custom anonParams`` () =
@@ -197,4 +205,5 @@ let ``Handles Export request with custom anonParams`` () =
   // The custom anonymization params have ridiculous suppression threshold to suppress all buckets
   // Assertion checks whether that's respected by the service
   result |> should contain "\"age\",\"city\",\"count\""
+  // 1 (only header) - the star bucket got suppressed too!
   result.Length |> should equal 1

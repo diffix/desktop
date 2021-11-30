@@ -60,6 +60,7 @@ export type AnonymizationSummary = {
   suppressedBuckets: number;
   totalCount: number;
   suppressedCount: number;
+  suppressedAnonCount: number | null;
   maxDistortion: number;
   medianDistortion: number;
 };

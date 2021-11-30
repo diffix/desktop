@@ -9,6 +9,7 @@ type Summary =
     SuppressedBuckets: int
     TotalCount: int
     SuppressedCount: int
+    SuppressedAnonCount: int option
     MaxDistortion: float
     MedianDistortion: float
   }
@@ -65,6 +66,11 @@ type Request =
   | Export of ExportRequest
   | HasMissingValues of HasMissingValuesRequest
 
+let private encodeIntOption =
+  function
+  | Some int -> Encode.int int
+  | None -> Encode.nil
+
 let rec private encodeValue =
   function
   | Null -> Encode.nil
@@ -91,6 +97,7 @@ let private extraCoders =
   Extra.empty
   |> Extra.withCustom encodeType generateDecoder<ExpressionType>
   |> Extra.withCustom encodeValue generateDecoder<Value>
+  |> Extra.withCustom encodeIntOption generateDecoder<int option>
 
 let private decodeType request =
   Decode.Auto.unsafeFromString (request, caseStrategy = CamelCase, extra = extraCoders)
