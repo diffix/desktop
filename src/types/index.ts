@@ -57,9 +57,9 @@ export type CountInput = 'Rows' | 'Entities';
 
 export type AnonymizationSummary = {
   totalBuckets: number;
-  lowCountBuckets: number;
-  totalRows: number;
-  lowCountRows: number;
+  suppressedBuckets: number;
+  totalCount: number;
+  suppressedCount: number;
   maxDistortion: number;
   medianDistortion: number;
 };

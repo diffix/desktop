@@ -33,9 +33,9 @@ type CommonProps = {
 
 const emptySummary: AnonymizationSummary = {
   totalBuckets: 0,
-  lowCountBuckets: 0,
-  totalRows: 0,
-  lowCountRows: 0,
+  suppressedBuckets: 0,
+  totalCount: 0,
+  suppressedCount: 0,
   maxDistortion: 0,
   medianDistortion: 0,
 };
@@ -46,13 +46,13 @@ function summaryDescriptions(summary: AnonymizationSummary) {
   return (
     <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
       <Descriptions.Item label="Suppressed Count">
-        {`${summary.lowCountRows} of ${summary.totalRows} (${formatPercentage(
-          summary.lowCountRows / summary.totalRows,
+        {`${summary.suppressedCount} of ${summary.totalCount} (${formatPercentage(
+          summary.suppressedCount / summary.totalCount,
         )})`}
       </Descriptions.Item>
       <Descriptions.Item label="Suppressed Bins">
-        {`${summary.lowCountBuckets} of ${summary.totalBuckets} (${formatPercentage(
-          summary.lowCountBuckets / summary.totalBuckets,
+        {`${summary.suppressedBuckets} of ${summary.totalBuckets} (${formatPercentage(
+          summary.suppressedBuckets / summary.totalBuckets,
         )})`}
       </Descriptions.Item>
       <Descriptions.Item label="Median Distortion">{formatPercentage(summary.medianDistortion)}</Descriptions.Item>
