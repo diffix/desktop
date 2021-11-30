@@ -95,9 +95,9 @@ When a column is selected, the generalization input is exposed. For text columns
 
 If the input data is multi-row, then __Diffix for Desktop__ gives you the choice of counting rows or counting protected entities (i.e. persons). The toggle switch may be found at the bottom of the column selection area.
 
-## Adjust anonymization parameters
+## Configure anonymization parameters
 
-The default preset ("Max utility") consists of reasonable values of the anonymization parameters, which have been found to provide strong anonymity and maximize the analytical utility of the resulting data.
+The default preset ("Max utility") consists of the recommended values for the default anonymization parameters, which have been found to provide strong anonymity and maximize the analytical utility of the resulting data.
 
 If you are forced to increase the strength of anonymization, or find that stronger anonymization still produces satisfactory results in terms of data quality, you can opt to choose one of the stronger presets.
 

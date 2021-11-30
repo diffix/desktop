@@ -285,8 +285,8 @@ const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[]; focusedStep
         />
         <Step
           status={status(NotebookNavStep.AnonParamsSelection)}
-          title={mapText('Anonymization Parameters', focusedStep === NotebookNavStep.AnonParamsSelection)}
-          description="Adjust the anonymization parameters"
+          title={mapText('Anonymization Configuration', focusedStep === NotebookNavStep.AnonParamsSelection)}
+          description="Configure the anonymization parameters"
         />
         <Step
           status={status(NotebookNavStep.AnonymizationSummary)}
