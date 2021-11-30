@@ -79,9 +79,8 @@ function AnonParamsSelectionHelp() {
     <div>
       <Title level={4}>Anonymization Configuration</Title>
       <Paragraph>
-        The default set of parameters ensures correct anonymization and has maximum analytical utility. It is
-        recommended for the majority of use cases. Select stronger anonymization if the lower analytical utility of the
-        result is acceptable.{' '}
+        The default values of parameters ensure correct anonymization and have good analytical utility. It is
+        recommended for the majority of use cases.{' '}
         <DocsLink page="operation" section="configure-anonymization-parameters">
           Click here for details.
         </DocsLink>

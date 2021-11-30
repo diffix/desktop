@@ -97,24 +97,24 @@ If the input data is multi-row, then __Diffix for Desktop__ gives you the choice
 
 ## Configure anonymization parameters
 
-The default preset ("Max utility") consists of the recommended values for the default anonymization parameters, which have been found to provide strong anonymity and maximize the analytical utility of the resulting data.
+The default preset consists of the recommended values for the anonymization parameters, which have been found to provide strong anonymity and maximize the analytical utility of the resulting data.
 
-If you are forced to increase the strength of anonymization, or find that stronger anonymization still produces satisfactory results in terms of data quality, you can opt to choose one of the stronger presets.
+One of the parameters (`low_thresh` - Suppression Threshold) is made configurable. Decrease it, to allow more of the smallest bins in the anonymized data and improve utility. Increase it, to suppress more of the smallest bins and increase privacy.
 
-### Anonymization parameters presets
+The remainder of parameters are currently fixed at the recommended default values.
 
-__Diffix for Desktop__ has 3 presets of anonymization parameters:
+__Diffix for Desktop__ uses the following anonymization parameters:
 
-| Parameter                                                                                                       | Max utility | Balanced | Max privacy |
-| --------------------------------------------------------------------------------------------------------------- | ----------- | -------- | ----------- |
-| `low_thresh` - The lower bound for the noisy suppression threshold                                              | 3           | 4        | 5           |
-| `sd_supp` - The standard deviation of the suppression Gaussian noise                                            | 1.0         | 1.0      | 1.0         |
-| `low_mean_gap` - The number of standard deviations (`sd_supp`) between `low_thresh` and the Gaussian noise mean | 2           | 2        | 2           |
-| `base_sd` - The standard deviation of the noise                                                                 | 1.5         | 2.25     | 3.0         |
-| `outlier_min` - The minimum possible value of `outlier_count`                                                   | 1           | 2        | 2           |
-| `outlier_max` - The maximum possible value of `outlier_count`                                                   | 2           | 3        | 3           |
-| `top_min` - The minimum possible value of `top_count`                                                           | 3           | 3        | 3           |
-| `top_max` - The maximum possible value of `top_count`                                                           | 4           | 4        | 4           |
+| Parameter                                                                                                       | Default     | Configurable? |
+| --------------------------------------------------------------------------------------------------------------- | ----------- | ------------- |
+| `low_thresh` - The lower bound for the noisy suppression threshold                                              | 3           | yes           |
+| `sd_supp` - The standard deviation of the suppression Gaussian noise                                            | 1.0         | no            |
+| `low_mean_gap` - The number of standard deviations (`sd_supp`) between `low_thresh` and the Gaussian noise mean | 2           | no            |
+| `base_sd` - The standard deviation of the noise                                                                 | 1.5         | no            |
+| `outlier_min` - The minimum possible value of `outlier_count`                                                   | 1           | no            |
+| `outlier_max` - The maximum possible value of `outlier_count`                                                   | 2           | no            |
+| `top_min` - The minimum possible value of `top_count`                                                           | 3           | no            |
+| `top_max` - The maximum possible value of `top_count`                                                           | 4           | no            |
 
 `outlier_count` and `top_count` control the strength of flattening the contribution of extreme contributors.
 

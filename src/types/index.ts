@@ -113,8 +113,6 @@ export type AnonymizedAggregate = {
 
 // AnonymizationParams
 
-export type AnonParamsPreset = 'P' | 'XP' | 'XXP';
-
 export type Interval = {
   lower: number;
   upper: number;
