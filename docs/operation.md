@@ -105,16 +105,16 @@ If you are forced to increase the strength of anonymization, or find that strong
 
 __Diffix for Desktop__ has 3 presets of anonymization parameters:
 
-| Parameter | Max utility | Balanced | Max privacy |
-| --- | --- | --- | --- |
-| `low_thresh` - The lower bound for the noisy suppression threshold | 3 | 4 | 5 |
-| `sd_supp` - The standard deviation of the suppression Gaussian noise | 1.0 | 1.0 | 1.0 |
-| `low_mean_gap` - The number of standard deviations (`sd_supp`) between `low_thresh` and the Gaussian noise mean | 2 | 2 | 2 |
-| `base_sd` - The standard deviation of the noise| 1.5 | 2.25 | 3.0 |
-| `outlier_min` - The minimum possible value of `outlier_count` | 1 | 2 | 2 |
-| `outlier_max` - The maximum possible value of `outlier_count` | 2 | 3 | 3 |
-| `top_min` - The minimum possible value of `top_count` | 3 | 3 | 3 |
-| `top_max` - The maximum possible value of `top_count` | 4 | 4 | 4 |
+| Parameter                                                                                                       | Max utility | Balanced | Max privacy |
+| --------------------------------------------------------------------------------------------------------------- | ----------- | -------- | ----------- |
+| `low_thresh` - The lower bound for the noisy suppression threshold                                              | 3           | 4        | 5           |
+| `sd_supp` - The standard deviation of the suppression Gaussian noise                                            | 1.0         | 1.0      | 1.0         |
+| `low_mean_gap` - The number of standard deviations (`sd_supp`) between `low_thresh` and the Gaussian noise mean | 2           | 2        | 2           |
+| `base_sd` - The standard deviation of the noise                                                                 | 1.5         | 2.25     | 3.0         |
+| `outlier_min` - The minimum possible value of `outlier_count`                                                   | 1           | 2        | 2           |
+| `outlier_max` - The maximum possible value of `outlier_count`                                                   | 2           | 3        | 3           |
+| `top_min` - The minimum possible value of `top_count`                                                           | 3           | 3        | 3           |
+| `top_max` - The maximum possible value of `top_count`                                                           | 4           | 4        | 4           |
 
 `outlier_count` and `top_count` control the strength of flattening the contribution of extreme contributors.
 
