@@ -47,7 +47,23 @@ function AidSelectionHelp() {
         If the data has one row per protected entity, then no entity identifier column need be selected. Otherwise,
         select a column containing a unique ID per protected entity.{' '}
         <DocsLink page="operation" section="important-configure-the-protected-entity-identifier-column">
-          Click here for details.
+          Click here for details on how to set.
+        </DocsLink>
+      </Paragraph>
+    </div>
+  );
+}
+
+function AnonParamsSelectionHelp() {
+  return (
+    <div>
+      <Title level={4}>Suppression Threshold Configuration</Title>
+      <Paragraph>
+        The suppression threshold determines the minimum number of protected entities
+        that comprise any bin. Bins with fewer entities than this threshold are suppressed.
+        Changing this threshold automatically recomputes the anonymized results.{' '}
+        <DocsLink page="operation" section="suppression-threshold-configuration">
+          Click here for details on how to set.
         </DocsLink>
       </Paragraph>
     </div>
@@ -69,21 +85,6 @@ function ColumnSelectionHelp() {
       <Paragraph>
         The <Text code>Count</Text> toggle below the column selection selects whether to count rows or to count the
         number of protected entities for each bin in the anonymized output.
-      </Paragraph>
-    </div>
-  );
-}
-
-function AnonParamsSelectionHelp() {
-  return (
-    <div>
-      <Title level={4}>Anonymization Configuration</Title>
-      <Paragraph>
-        The default values of parameters ensure correct anonymization and have good analytical utility. It is
-        recommended for the majority of use cases.{' '}
-        <DocsLink page="operation" section="configure-anonymization-parameters">
-          Click here for details.
-        </DocsLink>
       </Paragraph>
     </div>
   );

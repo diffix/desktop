@@ -33,12 +33,12 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
     <>
       <div className="AnonParamsSelectionStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.AnonParamsSelection} status="done" />
-        <Title level={3}>Adjust anonymization parameters</Title>
+        <Title level={3}>Adjust suppression threshold</Title>
 
         <Form layout="inline">
           <Form.Item
             label="Suppression Threshold"
-            tooltip="Bins with less protected entities than this are suppressed. Bins with more may not be suppressed"
+            tooltip="Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed"
             name="lowThreshold"
           >
             <InputNumber
