@@ -17,6 +17,11 @@ let ledHook = AggregationHooks.Led.hook
 let withHooks hooks context =
   { context with PostAggregationHooks = hooks }
 
+let unwrapOption error option =
+  match option with
+  | Some value -> value
+  | None -> failwith error
+
 let runQuery hooks query (filePath: string) anonParams =
   use dataProvider = new CSV.DataProvider(filePath) :> IDataProvider
   let context = QueryContext.make anonParams dataProvider |> withHooks hooks
@@ -99,7 +104,22 @@ let handlePreview
         GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
       """
 
-  let result = runQuery [ ledHook ] query inputPath anonParams
+  // We get a hold of the star bucket reference via side effects.
+  let mutable starBucket: Bucket option = None
+  let starBucketHook = AggregationHooks.StarBucket.hook (fun bucket -> starBucket <- Some bucket)
+
+  let result = runQuery [ ledHook; starBucketHook ] query inputPath anonParams
+
+  // Should be set once the query completes.
+  let starBucket = starBucket |> unwrapOption "Star bucket should be evaluated at this point."
+
+  // Pull stats from star bucket
+  let starBucketValues =
+    starBucket.Aggregators
+    |> Array.map (fun aggregator -> aggregator.Final(starBucket.ExecutionContext))
+
+  // Add star buckets stats to JSON output
+  // TODO
 
   let mutable totalBuckets = 0
   let mutable suppressedBuckets = 0

@@ -4,6 +4,7 @@ open OpenDiffix.Core
 
 module BucketAttributes =
   let IS_LED_MERGED = "is_led_merged"
+  let IS_STAR_BUCKET = "is_star_bucket"
 
 let private findSingleIndex cond arr =
   arr
@@ -22,6 +23,11 @@ let private isLowCount lowCountIndex bucket =
 
 let private isGlobalAggregation (aggregationContext: AggregationContext) =
   Array.isEmpty aggregationContext.GroupingLabels
+
+let private lowCountIndex (aggregationContext: AggregationContext) =
+  match findAggregator DiffixLowCount aggregationContext.Aggregators with
+  | Some index -> index
+  | None -> failwith "Cannot find required aggregator for LED hook"
 
 module Led =
   type private SiblingPerColumn =
@@ -63,7 +69,8 @@ module Led =
     aggIndexes
     |> Array.iter (fun i -> targetAggregators.[i].Merge(sourceAggregators.[i]))
 
-  let private led lowCountIndex (aggregationContext: AggregationContext) (buckets: Bucket seq) =
+  let private led (aggregationContext: AggregationContext) (buckets: Bucket seq) =
+    let lowCountIndex = lowCountIndex aggregationContext
     let groupingLabelsLength = aggregationContext.GroupingLabels.Length
     let anonAggregators = anonymizingAggregatorIndexes aggregationContext
 
@@ -119,9 +126,63 @@ module Led =
     if isGlobalAggregation aggregationContext then
       buckets
     else
-      let lowCountIndex =
-        match findAggregator DiffixLowCount aggregationContext.Aggregators with
-        | Some index -> index
-        | None -> failwith "Cannot find required aggregator for LED hook"
+      led aggregationContext buckets
 
-      led lowCountIndex aggregationContext buckets
+module StarBucket =
+  /// Merges all source aggregators into the target bucket.
+  let private mergeAllAggregatorsInto (targetBucket: Bucket) (sourceBucket: Bucket) =
+    let targetAggregators = targetBucket.Aggregators
+
+    sourceBucket.Aggregators |> Array.iteri (fun i -> targetAggregators.[i].Merge)
+
+  let private makeStarBucket (aggregationContext: AggregationContext) =
+    let isGlobal = isGlobalAggregation aggregationContext
+
+    // TODO: Do we need a specific noise seed for the star bucket?
+    let executionContext = aggregationContext.ExecutionContext
+
+    // Group labels are all NULLs
+    let group = Array.create aggregationContext.GroupingLabels.Length Null
+
+    let aggregators =
+      aggregationContext.Aggregators
+      |> Seq.map fst
+      |> Seq.map (Aggregator.create executionContext isGlobal)
+      |> Seq.toArray
+
+    let starBucket = Bucket.make group aggregators executionContext
+    // Not currently used, but may be in the future.
+    starBucket |> Bucket.putAttribute BucketAttributes.IS_STAR_BUCKET (Boolean true)
+    starBucket
+
+  /// Iterates and materializes the bucket sequence.
+  let private iterateBuckets f (buckets: Bucket seq) =
+    buckets
+    |> Seq.map (fun bucket ->
+      f bucket
+      bucket
+    )
+    // We do this because re-running a sequence is potentially dangerous if it has side effects.
+    |> Seq.toArray
+
+  let private computeStarBucket callback aggregationContext buckets =
+    let starBucket = makeStarBucket aggregationContext
+    let lowCountIndex = lowCountIndex aggregationContext
+
+    let buckets =
+      buckets
+      |> iterateBuckets (fun bucket ->
+        let isAlreadyMerged =
+          bucket
+          |> Bucket.getAttribute BucketAttributes.IS_LED_MERGED
+          |> Value.unwrapBoolean
+
+        if not isAlreadyMerged && isLowCount lowCountIndex bucket then
+          bucket |> mergeAllAggregatorsInto starBucket
+      )
+
+    callback starBucket
+    buckets :> Bucket seq
+
+  let hook callback (aggregationContext: AggregationContext) (buckets: Bucket seq) =
+    computeStarBucket callback aggregationContext buckets
