@@ -1,4 +1,4 @@
-module OpenDiffix.Service.LedTests
+module OpenDiffix.Service.AggregationHooksTests
 
 open Xunit
 open FsUnit.Xunit
@@ -23,14 +23,17 @@ let csvReader (csv: string) =
 
   new CSV.DataProvider(new System.IO.StringReader(cleanedCsv))
 
-let withHook hook context = { context with ExecutorHook = hook }
+let withHooks hooks context =
+  { context with PostAggregationHooks = hooks }
 
-let run hook csv query =
-  let queryContext = QueryContext.make noiselessAnonParams (csvReader csv) |> withHook hook
+let run hooks csv query =
+  let queryContext = QueryContext.make noiselessAnonParams (csvReader csv) |> withHooks hooks
   QueryEngine.run queryContext query
 
-let runWithHook csv query = run (Some Led.executorHook) csv query
-let runWithoutHook csv query = run None csv query
+let runWithHook csv query =
+  run [ AggregationHooks.Led.hook ] csv query
+
+let runWithoutHook csv query = run [] csv query
 
 let rows (result: QueryEngine.QueryResult) = result.Rows
 
@@ -151,17 +154,6 @@ let ``Requires low count filter aggregator in scope`` () =
     csvWithVictim
     """
     SELECT dept, gender, title, diffix_count(*, RowIndex)
-    FROM table
-    GROUP BY 1, 2, 3
-    """
-    "cannot find required aggregator"
-
-[<Fact>]
-let ``Requires count aggregator in scope`` () =
-  assertHookFails
-    csvWithVictim
-    """
-    SELECT dept, gender, title, diffix_low_count(RowIndex)
     FROM table
     GROUP BY 1, 2, 3
     """
