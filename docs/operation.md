@@ -4,7 +4,7 @@
 
 __Diffix for Desktop__ has four phases of operation:
 - Load table from CSV
-- Configuration anonymization parameters
+- Configure anonymization parameters
   - Select protected entity identifier column
   - Select suppression threshold
 - Select data and adjust quality
@@ -23,7 +23,7 @@ __Diffix for Desktop:__
 - Only accepts CSV files as input.
 - Interprets the first row of the CSV file as column names.
 - Auto-detects the CSV separator. All standard separators are accepted.
-- Auto-detects data types as text or numeric. Text columns are generalized with substring selection, and numeric columns are generalized with numeric ranges.
+- Auto-detects data types as text, numeric, or boolean. Text columns are generalized with substring selection, and numeric columns are generalized with numeric ranges.
 
 After loading, __Diffix for Desktop__ displays the column names and the first 1000 rows of the table. This data may be inspected to validate that the CSV file was loaded correctly.
 
@@ -85,7 +85,7 @@ This hides individual data values or combinations of data values that could
 leak private information about individual protected entities.
 
 Different output bins have different suppression thresholds: the threshold used for any
-given output bin is a random value taken from a Normal distribution. There is, however, a hard
+given output bin is a random value taken from a normal distribution. There is, however, a hard
 lower bound on the suppression threshold. The `suppression threshold` parameter sets this
 hard lower bound. (The mean threshold is the hard lower bound plus two.)
 
@@ -139,7 +139,7 @@ can lead to more suppression, but also to less distortion.
 
 ### Other anonymization parameters
 
-There are in total eight parameters and affect the strength of anonymization. They are
+There are in total eight parameters that affect the strength of anonymization. They are
 described in TODO. Of these, only the `suppression threshold` is settable in
 __Diffix for Desktop__. The others are set to default values that provide strong
 anonymization at good utility and don't require adjustment.
