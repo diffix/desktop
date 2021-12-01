@@ -38,7 +38,7 @@ __Diffix__ recognizes how many protected entities contribute to each output bin.
 
 Rather than apply a single suppression threshold to all bins, __Diffix__ slightly modifies the threshold for different bins. This adds additional uncertainty for recipients that have prior knowledge of protected entities.
 
-__Diffix__ suppresses bins with fewer than 4 protected entities *on average*. __Diffix__ always suppresses bins with only a single contributing protected entity.
+By default, __Diffix__ suppresses bins with fewer than 5 protected entities *on average*, corresponding to the `Suppression Threshold` anonymization parameter default value of 3. This can be configured at runtime (see section [Configure anonymization parameters](operation.md#configure-anonymization-parameters)). A minimum value of 2 for `Suppression Threshold` is enforced, therefore __Diffix__ always suppresses bins with only a single contributing protected entity.
 
 ## Generalization
 
