@@ -99,7 +99,7 @@ If the input data is multi-row, then __Diffix for Desktop__ gives you the choice
 
 The default preset consists of the recommended values for the anonymization parameters, which have been found to provide strong anonymity and maximize the analytical utility of the resulting data.
 
-One of the parameters (`low_thresh` - Suppression Threshold) is made configurable. Decrease it, to allow more of the smallest bins in the anonymized data and improve utility. Increase it, to suppress more of the smallest bins and increase privacy. The default values is `3` and minimum value is `2`.
+One of the parameters (`low_thresh` - Suppression Threshold) is made configurable. Decrease it, to allow more of the smallest bins in the anonymized data and improve utility. Increase it, to suppress more of the smallest bins and increase privacy. The default value is `3` and minimum value is `2`.
 
 The remainder of parameters are currently fixed at the recommended default values.
 
