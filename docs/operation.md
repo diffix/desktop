@@ -2,8 +2,11 @@
 
 > To report feature requests or problem, please contact us at [feedback@open-diffix.org](mailto:feedback@open-diffix.org).
 
-__Diffix for Desktop__ has three phases of operation:
-- Load and configure table from CSV
+__Diffix for Desktop__ has four phases of operation:
+- Load table from CSV
+- Configure anonymization parameters
+  - Select protected entity identifier column
+  - Select suppression threshold
 - Select data and adjust quality
   - Select columns for anonymization
   - Select amount of data generalization
@@ -16,13 +19,11 @@ An unlimited number of anonymized views of the data may be exported without comp
 
 ## Load table from CSV
 
-__Diffix for Desktop__ only accepts CSV files as input.
-
-__Diffix for Desktop__ interprets the first row of the CSV file as column names.
-
-__Diffix for Desktop__ auto-detects the CSV separator. All standard separators are accepted.
-
-__Diffix for Desktop__ auto-detects data types as text or numeric. Text columns are generalized with substring selection, and numeric columns are generalized with numeric ranges.
+__Diffix for Desktop:__ 
+- Only accepts CSV files as input.
+- Interprets the first row of the CSV file as column names.
+- Auto-detects the CSV separator. All standard separators are accepted.
+- Auto-detects data types as text, numeric, or boolean. Text columns are generalized with substring selection, and numeric columns are generalized with numeric ranges.
 
 After loading, __Diffix for Desktop__ displays the column names and the first 1000 rows of the table. This data may be inspected to validate that the CSV file was loaded correctly.
 
@@ -77,6 +78,86 @@ The `Sender email` and `Receiver email` each identify a different protected enti
 
 A data set with multiple protected entities needs to be pre-processed to have one protected entity per row before loading into __Diffix for Desktop__. See [Multiple protected entities per row](tips.md#multiple-protected-entities-per-row).
 
+## Suppression threshold configuration
+
+__Diffix for Desktop__ suppresses bins that are comprised of too few protected entities.
+This hides individual data values or combinations of data values that could
+leak private information about individual protected entities.
+
+Different output bins have different suppression thresholds: the threshold used for any
+given output bin is a random value taken from a normal distribution. There is, however, a hard
+lower bound on the suppression threshold. The `suppression threshold` parameter sets this
+hard lower bound. (The mean threshold is the hard lower bound plus two.)
+
+The default `suppression threshold` is 3. This is normally a safe setting: bins with
+one or two protected entities will __always__ be suppressed. There are two cases
+where a higher `suppression threshold` is required:
+
+1. Small groups of protected entities are closely related, like a family or married
+   couple, and there is a column that allows selection of a small group.
+2. There is not a perfect relationship between the protected entity identifier column
+   and the protected entity (the protected entity may have more than one protected
+   entity identifier), and there is a column that isolates the protected entity
+   in the same bin as multiple protected entities.
+
+One example of the first case is a banking dataset where the protected entity is the
+individual person, but where there are joint accounts, and there is a column containing the
+account number. If `suppression threshold = 2`, then selecting the account number can
+reveal information about joint accounts. One solution might be to set account as
+the protected entity rather than individual. Another, however, is to set
+`suppression threshold = 3` so that bins pertaining to a single joint account are
+always suppressed.
+
+A second example of the first case would be a dataset where the protected entity is the
+individual person, but where columns contain precise location information like latitude and
+longitude or home address. In this case, queries with location precision that isolate single home,
+and where the number of residents exceeds the `suppression threshold` can reveal information
+about individual families. One solution might be to lower the location precision in the original
+dataset. Another, however, is to set `suppression threshold` high enough that even large families
+are protected (e.g. `suppression threshold = 10`).
+
+An example of the second case would be a dataset where the protected entity is meant to
+be the individual person, but where the protected entity identifier is a mobile
+phone identifier (e.g. IMEI number). If there are columns that allow selection of an
+individual, such as name or customer number, then individuals who have multiple mobile
+phones, and therefore appear as multiple protected entities, may be isolated into a
+single bin. One solution is to remove all columns that may select an individual. Another,
+however, is to set `suppression threshold` to a value that exceeds the number of
+mobile phones any given individual is likely to have.
+
+### Higher suppression threshold settings
+
+There is a slight *anonymization* benefit to setting `suppression threshold` to a higher
+value than needed to ensure the protection of protected entities as described above.
+The benefit, however, is only slight, and therefore not really necessary. A better way
+to generate output bins comprised of more protected entities is via column generalization.
+
+There may also be a *data quality* benefit to setting `suppression threshold` to a higher
+value. This is because bins with very few protected entities have more relative distortion
+than bins with more protected entities. Setting `suppression threshold` to a higher value
+can lead to more suppression, but also to less distortion.
+
+### Other anonymization parameters
+
+There are in total eight parameters that affect the strength of anonymization. They are
+described in TODO. Of these, only the `suppression threshold` is settable in
+__Diffix for Desktop__. The others are set to default values that provide strong
+anonymization at good utility and don't require adjustment.
+These may become user-settable in future versions should a need arise. The following table
+gives the default values using the parameter names in TODO (note that `low_thresh` is
+the same as `suppression threshold`).
+
+| Anonymization parameter | Default setting |
+| --- | --- |
+| `low_thresh` | 3 |
+| `sd_supp` | 1.0 |
+| `low_mean_gap` | 2 |
+| `base_sd` | 1.5 |
+| `outlier_min` | 1 |
+| `outlier_max` | 2 |
+| `top_min` | 3 |
+| `top_max` | 4 |
+
 ## Select columns and generalization
 
 Like all data anonymization mechanisms, __Diffix__ distorts and hides data. The more columns included and the finer the data granularity, the more distortion and hiding. __Diffix__ distorts by adding *noise* to counts, and hides data by *suppressing* bins that pertain to too few protected entities.
@@ -94,14 +175,6 @@ When a column is selected, the generalization input is exposed. For text columns
 ### Toggle between counting rows and counting protected entities (i.e. persons)
 
 If the input data is multi-row, then __Diffix for Desktop__ gives you the choice of counting rows or counting protected entities (i.e. persons). The toggle switch may be found at the bottom of the column selection area.
-
-## Configure anonymization parameters
-
-The default preset consists of the recommended values for the anonymization parameters, which have been found to provide strong anonymity and maximize the analytical utility of the resulting data.
-
-One of the parameters (`low_thresh` - Suppression Threshold) is made configurable. Decrease it, to allow more of the smallest bins in the anonymized data and improve utility. Increase it, to suppress more of the smallest bins and increase privacy. The default value is `3` and minimum value is `2`.
-
-The remainder of parameters are currently fixed at the recommended default values.
 
 ## How to interpret the Anonymization Summary
 
