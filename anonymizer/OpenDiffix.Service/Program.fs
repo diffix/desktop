@@ -11,13 +11,20 @@ let toSalt =
   | Some (salt: string) -> Text.Encoding.UTF8.GetBytes(salt)
   | _ -> [||]
 
-let ledHook = Some Led.executorHook
+let NO_HOOKS = []
+let ledHook = AggregationHooks.Led.hook
 
-let withHook hook context = { context with ExecutorHook = hook }
+let withHooks hooks context =
+  { context with PostAggregationHooks = hooks }
 
-let runQuery hook query (filePath: string) anonParams =
+let unwrapOption error option =
+  match option with
+  | Some value -> value
+  | None -> failwith error
+
+let runQuery hooks query (filePath: string) anonParams =
   use dataProvider = new CSV.DataProvider(filePath) :> IDataProvider
-  let context = QueryContext.make anonParams dataProvider |> withHook hook
+  let context = QueryContext.make anonParams dataProvider |> withHooks hooks
   QueryEngine.run context query
 
 let quoteString (string: string) =
@@ -43,7 +50,9 @@ let csvFormatter result =
 let handleLoad ({ InputPath = inputPath; Rows = rows }: LoadRequest) =
   let query = $"SELECT * FROM table LIMIT %d{rows}"
 
-  AnonymizationParams.Default |> runQuery None query inputPath |> encodeResponse
+  AnonymizationParams.Default
+  |> runQuery NO_HOOKS query inputPath
+  |> encodeResponse
 
 let unwrapCount count =
   match count with
@@ -95,7 +104,22 @@ let handlePreview
         GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
       """
 
-  let result = runQuery ledHook query inputPath anonParams
+  // We get a hold of the star bucket reference via side effects.
+  let mutable starBucket: Bucket option = None
+  let starBucketHook = AggregationHooks.StarBucket.hook (fun bucket -> starBucket <- Some bucket)
+
+  let result = runQuery [ ledHook; starBucketHook ] query inputPath anonParams
+
+  // Should be set once the query completes.
+  let starBucket = starBucket |> unwrapOption "Star bucket should be evaluated at this point."
+
+  // Pull stats from star bucket
+  let starBucketValues =
+    starBucket.Aggregators
+    |> Array.map (fun aggregator -> aggregator.Final(starBucket.ExecutionContext))
+
+  // Add star buckets stats to JSON output
+  // TODO
 
   let mutable totalBuckets = 0
   let mutable suppressedBuckets = 0
@@ -165,7 +189,7 @@ let handleExport
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
-  let output = anonParams |> runQuery ledHook query inputPath |> csvFormatter
+  let output = anonParams |> runQuery [ ledHook ] query inputPath |> csvFormatter
 
   File.WriteAllText(outputPath, output)
 
@@ -187,7 +211,7 @@ let handleHasMissingValues
       LIMIT 1
     """
 
-  let queryResult = anonParams |> runQuery None query inputPath
+  let queryResult = anonParams |> runQuery NO_HOOKS query inputPath
   queryResult.Rows.Length > 0 |> encodeResponse
 
 let mainCore consoleInput =

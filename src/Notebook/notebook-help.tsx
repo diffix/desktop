@@ -59,9 +59,9 @@ function AnonParamsSelectionHelp() {
     <div>
       <Title level={4}>Suppression Threshold Configuration</Title>
       <Paragraph>
-        The suppression threshold determines the minimum number of protected entities
-        that comprise any bin. Bins with fewer entities than this threshold are suppressed.
-        Changing this threshold automatically recomputes the anonymized results.{' '}
+        The suppression threshold determines the minimum number of protected entities that comprise any bin. Bins with
+        fewer entities than this threshold are suppressed. Changing this threshold automatically recomputes the
+        anonymized results.{' '}
         <DocsLink page="operation" section="suppression-threshold-configuration">
           Click here for details on how to set.
         </DocsLink>
