@@ -104,22 +104,7 @@ let handlePreview
         GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
       """
 
-  // We get a hold of the star bucket reference via side effects.
-  let mutable starBucket: Bucket option = None
-  let starBucketHook = AggregationHooks.StarBucket.hook (fun bucket -> starBucket <- Some bucket)
-
-  let result = runQuery [ ledHook; starBucketHook ] query inputPath anonParams
-
-  // Should be set once the query completes.
-  let starBucket = starBucket |> unwrapOption "Star bucket should be evaluated at this point."
-
-  // Pull stats from star bucket
-  let starBucketValues =
-    starBucket.Aggregators
-    |> Array.map (fun aggregator -> aggregator.Final(starBucket.ExecutionContext))
-
-  // Add star buckets stats to JSON output
-  // TODO
+  let result = runQuery [ (* ledHook; starBucketHook *) ] query inputPath anonParams
 
   let mutable totalBuckets = 0
   let mutable suppressedBuckets = 0
@@ -189,7 +174,7 @@ let handleExport
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
-  let output = anonParams |> runQuery [ ledHook ] query inputPath |> csvFormatter
+  let output = anonParams |> runQuery [ (* ledHook; *) ] query inputPath |> csvFormatter
 
   File.WriteAllText(outputPath, output)
 
