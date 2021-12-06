@@ -1,12 +1,13 @@
 ## Changelog
 
-### Next version
+### Version 0.4.0
 
 - Fixed name of "count" column in exported file.
 - Show the changelog in the "Documentation" tab.
 - Simplified window menu.
 - Added support for global aggregation.
 - Fixed noise scaling not being applied bug.
+- Added anonymization configuration step.
 
 ### Version 0.3.1
 
