@@ -7,6 +7,7 @@
 - Simplified window menu.
 - Added support for global aggregation.
 - Fixed noise scaling not being applied bug.
+- Added anonymization configuration step.
 
 ### Version 0.3.1
 
