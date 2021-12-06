@@ -10,7 +10,7 @@ let noiselessAnonParams: AnonymizationParams =
   {
     TableSettings = Map []
     Salt = [||]
-    Suppression = { LowThreshold = 3; LowMeanGap = 0.; SD = 0. }
+    Suppression = { LowThreshold = 3; LowMeanGap = 0.; LayerSD = 0. }
     OutlierCount = { Lower = 1; Upper = 1 }
     TopCount = { Lower = 1; Upper = 1 }
     LayerNoiseSD = 0.

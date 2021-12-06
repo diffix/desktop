@@ -1,5 +1,10 @@
 ## Changelog
 
+### Next version
+
+- Merge suppressed buckets into a special *-bucket.
+- Added support for simple low-effect detection (LED).
+
 ### Version 0.4.0
 
 - Fixed name of "count" column in exported file.

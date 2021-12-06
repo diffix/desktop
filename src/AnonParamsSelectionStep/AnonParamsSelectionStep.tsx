@@ -21,12 +21,12 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
   const anonParams = {
     suppression: {
       lowThreshold: lowThreshold,
-      sD: 1.0,
+      layerSD: 1.0,
       lowMeanGap: 2.0,
     },
     outlierCount: { lower: 1, upper: 2 },
     topCount: { lower: 3, upper: 4 },
-    baseNoiseSD: 1.5,
+    layerNoiseSD: 1.0,
   };
 
   return (

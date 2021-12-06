@@ -21,7 +21,7 @@ let private defaultAnonParams =
   {
     "suppression": {
       "lowThreshold": 3,
-      "sD": 1,
+      "layerSD": 1,
       "lowMeanGap": 2
     },
     "outlierCount": {
@@ -32,7 +32,7 @@ let private defaultAnonParams =
       "lower": 2,
       "upper": 5
     },
-    "baseNoiseSD": 1.0
+    "layerNoiseSD": 1.0
   }
   """
 
@@ -107,7 +107,7 @@ let ``Handles Preview request with custom anonParams`` () =
     {
       "suppression": {
         "lowThreshold": 0,
-        "sD": 0,
+        "layerSD": 0,
         "lowMeanGap": 0
       },
       "outlierCount": {
@@ -118,7 +118,7 @@ let ``Handles Preview request with custom anonParams`` () =
         "lower": 2,
         "upper": 5
       },
-      "baseNoiseSD": 1.0
+      "layerNoiseSD": 1.0
     }
     """
 
@@ -171,7 +171,7 @@ let ``Handles Export request with custom anonParams`` () =
     {
       "suppression": {
         "lowThreshold": 300,
-        "sD": 1,
+        "layerSD": 1,
         "lowMeanGap": 2
       },
       "outlierCount": {
@@ -182,7 +182,7 @@ let ``Handles Export request with custom anonParams`` () =
           "lower": 2,
           "upper": 5
         },
-        "baseNoiseSD": 1.0
+        "layerNoiseSD": 1.0
       }
     """
 
