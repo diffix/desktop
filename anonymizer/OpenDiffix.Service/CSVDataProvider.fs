@@ -1,4 +1,4 @@
-module CSV
+module OpenDiffix.Service.CSV
 
 open System
 open System.Globalization

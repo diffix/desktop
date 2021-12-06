@@ -1,4 +1,4 @@
-module JsonEncodersDecoders
+module OpenDiffix.Service.JsonEncodersDecoders
 
 open OpenDiffix.Core
 open Thoth.Json.Net
