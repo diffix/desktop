@@ -108,7 +108,7 @@ let handlePreview
   let mutable starBucket: Bucket option = None
   let starBucketHook = AggregationHooks.StarBucket.hook (fun bucket -> starBucket <- Some bucket)
 
-  let result = runQuery [ ledHook; starBucketHook ] query inputPath anonParams
+  let result = runQuery [ (* ledHook; *) starBucketHook ] query inputPath anonParams
 
   // Should be set once the query completes.
   let starBucket = starBucket |> unwrapOption "Star bucket should be evaluated at this point."
@@ -189,7 +189,7 @@ let handleExport
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
-  let output = anonParams |> runQuery [ ledHook ] query inputPath |> csvFormatter
+  let output = anonParams |> runQuery [ (* ledHook; *) ] query inputPath |> csvFormatter
 
   File.WriteAllText(outputPath, output)
 
