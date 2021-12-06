@@ -1,4 +1,4 @@
-module AggregationHooks
+module OpenDiffix.Service.AggregationHooks
 
 open OpenDiffix.Core
 
