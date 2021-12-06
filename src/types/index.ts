@@ -120,7 +120,7 @@ export type Interval = {
 
 export type SuppressionParams = {
   lowThreshold: number;
-  sD: number;
+  layerSD: number;
   lowMeanGap: number;
 };
 
@@ -132,7 +132,7 @@ export type AnonymizationParams = {
   // Count params
   outlierCount: Interval;
   topCount: Interval;
-  baseNoiseSD: number;
+  layerNoiseSD: number;
 };
 
 // API
