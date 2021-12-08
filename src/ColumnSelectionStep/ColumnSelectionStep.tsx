@@ -97,21 +97,25 @@ function GeneralizationControls({
           <Form.Item label="Substring start" name="substringStart">
             <span key={column.resetCount}>
               <InputNumber
+                // `precision` and `Math.round` in change handler both needed to protect from decimals
+                precision={0}
                 size="small"
                 placeholder="1"
                 min={1}
                 value={column.substringStart as number}
-                onChange={(substringStart) => updateColumn({ substringStart })}
+                onChange={(substringStart) => updateColumn({ substringStart: Math.round(substringStart) })}
               />
             </span>
           </Form.Item>
           <Form.Item label="Substring length" name="substringLength">
             <span key={column.resetCount}>
               <InputNumber
+                // `precision` and `Math.round` in change handler both needed to protect from decimals
+                precision={0}
                 size="small"
                 min={1}
                 value={column.substringLength as number}
-                onChange={(substringLength) => updateColumn({ substringLength })}
+                onChange={(substringLength) => updateColumn({ substringLength: Math.round(substringLength) })}
               />
             </span>
           </Form.Item>
