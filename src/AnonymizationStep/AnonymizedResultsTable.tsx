@@ -130,7 +130,7 @@ function filterRows(mode: DisplayMode, rows: AnonymizedResultRow[]) {
   }
 }
 
-function addValue(rowData: TableRowData, values: AnonymizedValue[]) {
+function addValuesToRowData(rowData: TableRowData, values: AnonymizedValue[]) {
   const { length } = values;
   for (let columnIdx = 0; columnIdx < length; columnIdx++) {
     const value = values[columnIdx];
@@ -150,7 +150,7 @@ function mapRow(row: AnonymizedResultRow, i: number) {
     lowCount: row.lowCount,
   };
 
-  addValue(rowData, row.values);
+  addValuesToRowData(rowData, row.values);
 
   return rowData;
 }
@@ -171,7 +171,7 @@ function makeSuppressBinData(result: AnonymizedQueryResult) {
         : '*',
     );
 
-    addValue(rowData, values);
+    addValuesToRowData(rowData, values);
     return [rowData];
   } else {
     // no suppression took place _OR_ the suppress bin was itself suppressed by the

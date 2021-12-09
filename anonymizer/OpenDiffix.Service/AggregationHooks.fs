@@ -201,13 +201,13 @@ module StarBucket =
       starBucket.Aggregators.[lowCountIndex].Final(executionContext)
       |> Value.unwrapBoolean
 
-    let starBucketResults =
+    let suppressedAnonCount =
       if isStarBucketLowCount then
         Null
       else
         starBucket.Aggregators.[diffixCountIndex].Final(executionContext)
 
-    callback starBucketResults
+    callback suppressedAnonCount
     buckets :> Bucket seq
 
   let hook callback (aggregationContext: AggregationContext) (buckets: Bucket seq) =
