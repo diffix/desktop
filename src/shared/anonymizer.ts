@@ -16,6 +16,7 @@ import {
   TableSchema,
   Task,
   AnonymizationParams,
+  RowData,
 } from '../types';
 import { runTask } from './utils';
 
@@ -124,9 +125,22 @@ class DiffixAnonymizer implements Anonymizer {
         // NOTE: the position of `diffix_low_count` and other columns must be kept in sync with the
         // Preview request's `SELECT` in `anonymizer/OpenDiffix.Service/Program.fs`.
         const lowCount = row[0] as boolean;
+        const count = row[1] as number;
+        const diffixCount = lowCount ? null : (row[2] as number);
+        // the remainder of cells in the row are bucket values from `GROUP BY`s
+        const bucketValueArray = [...row.slice(3)];
+
+        // now translate this into a structure with named fields `AnonymizedResultRow`
+        const emptyRowData: RowData = {};
+        const bucketValues: RowData = bucketColumns.reduce((rowData: RowData, column: BucketColumn, columnIdx) => {
+          rowData[column.name] = bucketValueArray[columnIdx];
+          return rowData;
+        }, emptyRowData);
         return {
           lowCount,
-          values: [...row.slice(3), { realValue: row[1] as number, anonValue: lowCount ? null : (row[2] as number) }],
+          count,
+          diffixCount,
+          bucketValues,
         };
       });
       const columns: AnonymizedResultColumn[] = [...bucketColumns, { name: 'Count', type: 'aggregate' }];

@@ -1,4 +1,4 @@
-import { AnonymizedAggregate, ColumnType, ComputedData, RowData, Task, Value } from '../types';
+import { ColumnType, ComputedData, RowData, Task, Value } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const inProgressState: ComputedData<any> = { state: 'in_progress' };
@@ -23,7 +23,7 @@ export function formatPercentage(value: number, precision = 2): string {
   return `${Math.round(factor * 100 * value) / factor}%`;
 }
 
-export function relativeNoise({ anonValue, realValue }: AnonymizedAggregate): number | null {
+export function relativeNoise(anonValue: number | null, realValue: number): number | null {
   if (anonValue === null) return null;
   return Math.abs(realValue - anonValue) / realValue;
 }

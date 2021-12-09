@@ -11,18 +11,21 @@ import {
   RowData,
   Value,
   BucketColumn,
-  AnonymizedValue,
 } from '../types';
 import { DisplayModeSwitch } from './DisplayModeSwitch';
 
 import './AnonymizedResultsTable.css';
 
-type TableRowData = RowData & {
-  key: number;
-  lowCount: AnonymizedResultRow['lowCount'];
-};
-
 // Columns
+
+type TableColumnData = {
+  title: string;
+  // must refer to a field in `TableRowData`
+  dataIndex: 'anon' | 'real' | 'diff' | string;
+  render: (v: Value) => React.ReactNode;
+  sorter: (rowA: RowData, rowB: RowData) => number;
+  ellipsis: { showTitle: boolean };
+};
 
 // with `ellipsis: { showTitle: false }` set for the column, we're disabling the default tooltip
 // so that the styling of tooltips is more consistent. This forces us to provide Tooltip in all cases
@@ -86,7 +89,12 @@ function renderRelativeNoiseValue(v: Value) {
   return plainStringCell(v === null ? '-' : formatPercentage(v as number));
 }
 
-function makeColumnData(title: string, dataIndex: string, type: ColumnType, render: (v: Value) => React.ReactNode) {
+function makeColumnData(
+  title: string,
+  dataIndex: string,
+  type: ColumnType,
+  render: (v: Value) => React.ReactNode,
+): TableColumnData {
   return {
     title,
     dataIndex,
@@ -98,25 +106,37 @@ function makeColumnData(title: string, dataIndex: string, type: ColumnType, rend
 
 const AGG_COLUMN_TYPE = 'real';
 
-const mapColumn =
-  (mode: DisplayMode, bucketColumns: BucketColumn[]) => (column: AnonymizedResultColumn, columnIdx: number) => {
-    if (column.type === 'aggregate') {
-      switch (mode) {
-        case 'anonymized':
-          return [makeColumnData(column.name, columnIdx + '_anon', AGG_COLUMN_TYPE, renderValue)];
-        case 'combined':
-          return [
-            makeColumnData(column.name + ' (anonymized)', columnIdx + '_anon', AGG_COLUMN_TYPE, renderLowCountValue),
-            makeColumnData(column.name + ' (original)', columnIdx + '_real', AGG_COLUMN_TYPE, renderValue),
-            makeColumnData('Distortion', columnIdx + '_diff', 'real', renderRelativeNoiseValue),
-          ];
-      }
+const mapColumn = (mode: DisplayMode, bucketColumns: BucketColumn[]) => (column: AnonymizedResultColumn) => {
+  if (column.type === 'aggregate') {
+    switch (mode) {
+      case 'anonymized':
+        return [makeColumnData(column.name, 'anon', AGG_COLUMN_TYPE, renderValue)];
+      case 'combined':
+        return [
+          makeColumnData(column.name + ' (anonymized)', 'anon', AGG_COLUMN_TYPE, renderLowCountValue),
+          makeColumnData(column.name + ' (original)', 'real', AGG_COLUMN_TYPE, renderValue),
+          makeColumnData('Distortion', 'diff', 'real', renderRelativeNoiseValue),
+        ];
     }
+  }
 
-    return [makeColumnData(column.name, columnIdx.toString(), column.type, buildCellRenderer(column, bucketColumns))];
-  };
+  return [makeColumnData(column.name, column.name, column.type, buildCellRenderer(column, bucketColumns))];
+};
 
 // Rows
+
+// Represents data shown in the table; contains values which are displayed along
+// with some metadata used to style and render the row.
+type TableRowData = RowData & {
+  // RowData contains fields derived from bucket columns,
+  // which are shown in the table along with:
+  anon: number | null;
+  real: number;
+  diff: number | null;
+  // Row metadata fields:
+  key: number;
+  lowCount: AnonymizedResultRow['lowCount'];
+};
 
 function rowClassName({ lowCount }: TableRowData) {
   return 'AnonymizedResultsTable-row' + (lowCount ? ' low-count' : '');
@@ -130,48 +150,39 @@ function filterRows(mode: DisplayMode, rows: AnonymizedResultRow[]) {
   }
 }
 
-function addValuesToRowData(rowData: TableRowData, values: AnonymizedValue[]) {
-  const { length } = values;
-  for (let columnIdx = 0; columnIdx < length; columnIdx++) {
-    const value = values[columnIdx];
-    if (value && typeof value === 'object') {
-      rowData[columnIdx + '_real'] = value.realValue;
-      rowData[columnIdx + '_anon'] = value.anonValue;
-      rowData[columnIdx + '_diff'] = relativeNoise(value);
-    } else {
-      rowData[columnIdx] = value;
-    }
-  }
-}
-
 function mapRow(row: AnonymizedResultRow, i: number) {
-  const rowData: TableRowData = {
+  const anon = row.diffixCount;
+  const real = row.count;
+  return {
+    // displayed values
+    ...row.bucketValues,
+    anon: anon,
+    real: real,
+    diff: relativeNoise(anon, real),
+    // row metadata
     key: i,
     lowCount: row.lowCount,
   };
-
-  addValuesToRowData(rowData, row.values);
-
-  return rowData;
 }
 
-function makeSuppressBinData(result: AnonymizedQueryResult) {
+function makeSuppressBinData(result: AnonymizedQueryResult, bucketColumns: BucketColumn[]) {
   if (result.summary.suppressedAnonCount) {
+    const anon = result.summary.suppressedAnonCount;
+    const real = result.summary.suppressedCount;
     const rowData: TableRowData = {
+      // displayed values; bucket values are filled in with *'s below
+      anon: anon,
+      real: real,
+      diff: relativeNoise(anon, real),
+      // row metadata
       key: -1,
-      // non-null `suppressedAnonCount` implies this
       lowCount: false,
     };
 
-    const values: AnonymizedValue[] = result.columns.map((column: AnonymizedResultColumn) =>
-      // This TableRowData is for the suppress bin, so all bucket columns hold
-      // the star "*", while aggregate columns (counts) are coming from the summary
-      column.type === 'aggregate'
-        ? { realValue: result.summary.suppressedCount, anonValue: result.summary.suppressedAnonCount }
-        : '*',
-    );
+    bucketColumns.forEach((column: BucketColumn) => {
+      rowData[column.name] = '*';
+    });
 
-    addValuesToRowData(rowData, values);
     return [rowData];
   } else {
     // no suppression took place _OR_ the suppress bin was itself suppressed by the
@@ -198,7 +209,7 @@ export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTablePro
   const columns = result.columns.flatMap(mapColumn(mode, bucketColumns));
   const queryData = filterRows(mode, result.rows).map(mapRow);
 
-  const suppressBinData: TableRowData[] = mode === 'anonymized' ? makeSuppressBinData(result) : [];
+  const suppressBinData: TableRowData[] = mode === 'anonymized' ? makeSuppressBinData(result, bucketColumns) : [];
 
   const data = suppressBinData.concat(queryData);
 

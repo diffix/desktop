@@ -11,7 +11,7 @@ export type ComputedData<T> =
 export type DisplayMode = 'anonymized' | 'combined';
 
 export type RowData = {
-  [dataIndex in number | string]: Value;
+  [dataIndex: string]: Value;
 };
 
 // Schema
@@ -103,13 +103,13 @@ export type AnonymizedResultColumn = {
 
 export type AnonymizedColumnType = ColumnType | 'aggregate';
 
-export type AnonymizedResultRow = { lowCount: boolean; values: AnonymizedValue[] };
-
-export type AnonymizedValue = Value | AnonymizedAggregate;
-
-export type AnonymizedAggregate = {
-  realValue: number;
-  anonValue: number | null;
+// Represents row data returned from the preview query request to the
+// `OpenDiffix.Service`
+export type AnonymizedResultRow = {
+  lowCount: boolean;
+  count: number;
+  diffixCount: number | null;
+  bucketValues: RowData;
 };
 
 // AnonymizationParams
