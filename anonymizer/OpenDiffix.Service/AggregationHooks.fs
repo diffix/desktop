@@ -27,7 +27,17 @@ let private isGlobalAggregation (aggregationContext: AggregationContext) =
 let private lowCountIndex (aggregationContext: AggregationContext) =
   match findAggregator DiffixLowCount aggregationContext.Aggregators with
   | Some index -> index
-  | None -> failwith "Cannot find required aggregator for LED hook"
+  | None -> failwith "Cannot find required DiffixLowCount aggregator"
+
+let private diffixCountIndex (aggregationContext: AggregationContext) =
+  match findAggregator DiffixCount aggregationContext.Aggregators with
+  | Some index -> index
+  | None -> failwith "Cannot find required DiffixCount aggregator"
+
+let private countIndex (aggregationContext: AggregationContext) =
+  match findAggregator Count aggregationContext.Aggregators with
+  | Some index -> index
+  | None -> failwith "Cannot find required Count aggregator"
 
 module Led =
   type private SiblingPerColumn =
@@ -168,6 +178,7 @@ module StarBucket =
   let private computeStarBucket callback aggregationContext buckets =
     let starBucket = makeStarBucket aggregationContext
     let lowCountIndex = lowCountIndex aggregationContext
+    let diffixCountIndex = diffixCountIndex aggregationContext
 
     let buckets =
       buckets
@@ -181,7 +192,22 @@ module StarBucket =
           bucket |> mergeAllAggregatorsInto starBucket
       )
 
-    callback starBucket
+    let executionContext = starBucket.ExecutionContext
+
+    // NOTE this is also true when there is no star bucket (no suppression)
+    //      this is because of how the initial value (`null`) of the
+    //      `DiffixLowCount` aggregator is translated to `Boolean true`
+    let isStarBucketLowCount =
+      starBucket.Aggregators.[lowCountIndex].Final(executionContext)
+      |> Value.unwrapBoolean
+
+    let suppressedAnonCount =
+      if isStarBucketLowCount then
+        Null
+      else
+        starBucket.Aggregators.[diffixCountIndex].Final(executionContext)
+
+    callback suppressedAnonCount
     buckets :> Bucket seq
 
   let hook callback (aggregationContext: AggregationContext) (buckets: Bucket seq) =

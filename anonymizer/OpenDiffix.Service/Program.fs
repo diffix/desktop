@@ -2,6 +2,7 @@ module OpenDiffix.Service.Program
 
 open System
 open System.IO
+
 open OpenDiffix.Core
 open OpenDiffix.Core.QueryEngine
 open JsonEncodersDecoders
@@ -35,17 +36,32 @@ let csvFormat value =
   | String string -> quoteString string
   | _ -> Value.toString value
 
-let csvFormatter result =
+let csvFormatter suppressedAnonCount result =
   let header =
     result.Columns
     |> List.map (fun column -> quoteString column.Name)
+    |> String.join ","
+
+  let starBucketRow =
+    result.Columns
+    |> List.map (
+      function
+      | { Name = "count" } -> csvFormat suppressedAnonCount
+      | _ -> csvFormat (Value.String "*")
+    )
     |> String.join ","
 
   let rows =
     result.Rows
     |> List.map (fun row -> row |> Array.map csvFormat |> String.join ",")
 
-  header :: rows |> String.join "\n"
+  match suppressedAnonCount with
+  // no suppression took place _OR_ the suppress bin was itself suppressed by the
+  // low count filter
+  | Null -> header :: rows |> String.join "\n"
+  // there was suppression and the suppress bin wasn't suppressed
+  | Integer _ -> header :: starBucketRow :: rows |> String.join "\n"
+  | _ -> failwith "Unexpected value of SuppressedAnonCount"
 
 let handleLoad ({ InputPath = inputPath; Rows = rows }: LoadRequest) =
   let query = $"SELECT * FROM table LIMIT %d{rows}"
@@ -54,10 +70,17 @@ let handleLoad ({ InputPath = inputPath; Rows = rows }: LoadRequest) =
   |> runQuery NO_HOOKS query inputPath
   |> encodeResponse
 
-let unwrapCount count =
+let safeUnwrapCount count =
   match count with
-  | Integer count -> count
-  | _ -> failwith "Unexpected value type received for count."
+  | Integer count -> Some(int count)
+  | _ -> None
+
+let unwrapCount count =
+  count
+  |> safeUnwrapCount
+  |> function
+    | Some count -> count
+    | _ -> failwith "Unexpected value type received for count."
 
 let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
   {
@@ -104,7 +127,13 @@ let handlePreview
         GROUP BY %s{String.join ", " [ 4 .. buckets.Length + 3 ]}
       """
 
-  let result = runQuery [ (* ledHook; starBucketHook *) ] query inputPath anonParams
+  // We get a hold of the star bucket results reference via side effects.
+  let mutable suppressedAnonCount = Null
+  let pullHookResultsCallback results = suppressedAnonCount <- results
+  let starBucketHook = AggregationHooks.StarBucket.hook pullHookResultsCallback
+
+  // TODO: `ledHook` is temporarily disabled until optimized
+  let result = runQuery [ starBucketHook ] query inputPath anonParams
 
   let mutable totalBuckets = 0
   let mutable suppressedBuckets = 0
@@ -114,7 +143,7 @@ let handlePreview
   let distortions = Array.create result.Rows.Length 0.0
 
   for row in result.Rows do
-    let realCount = int (unwrapCount row.[1])
+    let realCount = unwrapCount row.[1]
     totalBuckets <- totalBuckets + 1
     totalCount <- totalCount + realCount
 
@@ -122,7 +151,7 @@ let handlePreview
       suppressedBuckets <- suppressedBuckets + 1
       suppressedCount <- suppressedCount + realCount
     else
-      let noisyCount = int (unwrapCount row.[2])
+      let noisyCount = unwrapCount row.[2]
       let distortion = float (abs (noisyCount - realCount)) / float realCount
       let anonBucket = totalBuckets - suppressedBuckets - 1
       distortions.[anonBucket] <- distortion
@@ -137,6 +166,7 @@ let handlePreview
       SuppressedBuckets = suppressedBuckets
       TotalCount = totalCount
       SuppressedCount = suppressedCount
+      SuppressedAnonCount = safeUnwrapCount suppressedAnonCount
       MaxDistortion = Array.last distortions
       MedianDistortion = distortions.[anonBuckets / 2]
     }
@@ -174,7 +204,17 @@ let handleExport
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
-  let output = anonParams |> runQuery [ (* ledHook; *) ] query inputPath |> csvFormatter
+  // We get a hold of the star bucket results reference via side effects.
+  let mutable suppressedAnonCount = Null
+  let pullHookResultsCallback results = suppressedAnonCount <- results
+  let starBucketHook = AggregationHooks.StarBucket.hook pullHookResultsCallback
+
+  // TODO: `ledHook` is temporarily disabled until optimized
+  let output =
+    anonParams
+    |> runQuery [ starBucketHook ] query inputPath
+    |> csvFormatter suppressedAnonCount
+
 
   File.WriteAllText(outputPath, output)
 
