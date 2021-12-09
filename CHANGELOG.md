@@ -4,6 +4,7 @@
 
 - Merge suppressed buckets into a special *-bucket.
 - Added support for simple low-effect detection (LED).
+- Fixed decimal form inputs causing anonymization failure.
 
 ### Version 0.4.0
 

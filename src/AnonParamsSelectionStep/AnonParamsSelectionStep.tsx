@@ -35,18 +35,21 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
         <NotebookNavAnchor step={NotebookNavStep.AnonParamsSelection} status="done" />
         <Title level={3}>Adjust suppression threshold</Title>
 
-        <Form layout="inline">
+        <Form
+          layout="inline"
+          initialValues={{ lowThreshold: lowThreshold }}
+          onValuesChange={({ lowThreshold }) => setLowThreshold(Math.round(lowThreshold))}
+        >
           <Form.Item
             label="Suppression Threshold"
             tooltip="Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed"
             name="lowThreshold"
           >
             <InputNumber
+              // `precision` and `Math.round` in change handler both needed to protect from decimals
+              precision={0}
               size="middle"
               min={minLowThreshold}
-              defaultValue={lowThreshold}
-              value={lowThreshold}
-              onChange={(newThreshold) => setLowThreshold(newThreshold)}
             />
           </Form.Item>
         </Form>
