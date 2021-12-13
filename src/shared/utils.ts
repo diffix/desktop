@@ -1,4 +1,4 @@
-import { AnonymizedAggregate, ColumnType, ComputedData, RowData, Task, Value } from '../types';
+import { AnonymizedAggregate, ColumnType, RowDataIndex, ComputedData, RowData, Task, Value } from '../types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const inProgressState: ComputedData<any> = { state: 'in_progress' };
@@ -49,7 +49,7 @@ function toBoolean(value: Value) {
 }
 
 export const columnSorter =
-  (type: ColumnType, dataIndex: number | string) =>
+  (type: ColumnType, dataIndex: RowDataIndex) =>
   (rowA: RowData, rowB: RowData): number => {
     let a = rowA[dataIndex];
     let b = rowB[dataIndex];

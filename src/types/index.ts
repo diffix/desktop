@@ -10,8 +10,11 @@ export type ComputedData<T> =
 
 export type DisplayMode = 'anonymized' | 'combined';
 
+export type AggregateRowDataIndex = `${number}_anon` | `${number}_real` | `${number}_diff`;
+export type RowDataIndex = number | AggregateRowDataIndex;
+
 export type RowData = {
-  [dataIndex in number | string]: Value;
+  [dataIndex: RowDataIndex]: Value;
 };
 
 // Schema

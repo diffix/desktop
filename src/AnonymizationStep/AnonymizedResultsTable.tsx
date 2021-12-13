@@ -12,6 +12,7 @@ import {
   Value,
   BucketColumn,
   AnonymizedValue,
+  RowDataIndex,
 } from '../types';
 import { DisplayModeSwitch } from './DisplayModeSwitch';
 
@@ -27,7 +28,7 @@ type TableRowData = RowData & {
 
 // Ensures that suppress bin row always comes first, regardless of sorting.
 // It must be first in the `Table`'s dataSource
-function anonymizedColumnSorter(type: ColumnType, dataIndex: number | string) {
+function anonymizedColumnSorter(type: ColumnType, dataIndex: RowDataIndex) {
   const commonSorter = columnSorter(type, dataIndex);
   return (rowA: TableRowData, rowB: TableRowData): number => {
     if (rowA.isSuppressBinRow || rowB.isSuppressBinRow) return 0;
@@ -97,7 +98,12 @@ function renderRelativeNoiseValue(v: Value) {
   return plainStringCell(v === null ? '-' : formatPercentage(v as number));
 }
 
-function makeColumnData(title: string, dataIndex: string, type: ColumnType, render: (v: Value) => React.ReactNode) {
+function makeColumnData(
+  title: string,
+  dataIndex: RowDataIndex,
+  type: ColumnType,
+  render: (v: Value) => React.ReactNode,
+) {
   return {
     title,
     dataIndex,
@@ -114,17 +120,17 @@ const mapColumn =
     if (column.type === 'aggregate') {
       switch (mode) {
         case 'anonymized':
-          return [makeColumnData(column.name, columnIdx + '_anon', AGG_COLUMN_TYPE, renderValue)];
+          return [makeColumnData(column.name, `${columnIdx}_anon`, AGG_COLUMN_TYPE, renderValue)];
         case 'combined':
           return [
-            makeColumnData(column.name + ' (anonymized)', columnIdx + '_anon', AGG_COLUMN_TYPE, renderLowCountValue),
-            makeColumnData(column.name + ' (original)', columnIdx + '_real', AGG_COLUMN_TYPE, renderValue),
-            makeColumnData('Distortion', columnIdx + '_diff', 'real', renderRelativeNoiseValue),
+            makeColumnData(column.name + ' (anonymized)', `${columnIdx}_anon`, AGG_COLUMN_TYPE, renderLowCountValue),
+            makeColumnData(column.name + ' (original)', `${columnIdx}_real`, AGG_COLUMN_TYPE, renderValue),
+            makeColumnData('Distortion', `${columnIdx}_diff`, AGG_COLUMN_TYPE, renderRelativeNoiseValue),
           ];
       }
     }
 
-    return [makeColumnData(column.name, columnIdx.toString(), column.type, buildCellRenderer(column, bucketColumns))];
+    return [makeColumnData(column.name, columnIdx, column.type, buildCellRenderer(column, bucketColumns))];
   };
 
 // Rows
@@ -146,9 +152,10 @@ function addValuesToRowData(rowData: TableRowData, values: AnonymizedValue[]) {
   for (let columnIdx = 0; columnIdx < length; columnIdx++) {
     const value = values[columnIdx];
     if (value && typeof value === 'object') {
-      rowData[columnIdx + '_real'] = value.realValue;
-      rowData[columnIdx + '_anon'] = value.anonValue;
-      rowData[columnIdx + '_diff'] = relativeNoise(value);
+      // if `value` is an object, must be of type `AnonymizedAggregate`
+      rowData[`${columnIdx}_anon`] = value.anonValue;
+      rowData[`${columnIdx}_real`] = value.realValue;
+      rowData[`${columnIdx}_diff`] = relativeNoise(value);
     } else {
       rowData[columnIdx] = value;
     }
