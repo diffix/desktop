@@ -180,6 +180,8 @@ module StarBucket =
     let lowCountIndex = lowCountIndex aggregationContext
     let diffixCountIndex = diffixCountIndex aggregationContext
 
+    let mutable bucketCount = 0
+
     let buckets =
       buckets
       |> iterateBuckets (fun bucket ->
@@ -189,20 +191,23 @@ module StarBucket =
           |> Value.unwrapBoolean
 
         if not isAlreadyMerged && isLowCount lowCountIndex bucket then
+          bucketCount <- bucketCount + 1
           bucket |> mergeAllAggregatorsInto starBucket
       )
 
     let executionContext = starBucket.ExecutionContext
 
-    // NOTE this is also true when there is no star bucket (no suppression)
-    //      this is because of how the initial value (`null`) of the
-    //      `DiffixLowCount` aggregator is translated to `Boolean true`
     let isStarBucketLowCount =
       starBucket.Aggregators.[lowCountIndex].Final(executionContext)
       |> Value.unwrapBoolean
 
+    let isStarBucketSingleBucket = bucketCount < 2
+
     let suppressedAnonCount =
-      if isStarBucketLowCount then
+      // NOTE: we can have a suppress bin consisting of a single suppressed bucket,
+      // which won't be suppressed by itself (different noise seed). In such case,
+      // we must enforce the suppression manually with `isStarBucketSingleBucket`.
+      if isStarBucketLowCount || isStarBucketSingleBucket then
         Null
       else
         starBucket.Aggregators.[diffixCountIndex].Final(executionContext)

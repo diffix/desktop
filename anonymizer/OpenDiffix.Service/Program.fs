@@ -56,8 +56,7 @@ let csvFormatter suppressedAnonCount result =
     |> List.map (fun row -> row |> Array.map csvFormat |> String.join ",")
 
   match suppressedAnonCount with
-  // no suppression took place _OR_ the suppress bin was itself suppressed by the
-  // low count filter
+  // no suppression took place _OR_ the suppress bin was itself suppressed
   | Null -> header :: rows |> String.join "\n"
   // there was suppression and the suppress bin wasn't suppressed
   | Integer _ -> header :: starBucketRow :: rows |> String.join "\n"
