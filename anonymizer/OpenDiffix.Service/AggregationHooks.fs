@@ -148,11 +148,10 @@ module StarBucket =
   let private makeStarBucket (aggregationContext: AggregationContext) =
     let isGlobal = isGlobalAggregation aggregationContext
 
-    // TODO: Do we need a specific noise seed for the star bucket?
     let executionContext = aggregationContext.ExecutionContext
 
-    // Group labels are all NULLs
-    let group = Array.create aggregationContext.GroupingLabels.Length Null
+    // Group labels are all '*'s
+    let group = Array.create aggregationContext.GroupingLabels.Length (String "*")
 
     let aggregators =
       aggregationContext.Aggregators
