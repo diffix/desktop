@@ -20,9 +20,20 @@ import './AnonymizedResultsTable.css';
 type TableRowData = RowData & {
   key: number;
   lowCount: AnonymizedResultRow['lowCount'];
+  isSuppressBinRow: boolean;
 };
 
 // Columns
+
+// Ensures that suppress bin row always comes first, regardless of sorting.
+// It must be first in the `Table`'s dataSource
+function anonymizedColumnSorter(type: ColumnType, dataIndex: number | string) {
+  const commonSorter = columnSorter(type, dataIndex);
+  return (rowA: TableRowData, rowB: TableRowData): number => {
+    if (rowA.isSuppressBinRow || rowB.isSuppressBinRow) return 0;
+    return commonSorter(rowA, rowB);
+  };
+}
 
 // with `ellipsis: { showTitle: false }` set for the column, we're disabling the default tooltip
 // so that the styling of tooltips is more consistent. This forces us to provide Tooltip in all cases
@@ -91,7 +102,7 @@ function makeColumnData(title: string, dataIndex: string, type: ColumnType, rend
     title,
     dataIndex,
     render,
-    sorter: columnSorter(type, dataIndex),
+    sorter: anonymizedColumnSorter(type, dataIndex),
     ellipsis: { showTitle: false },
   };
 }
@@ -148,6 +159,7 @@ function mapRow(row: AnonymizedResultRow, i: number) {
   const rowData: TableRowData = {
     key: i,
     lowCount: row.lowCount,
+    isSuppressBinRow: false,
   };
 
   addValuesToRowData(rowData, row.values);
@@ -161,6 +173,7 @@ function makeSuppressBinData(result: AnonymizedQueryResult) {
       key: -1,
       // non-null `suppressedAnonCount` implies this
       lowCount: false,
+      isSuppressBinRow: true,
     };
 
     const values: AnonymizedValue[] = result.columns.map((column: AnonymizedResultColumn) =>
