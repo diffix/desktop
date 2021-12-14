@@ -219,7 +219,7 @@ The combined view lets you examine precisely the distortion and suppression. The
 
 ### Suppress bin
 
-The first row in the Anonymized Data table might contain the _suppress bin_, which provides the anonymized count of the data from the bins which got suppressed. The suppress bin has all of the columns selected for anonymization displaying the value `*`.
+The first row in the Anonymized Data table might contain the _suppress bin_, which provides the combined anonymized count of all the bins that were suppressed. The suppress bin shows all column values as `*`.
 
 Note that the suppress bin may itself be suppressed. The suppress bin is only shown in the `Anonymized` view.
 
