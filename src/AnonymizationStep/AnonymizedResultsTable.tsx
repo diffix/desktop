@@ -191,6 +191,9 @@ function makeSuppressBinData(result: AnonymizedQueryResult) {
         : '*',
     );
 
+    const firstStarInRowIdx = values.findIndex((v) => v === '*');
+    if (firstStarInRowIdx > -1) values[firstStarInRowIdx] = '* (Suppress bin)';
+
     addValuesToRowData(rowData, values);
     return [rowData];
   } else {
