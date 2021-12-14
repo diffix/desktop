@@ -217,6 +217,12 @@ The combined view displays suppressed bins. The `Count (anonymized)` column is l
 
 The combined view lets you examine precisely the distortion and suppression. The anonymized data can be sorted by each column. Sorting by `Count (original)` shows the ascending suppressed bins first, and so is useful for examining what has been suppressed. Sorting by `Distortion` descending shows the bins with the most error first, and so is useful for examining which bins have high distortion.
 
+### Suppress bin
+
+The first row in the Anonymized Data table might contain the _suppress bin_, which provides the combined anonymized count of all the bins that were suppressed. The suppress bin shows all column values as `*`.
+
+Note that the suppress bin may itself be suppressed. The suppress bin is only shown in the `Anonymized` view.
+
 ### What is safe to release
 
 Note that the data in the `Anonymized` view is the only data that is properly anonymized by __Diffix for Desktop__. Note in particular that the Anonymization Summary is not anonymized per se. See [Releasing Anonymization Summary statistics](tips.md#releasing-anonymization-summary-statistics).

@@ -122,6 +122,14 @@ function AnonymizedResultsHelp() {
           Click here for details.
         </DocsLink>
       </Paragraph>
+      <Paragraph>
+        The{' '}
+        <DocsLink page="operation" section="suppress-bin">
+          suppress bin
+        </DocsLink>{' '}
+        denoted by <Text code>*</Text> column values, is shown first. It indicates the combined anonymized count of all
+        suppressed bins.
+      </Paragraph>
     </div>
   );
 }
@@ -130,7 +138,10 @@ function CsvExportHelp() {
   return (
     <div>
       <Title level={4}>CSV Export</Title>
-      <Paragraph>Exports the anonymized results only (not the combined view).</Paragraph>
+      <Paragraph>
+        Exports the anonymized results only (not the combined view). The suppress bin is exported as the first row in
+        the CSV file, unless it has been suppressed.
+      </Paragraph>
     </div>
   );
 }
