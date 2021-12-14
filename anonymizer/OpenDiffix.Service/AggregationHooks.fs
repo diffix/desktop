@@ -148,11 +148,10 @@ module StarBucket =
   let private makeStarBucket (aggregationContext: AggregationContext) =
     let isGlobal = isGlobalAggregation aggregationContext
 
-    // TODO: Do we need a specific noise seed for the star bucket?
     let executionContext = aggregationContext.ExecutionContext
 
-    // Group labels are all NULLs
-    let group = Array.create aggregationContext.GroupingLabels.Length Null
+    // Group labels are all '*'s
+    let group = Array.create aggregationContext.GroupingLabels.Length (String "*")
 
     let aggregators =
       aggregationContext.Aggregators
@@ -165,50 +164,42 @@ module StarBucket =
     starBucket |> Bucket.putAttribute BucketAttributes.IS_STAR_BUCKET (Boolean true)
     starBucket
 
-  /// Iterates and materializes the bucket sequence.
-  let private iterateBuckets f (buckets: Bucket seq) =
-    buckets
-    |> Seq.map (fun bucket ->
-      f bucket
-      bucket
-    )
-    // We do this because re-running a sequence is potentially dangerous if it has side effects.
-    |> Seq.toArray
-
-  let private computeStarBucket callback aggregationContext buckets =
+  let private computeStarBucket callback aggregationContext (buckets: Bucket seq) =
     let starBucket = makeStarBucket aggregationContext
     let lowCountIndex = lowCountIndex aggregationContext
     let diffixCountIndex = diffixCountIndex aggregationContext
 
-    let buckets =
-      buckets
-      |> iterateBuckets (fun bucket ->
-        let isAlreadyMerged =
-          bucket
-          |> Bucket.getAttribute BucketAttributes.IS_LED_MERGED
-          |> Value.unwrapBoolean
+    let isInStarBucket bucket =
+      let isAlreadyMerged =
+        bucket
+        |> Bucket.getAttribute BucketAttributes.IS_LED_MERGED
+        |> Value.unwrapBoolean
 
-        if not isAlreadyMerged && isLowCount lowCountIndex bucket then
-          bucket |> mergeAllAggregatorsInto starBucket
-      )
+      not isAlreadyMerged && isLowCount lowCountIndex bucket
+
+    let bucketsInStarBucket =
+      buckets
+      |> Seq.filter isInStarBucket
+      |> Seq.map (mergeAllAggregatorsInto starBucket)
+      |> Seq.length
 
     let executionContext = starBucket.ExecutionContext
 
-    // NOTE this is also true when there is no star bucket (no suppression)
-    //      this is because of how the initial value (`null`) of the
-    //      `DiffixLowCount` aggregator is translated to `Boolean true`
     let isStarBucketLowCount =
       starBucket.Aggregators.[lowCountIndex].Final(executionContext)
       |> Value.unwrapBoolean
 
     let suppressedAnonCount =
-      if isStarBucketLowCount then
+      // NOTE: we can have a suppress bin consisting of a single suppressed bucket,
+      // which won't be suppressed by itself (different noise seed). In such case,
+      // we must enforce the suppression manually.
+      if isStarBucketLowCount || bucketsInStarBucket < 2 then
         Null
       else
         starBucket.Aggregators.[diffixCountIndex].Final(executionContext)
 
     callback suppressedAnonCount
-    buckets :> Bucket seq
+    buckets
 
   let hook callback (aggregationContext: AggregationContext) (buckets: Bucket seq) =
     computeStarBucket callback aggregationContext buckets

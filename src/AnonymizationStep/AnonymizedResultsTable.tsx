@@ -186,7 +186,7 @@ function makeSuppressBinData(result: AnonymizedQueryResult) {
     const values: AnonymizedValue[] = result.columns.map((column: AnonymizedResultColumn) =>
       // This TableRowData is for the suppress bin, so all bucket columns hold
       // the star "*", while aggregate columns (counts) are coming from the summary
-      column.type === 'aggregate'
+      column.type === 'aggregate' && column.name === 'Count'
         ? { realValue: result.summary.suppressedCount, anonValue: result.summary.suppressedAnonCount }
         : '*',
     );
@@ -197,8 +197,7 @@ function makeSuppressBinData(result: AnonymizedQueryResult) {
     addValuesToRowData(rowData, values);
     return [rowData];
   } else {
-    // no suppression took place _OR_ the suppress bin was itself suppressed by the
-    // low count filter
+    // no suppression took place _OR_ the suppress bin was itself suppressed
     return [];
   }
 }

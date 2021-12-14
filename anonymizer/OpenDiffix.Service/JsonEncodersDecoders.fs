@@ -9,6 +9,7 @@ type Summary =
     SuppressedBuckets: int
     TotalCount: int
     SuppressedCount: int
+    // `None` if the suppress bin has been suppressed
     SuppressedAnonCount: int option
     MaxDistortion: float
     MedianDistortion: float
