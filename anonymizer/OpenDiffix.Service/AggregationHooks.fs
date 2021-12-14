@@ -164,33 +164,24 @@ module StarBucket =
     starBucket |> Bucket.putAttribute BucketAttributes.IS_STAR_BUCKET (Boolean true)
     starBucket
 
-  /// Iterates and materializes the bucket sequence.
-  let private iterateBuckets f (buckets: Bucket seq) =
-    buckets
-    |> Seq.map (fun bucket ->
-      f bucket
-      bucket
-    )
-    // We do this because re-running a sequence is potentially dangerous if it has side effects.
-    |> Seq.toArray
-
   let private computeStarBucket callback aggregationContext (buckets: Bucket seq) =
     let starBucket = makeStarBucket aggregationContext
     let lowCountIndex = lowCountIndex aggregationContext
     let diffixCountIndex = diffixCountIndex aggregationContext
 
-    let starBucketBuckets =
+    let isInStarBucket bucket =
+      let isAlreadyMerged =
+        bucket
+        |> Bucket.getAttribute BucketAttributes.IS_LED_MERGED
+        |> Value.unwrapBoolean
+
+      not isAlreadyMerged && isLowCount lowCountIndex bucket
+
+    let bucketsInStarBucket =
       buckets
-      |> Seq.filter (fun bucket ->
-        let isAlreadyMerged =
-          bucket
-          |> Bucket.getAttribute BucketAttributes.IS_LED_MERGED
-          |> Value.unwrapBoolean
-
-        not isAlreadyMerged && isLowCount lowCountIndex bucket
-      )
-
-    starBucketBuckets |> Seq.iter (mergeAllAggregatorsInto starBucket)
+      |> Seq.filter isInStarBucket
+      |> Seq.map (mergeAllAggregatorsInto starBucket)
+      |> Seq.length
 
     let executionContext = starBucket.ExecutionContext
 
@@ -202,7 +193,7 @@ module StarBucket =
       // NOTE: we can have a suppress bin consisting of a single suppressed bucket,
       // which won't be suppressed by itself (different noise seed). In such case,
       // we must enforce the suppression manually.
-      if isStarBucketLowCount || (Seq.length starBucketBuckets) = 1 then
+      if isStarBucketLowCount || bucketsInStarBucket < 2 then
         Null
       else
         starBucket.Aggregators.[diffixCountIndex].Final(executionContext)
