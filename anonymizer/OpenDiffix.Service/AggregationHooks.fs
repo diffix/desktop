@@ -174,25 +174,23 @@ module StarBucket =
     // We do this because re-running a sequence is potentially dangerous if it has side effects.
     |> Seq.toArray
 
-  let private computeStarBucket callback aggregationContext buckets =
+  let private computeStarBucket callback aggregationContext (buckets: Bucket seq) =
     let starBucket = makeStarBucket aggregationContext
     let lowCountIndex = lowCountIndex aggregationContext
     let diffixCountIndex = diffixCountIndex aggregationContext
 
-    let mutable bucketCount = 0
-
-    let buckets =
+    let starBucketBuckets =
       buckets
-      |> iterateBuckets (fun bucket ->
+      |> Seq.filter (fun bucket ->
         let isAlreadyMerged =
           bucket
           |> Bucket.getAttribute BucketAttributes.IS_LED_MERGED
           |> Value.unwrapBoolean
 
-        if not isAlreadyMerged && isLowCount lowCountIndex bucket then
-          bucketCount <- bucketCount + 1
-          bucket |> mergeAllAggregatorsInto starBucket
+        not isAlreadyMerged && isLowCount lowCountIndex bucket
       )
+
+    starBucketBuckets |> Seq.iter (mergeAllAggregatorsInto starBucket)
 
     let executionContext = starBucket.ExecutionContext
 
@@ -200,19 +198,17 @@ module StarBucket =
       starBucket.Aggregators.[lowCountIndex].Final(executionContext)
       |> Value.unwrapBoolean
 
-    let isStarBucketSingleBucket = bucketCount < 2
-
     let suppressedAnonCount =
       // NOTE: we can have a suppress bin consisting of a single suppressed bucket,
       // which won't be suppressed by itself (different noise seed). In such case,
-      // we must enforce the suppression manually with `isStarBucketSingleBucket`.
-      if isStarBucketLowCount || isStarBucketSingleBucket then
+      // we must enforce the suppression manually.
+      if isStarBucketLowCount || (Seq.length starBucketBuckets) = 1 then
         Null
       else
         starBucket.Aggregators.[diffixCountIndex].Final(executionContext)
 
     callback suppressedAnonCount
-    buckets :> Bucket seq
+    buckets
 
   let hook callback (aggregationContext: AggregationContext) (buckets: Bucket seq) =
     computeStarBucket callback aggregationContext buckets
