@@ -99,16 +99,30 @@ let private isolatingColumns (aggregationContext: AggregationContext) (buckets: 
 
   buckets, isolatingColumns
 
+/// Tracks number of siblings for bucket column.
+/// A sibling is a bucket that matches all other columns except the current one.
 type private SiblingPerColumn =
   | NoBuckets
   | SingleBucket of bucket: Bucket * lowCount: bool
   | MultipleBuckets
 
+/// Checks if any column is unknown.
+/// An unknown column has no siblings.
 let private hasUnknownColumn (siblingsPerColumn: SiblingPerColumn array) =
   siblingsPerColumn
   |> Array.exists (
     function
     | NoBuckets -> true
+    | _ -> false
+  )
+
+/// Checks if any column is isolating.
+/// An isolating column has a single high-count sibling.
+let private hasIsolatingColumn (siblingsPerColumn: SiblingPerColumn array) =
+  siblingsPerColumn
+  |> Array.exists (
+    function
+    | SingleBucket (_, false) -> true
     | _ -> false
   )
 
@@ -164,15 +178,7 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
             | _ -> MultipleBuckets
         | None -> ()
 
-    let hasIsolatingColumn =
-      siblingsPerColumn
-      |> Array.exists (
-        function
-        | SingleBucket (_, false) -> true
-        | _ -> false
-      )
-
-    if hasIsolatingColumn then
+    if hasIsolatingColumn siblingsPerColumn then
       bucketsIsolatingColumn <- bucketsIsolatingColumn + 1
 
       // todo, unknown cols
