@@ -21,6 +21,7 @@ let private findSingleNonMatchingColumn max (row1: Row) (row2: Row) =
 
   compare None 0
 
+/// Returns an array of indexes pointing to anonymizing aggregators (diffix count, low count).
 let private anonymizingAggregatorIndexes (aggregationContext: AggregationContext) =
   aggregationContext.Aggregators
   |> Seq.map fst
@@ -28,19 +29,21 @@ let private anonymizingAggregatorIndexes (aggregationContext: AggregationContext
   |> Seq.choose (fun (i, aggSpec) -> if Aggregator.isAnonymizing aggSpec then Some i else None)
   |> Seq.toArray
 
-// For LED hook we merge only anonymizing aggregators.
+/// Merges only given indexes from source bucket to destination bucket.
 let private mergeGivenAggregatorsInto (targetBucket: Bucket) aggIndexes (sourceBucket: Bucket) =
+  targetBucket.RowCount <- targetBucket.RowCount + 1
+
   let sourceAggregators = sourceBucket.Aggregators
   let targetAggregators = targetBucket.Aggregators
 
   for i in aggIndexes do
     targetAggregators.[i].Merge(sourceAggregators.[i])
 
-type ColumnState = { Values: Dictionary<Value, int>; mutable TopValues: (Value * int) list }
-
 [<Literal>]
 let TOP_VALUES = 3
 
+/// Removes given value from the list.
+/// In addition, truncates the list to at most TOP_VALUES elements.
 let rec private removeValue index value list =
   if index = TOP_VALUES then
     [] // Trim off excess
@@ -50,6 +53,8 @@ let rec private removeValue index value list =
     | (topValue, _topCount) :: tail when topValue = value -> tail
     | head :: tail -> head :: removeValue (index + 1) value tail
 
+/// Inserts a (value, count) pair in the sorted list (in descending order).
+/// In addition, truncates the list to at most TOP_VALUES elements.
 let rec private insertValueSorted index (value, count) list =
   if index = TOP_VALUES then
     [] // Trim off excess
@@ -59,7 +64,17 @@ let rec private insertValueSorted index (value, count) list =
     | (_topValue, topCount) :: _tail when count > topCount -> (value, count) :: removeValue (index + 1) value list
     | head :: tail -> head :: insertValueSorted (index + 1) (value, count) tail
 
+/// Used to keep track of value distribution for a column.
+/// TopValues is a sorted list which is kept in sync with the three most frequent values.
+type private ColumnState = { Values: Dictionary<Value, int>; mutable TopValues: (Value * int) list }
+
+/// Determines isolating columns in the result set and returns an array of their indexes.
 let private isolatingColumns (aggregationContext: AggregationContext) (buckets: Bucket seq) =
+  // The only columns that can be isolating columns are columns where:
+  //   - One distinct value has at least 60% of all rows
+  //   - Two distinct values each have at least 30% of all rows
+  //   - Three distinct values each have at least 20% of all rows
+
   let countsByColumn =
     Array.init aggregationContext.GroupingLabels.Length (fun _ -> { Values = Dictionary(); TopValues = [] })
 
@@ -220,11 +235,15 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
   buckets :> Bucket seq
 
 let hook (aggregationContext: AggregationContext) (buckets: Bucket seq) =
+  // LED requires at least 2 columns - an isolating column and an unknown column.
+  // With exactly 2 columns attacks are not useful because
+  // they would have to isolate victims against the whole dataset.
   if aggregationContext.GroupingLabels.Length <= 2 then
     buckets
   else
     let buckets, isolatingColumns = isolatingColumns aggregationContext buckets
 
+    // The attack is possible only if there are isolating columns.
     if isolatingColumns.Length > 0 then
       led aggregationContext buckets isolatingColumns
     else
