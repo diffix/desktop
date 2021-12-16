@@ -32,15 +32,8 @@ module Utils =
     | Some index -> index
     | None -> failwith "Cannot find required DiffixCount aggregator"
 
-  let safeIter fn (seq: 'a seq) : 'a array =
+  /// Converts the sequence to an array, casting if it's already one.
+  let toArray (seq: 'a seq) : 'a array =
     match seq with
-    | :? ('a array) as arr ->
-      Array.iter fn arr
-      arr
-    | _ ->
-      seq
-      |> Seq.map (fun x ->
-        fn x
-        x
-      )
-      |> Seq.toArray
+    | :? ('a array) as arr -> arr
+    | _ -> Seq.toArray seq

@@ -69,7 +69,7 @@ let rec private insertValueSorted index (value, count) list =
 type private ColumnState = { Values: Dictionary<Value, int>; mutable TopValues: (Value * int) list }
 
 /// Determines isolating columns in the result set and returns an array of their indexes.
-let private isolatingColumns (aggregationContext: AggregationContext) (buckets: Bucket seq) =
+let private isolatingColumns (aggregationContext: AggregationContext) (buckets: Bucket array) =
   // The only columns that can be isolating columns are columns where:
   //   - One distinct value has at least 60% of all rows
   //   - Two distinct values each have at least 30% of all rows
@@ -80,20 +80,17 @@ let private isolatingColumns (aggregationContext: AggregationContext) (buckets: 
 
   let mutable totalRows = 0
 
-  let buckets =
-    buckets
-    |> Utils.safeIter (fun bucket ->
-      let count = bucket.RowCount
-      totalRows <- totalRows + count
+  for bucket in buckets do
+    let count = bucket.RowCount
+    totalRows <- totalRows + count
 
-      bucket.Group
-      |> Array.iteri (fun i value ->
-        let state = countsByColumn.[i]
-        let currentCount = Dictionary.getOrDefault value 0 state.Values
-        let newCount = currentCount + count
-        state.Values.[value] <- newCount
-        state.TopValues <- insertValueSorted 0 (value, newCount) state.TopValues
-      )
+    bucket.Group
+    |> Array.iteri (fun i value ->
+      let state = countsByColumn.[i]
+      let currentCount = Dictionary.getOrDefault value 0 state.Values
+      let newCount = currentCount + count
+      state.Values.[value] <- newCount
+      state.TopValues <- insertValueSorted 0 (value, newCount) state.TopValues
     )
 
   let aboveThreshold percent values =
@@ -112,7 +109,7 @@ let private isolatingColumns (aggregationContext: AggregationContext) (buckets: 
       | _other -> None
     )
 
-  buckets, isolatingColumns
+  isolatingColumns
 
 /// Tracks number of siblings for bucket column.
 /// A sibling is a bucket that matches all other columns except the current one.
@@ -241,9 +238,10 @@ let hook (aggregationContext: AggregationContext) (buckets: Bucket seq) =
   if aggregationContext.GroupingLabels.Length <= 2 then
     buckets
   else
-    let buckets, isolatingColumns = isolatingColumns aggregationContext buckets
+    let buckets = Utils.toArray buckets
+    let isolatingColumns = isolatingColumns aggregationContext buckets
 
-    // The attack is possible only if there are isolating columns.
+    // Attacks are possible only if there are isolating columns.
     if isolatingColumns.Length > 0 then
       led aggregationContext buckets isolatingColumns
     else
