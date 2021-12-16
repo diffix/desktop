@@ -2,6 +2,10 @@ module OpenDiffix.Service.Led
 
 open OpenDiffix.Core
 
+let private startStopwatch () = System.Diagnostics.Stopwatch.StartNew()
+
+let private logDebug msg = Logger.debug $"[LED] {msg}"
+
 /// Compares 2 rows and returns the index where a single column is not equal.
 /// Returns `None` if rows are equal or are different in more than one column.
 let private findSingleNonMatchingColumn max (row1: Row) (row2: Row) =
@@ -70,6 +74,8 @@ type private ColumnState = { Values: Dictionary<Value, int>; mutable TopValues: 
 
 /// Determines isolating columns in the result set and returns an array of their indexes.
 let private isolatingColumns (aggregationContext: AggregationContext) (buckets: Bucket array) =
+  let stopwatch = startStopwatch ()
+
   // The only columns that can be isolating columns are columns where:
   //   - One distinct value has at least 60% of all rows
   //   - Two distinct values each have at least 30% of all rows
@@ -109,6 +115,11 @@ let private isolatingColumns (aggregationContext: AggregationContext) (buckets: 
       | _other -> None
     )
 
+  let isolatingColumnsStr = isolatingColumns |> Seq.map string |> String.join ", "
+
+  logDebug $"Isolating columns: [{isolatingColumnsStr}]"
+  logDebug $"Isolating columns runtime: {stopwatch.Elapsed}"
+
   isolatingColumns
 
 /// Tracks number of siblings for bucket column.
@@ -138,16 +149,56 @@ let private hasIsolatingColumn (siblingsPerColumn: SiblingPerColumn array) =
     | _ -> false
   )
 
-let private led (aggregationContext: AggregationContext) (buckets: Bucket array) (isolatingColumns: int array) =
-  let stopwatch = System.Diagnostics.Stopwatch.StartNew()
+type LedDiagnostics() =
+  // How much time it took to run LED
+  let stopwatch = startStopwatch ()
+
+  // Bucket size vs. how many merges for that size occurred
   let mergeHistogram = Dictionary<int, int>()
+
+  // How many low count buckets are found
   let mutable bucketsLowCount = 0
+
+  // How many buckets with isolating columns are found
   let mutable bucketsIsolatingColumn = 0
+
+  // How many buckets are merged (at least once)
   let mutable bucketsMerged = 0
+
+  // How many comparisons between buckets have occurred (calls to findSingleNonMatchingColumn)
   let mutable comparisons = 0UL
 
-  let bumpDistribution bucketCount =
-    mergeHistogram.[bucketCount] <- (Dictionary.getOrDefault bucketCount 0 mergeHistogram) + 1
+  member this.IncrementMerge(bucketCount: int) =
+    mergeHistogram |> Dictionary.increment bucketCount
+
+  member this.IncrementBucketsLowCount() = bucketsLowCount <- bucketsLowCount + 1
+
+  member this.IncrementBucketsIsolatingColumn() =
+    bucketsIsolatingColumn <- bucketsIsolatingColumn + 1
+
+  member this.IncrementBucketsMerged() = bucketsMerged <- bucketsMerged + 1
+
+  member this.IncrementComparisons() = comparisons <- comparisons + 1UL
+
+  member this.Print(bucketsLength: int, victimBucketsLength: int) =
+    let mergeHistogramStr =
+      mergeHistogram
+      |> Seq.sortBy (fun pair -> pair.Key)
+      |> Seq.map (fun pair -> $"({pair.Key}, {pair.Value})")
+      |> Seq.append [ $"(*, {mergeHistogram |> Seq.sumBy (fun pair -> pair.Value)})" ]
+      |> String.join " "
+
+    logDebug $"Total buckets: {bucketsLength}"
+    logDebug $"Suppressed buckets: {bucketsLowCount}"
+    logDebug $"Suppressed buckets below threshold: {victimBucketsLength}"
+    logDebug $"Buckets with isolating column(s): {bucketsIsolatingColumn}"
+    logDebug $"Merged buckets: {bucketsMerged}"
+    logDebug $"Merge distribution: {mergeHistogramStr}"
+    logDebug $"Total comparisons: {comparisons}"
+    logDebug $"Runtime: {stopwatch.Elapsed}"
+
+let private led (aggregationContext: AggregationContext) (buckets: Bucket array) (isolatingColumns: int array) =
+  let diagnostics = LedDiagnostics()
 
   let lowCountIndex = Utils.lowCountIndex aggregationContext
   let groupingLabelsLength = aggregationContext.GroupingLabels.Length
@@ -167,7 +218,7 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
       let cacheKey = nonIsolatingColumns |> Array.map (fun i -> bucket.Group.[i])
       let siblings = isolatorCache |> Dictionary.getOrInit cacheKey (fun _ -> MutableList())
       siblings.Add((bucket, lowCount))
-      if lowCount then bucketsLowCount <- bucketsLowCount + 1
+      if lowCount then diagnostics.IncrementBucketsLowCount()
       if lowCount && bucket.RowCount <= 3 then Some(bucket, cacheKey) else None
     )
 
@@ -180,7 +231,7 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
     // Test for isolating columns
     for otherBucket, otherLowCount in isolatorCandidates do
       if not (obj.ReferenceEquals(victimBucket, otherBucket)) then
-        comparisons <- comparisons + 1UL
+        diagnostics.IncrementComparisons()
 
         match findSingleNonMatchingColumn groupingLabelsLength victimGroup otherBucket.Group with
         | Some nonMatchingColumn ->
@@ -191,18 +242,19 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
         | None -> ()
 
     if hasIsolatingColumn siblingsPerColumn then
-      bucketsIsolatingColumn <- bucketsIsolatingColumn + 1
+      diagnostics.IncrementBucketsIsolatingColumn()
 
       // todo, unknown cols
 
       if hasUnknownColumn siblingsPerColumn then
-        bucketsMerged <- bucketsMerged + 1
+        diagnostics.IncrementBucketsMerged()
 
         siblingsPerColumn
         |> Array.iter (
           function
           | SingleBucket (siblingBucket, false) ->
-            bumpDistribution victimBucket.RowCount
+            diagnostics.IncrementMerge(victimBucket.RowCount)
+
             victimBucket |> mergeGivenAggregatorsInto siblingBucket anonAggregators
 
             victimBucket
@@ -210,25 +262,7 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
           | _ -> ()
         )
 
-  let isolatingColumnsStr = isolatingColumns |> Seq.map string |> String.join ", "
-
-  let mergeHistogramStr =
-    mergeHistogram
-    |> Seq.sortBy (fun pair -> pair.Key)
-    |> Seq.map (fun pair -> $"({pair.Key}, {pair.Value})")
-    |> Seq.append [ $"(*, {mergeHistogram |> Seq.sumBy (fun pair -> pair.Value)})" ]
-    |> String.join " "
-
-  Logger.debug $"[LED] Total buckets: {buckets.Length}"
-  Logger.debug $"[LED] Suppressed buckets: {bucketsLowCount}"
-  Logger.debug $"[LED] Suppressed buckets below threshold: {victimBuckets.Length}"
-  Logger.debug $"[LED] Isolating columns: [{isolatingColumnsStr}]"
-  Logger.debug $"[LED] Buckets with isolating column(s): {bucketsIsolatingColumn}"
-  Logger.debug $"[LED] Merged buckets: {bucketsMerged}"
-  Logger.debug $"[LED] Merge distribution: {mergeHistogramStr}"
-  Logger.debug $"[LED] Total comparisons: {comparisons}"
-  Logger.debug $"[LED] Runtime: {stopwatch.Elapsed}"
-
+  diagnostics.Print(buckets.Length, victimBuckets.Length)
   buckets :> Bucket seq
 
 let hook (aggregationContext: AggregationContext) (buckets: Bucket seq) =
