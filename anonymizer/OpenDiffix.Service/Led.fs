@@ -209,18 +209,24 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
 
   let anonAggregators = anonymizingAggregatorIndexes aggregationContext
 
+  // Fast lookup for checking isolating column conditions.
+  // Buckets are grouped by their `nonIsolatingColumns`, meaning dictionary
+  // entries are lists of buckets with different values of `isolatingColumns`.
+  // We compare victims against buckets in that list. If there is exactly
+  // one high-count sibling, then we have found an isolating column.
   let isolatorCache = Dictionary<Row, MutableList<Bucket * bool>>(Row.equalityComparer)
 
-  let victimBuckets =
-    buckets
-    |> Array.choose (fun bucket ->
-      let lowCount = Utils.isLowCount lowCountIndex bucket
-      let cacheKey = nonIsolatingColumns |> Array.map (fun i -> bucket.Group.[i])
-      let siblings = isolatorCache |> Dictionary.getOrInit cacheKey (fun _ -> MutableList())
-      siblings.Add((bucket, lowCount))
-      if lowCount then diagnostics.IncrementBucketsLowCount()
-      if lowCount && bucket.RowCount <= 3 then Some(bucket, cacheKey) else None
-    )
+  // Victim buckets are low-count and have <= 3 rows.
+  // While iterating, we also put entries in `isolatorCache`.
+  let pickVictimBucket bucket =
+    let lowCount = Utils.isLowCount lowCountIndex bucket
+    let cacheKey = nonIsolatingColumns |> Array.map (fun i -> bucket.Group.[i])
+    let siblings = isolatorCache |> Dictionary.getOrInit cacheKey (fun _ -> MutableList())
+    siblings.Add((bucket, lowCount))
+    if lowCount then diagnostics.IncrementBucketsLowCount()
+    if lowCount && bucket.RowCount <= 3 then Some(bucket, cacheKey) else None
+
+  let victimBuckets = buckets |> Array.choose pickVictimBucket
 
   // Main victim bucket loop
   for victimBucket, cacheKey in victimBuckets do
@@ -244,21 +250,19 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
     if hasIsolatingColumn siblingsPerColumn then
       diagnostics.IncrementBucketsIsolatingColumn()
 
-      // todo, unknown cols
+      // todo, Test for unknown columns
 
       if hasUnknownColumn siblingsPerColumn then
+        // Bucket will be merged because there is an isolating column and an unknown column.
         diagnostics.IncrementBucketsMerged()
 
         siblingsPerColumn
         |> Array.iter (
           function
           | SingleBucket (siblingBucket, false) ->
-            diagnostics.IncrementMerge(victimBucket.RowCount)
-
             victimBucket |> mergeGivenAggregatorsInto siblingBucket anonAggregators
-
-            victimBucket
-            |> Bucket.putAttribute BucketAttributes.IS_LED_MERGED (Boolean true)
+            diagnostics.IncrementMerge(victimBucket.RowCount)
+            Bucket.putAttribute BucketAttributes.IS_LED_MERGED (Boolean true) victimBucket
           | _ -> ()
         )
 
