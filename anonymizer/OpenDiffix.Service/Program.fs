@@ -13,7 +13,6 @@ let toSalt =
   | _ -> [||]
 
 let NO_HOOKS = []
-let ledHook = AggregationHooks.Led.hook
 
 let withHooks hooks context =
   { context with PostAggregationHooks = hooks }
@@ -129,10 +128,9 @@ let handlePreview
   // We get a hold of the star bucket results reference via side effects.
   let mutable suppressedAnonCount = Null
   let pullHookResultsCallback results = suppressedAnonCount <- results
-  let starBucketHook = AggregationHooks.StarBucket.hook pullHookResultsCallback
+  let starBucketHook = StarBucket.hook pullHookResultsCallback
 
-  // TODO: `ledHook` is temporarily disabled until optimized
-  let result = runQuery [ starBucketHook ] query inputPath anonParams
+  let result = runQuery [ Led.hook; starBucketHook ] query inputPath anonParams
 
   let mutable totalBuckets = 0
   let mutable suppressedBuckets = 0
@@ -206,12 +204,11 @@ let handleExport
   // We get a hold of the star bucket results reference via side effects.
   let mutable suppressedAnonCount = Null
   let pullHookResultsCallback results = suppressedAnonCount <- results
-  let starBucketHook = AggregationHooks.StarBucket.hook pullHookResultsCallback
+  let starBucketHook = StarBucket.hook pullHookResultsCallback
 
-  // TODO: `ledHook` is temporarily disabled until optimized
   let output =
     anonParams
-    |> runQuery [ starBucketHook ] query inputPath
+    |> runQuery [ Led.hook; starBucketHook ] query inputPath
     |> csvFormatter suppressedAnonCount
 
 

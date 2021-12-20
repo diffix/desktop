@@ -5,7 +5,9 @@
     <GenerateProgramFile>false</GenerateProgramFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AggregationHooks.Tests.fs" />
+    <Compile Include="TestHelpers.fs" />
+    <Compile Include="Led.Tests.fs" />
+    <Compile Include="StarBucket.Tests.fs" />
     <Compile Include="Program.Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

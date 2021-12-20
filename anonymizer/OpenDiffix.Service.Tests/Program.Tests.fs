@@ -7,7 +7,7 @@ open OpenDiffix.Service.Program
 
 let private normalizePath (path: string) = path.Replace('\\', '/')
 
-let private dataPath = normalizePath (__SOURCE_DIRECTORY__) + "/../reference/data/customers.csv"
+let private dataPath = normalizePath __SOURCE_DIRECTORY__ + "/../reference/data/customers.csv"
 
 type private TempFile() =
   let path = System.IO.Path.GetTempFileName() |> normalizePath
