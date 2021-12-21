@@ -32,6 +32,8 @@ let private mergeGivenAggregatorsInto (targetBucket: Bucket) aggIndexes (sourceB
 // Main LED
 // ----------------------------------------------------------------
 
+type private Interlocked = System.Threading.Interlocked
+
 type private LedDiagnostics() =
   // Bucket size vs. how many merges for that size occurred
   let mergeHistogram = Dictionary<int, int>()
@@ -46,14 +48,16 @@ type private LedDiagnostics() =
   let mutable bucketsMerged = 0
 
   member this.IncrementBucketsIsolatingColumn() =
-    bucketsIsolatingColumn <- bucketsIsolatingColumn + 1
+    Interlocked.Increment(&bucketsIsolatingColumn) |> ignore
 
   member this.IncrementBucketsUnknownColumn() =
-    bucketsUnknownColumn <- bucketsUnknownColumn + 1
+    Interlocked.Increment(&bucketsUnknownColumn) |> ignore
 
-  member this.IncrementBucketsMerged() = bucketsMerged <- bucketsMerged + 1
+  member this.IncrementBucketsMerged() =
+    Interlocked.Increment(&bucketsMerged) |> ignore
 
   member this.IncrementMerge(bucketCount: int) =
+    // Not thread safe!
     mergeHistogram |> Dictionary.increment bucketCount
 
   member this.Print(totalBuckets: int, suppressedBuckets: int) =
@@ -163,7 +167,7 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
       None
 
   victimBuckets
-  |> Array.choose chooseMergeTargets
+  |> Array.Parallel.choose chooseMergeTargets
   |> Array.iter (fun (victimBucket, mergeTargets) ->
     diagnostics.IncrementBucketsMerged()
     Bucket.putAttribute BucketAttributes.IS_LED_MERGED (Boolean true) victimBucket
