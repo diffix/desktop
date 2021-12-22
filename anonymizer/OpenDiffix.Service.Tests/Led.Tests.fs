@@ -151,3 +151,13 @@ let ``Ignores global aggregation`` () =
     FROM table
     """
     []
+
+[<Fact>]
+let ``Ignores if the victim cannot be singled out`` () =
+  assertHookDifference
+    csvWithDifferentTitles
+    """
+    SELECT diffix_count(*, RowIndex)
+    FROM table
+    """
+    []
