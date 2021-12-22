@@ -5,14 +5,17 @@ open FsUnit.Xunit
 
 open OpenDiffix.Core
 
+let assertRowsDifference rows1 rows2 (diff: List<Row * Row>) =
+  List.zip rows1 rows2
+  |> List.filter (fun (left, right) -> Row.equalityComparer.Equals(left, right) |> not)
+  |> should equal diff
+
 let assertHookDifference csv query (diff: List<Row * Row>) =
   let rows (result: QueryEngine.QueryResult) = result.Rows
   let withoutHookRows = TestHelpers.run [] csv query |> rows
   let withHookRows = TestHelpers.run [ Led.hook ] csv query |> rows
 
-  List.zip withoutHookRows withHookRows
-  |> List.filter (fun (left, right) -> Row.equalityComparer.Equals(left, right) |> not)
-  |> should equal diff
+  assertRowsDifference withoutHookRows withHookRows diff
 
 let assertHookFails csv query (errorFragment: string) =
   try
@@ -57,6 +60,14 @@ let csvWithTwoVictims = csvWithVictim + "\n" + "cs,f,prof"
 let csvWithThreeCsWomen = csvWithTwoVictims + "\n" + "cs,f,prof"
 let csvWithDifferentTitles = csvWithVictim + "\n" + "cs,f,asst"
 
+let csvWithProperStarBucket =
+  csvWithVictim
+  + """
+    biol,f,asst
+    chem,m,asst
+    biol,f,prof
+    """
+
 let query =
   """
   SELECT dept, gender, title, diffix_count(*, RowIndex), diffix_low_count(RowIndex)
@@ -87,6 +98,36 @@ let ``Merges 2 victims with same title`` () =
 [<Fact>]
 let ``Does not merge high count buckets`` () =
   assertHookDifference csvWithThreeCsWomen query []
+
+[<Fact>]
+let ``Does not merge if the victim cannot be singled out`` () =
+  assertHookDifference csvWithDifferentTitles query []
+
+[<Fact>]
+let ``Merges taking precedence before star bucket hook`` () =
+  // We get a hold of the star bucket results reference via side effects.
+  let mutable suppressedAnonCount = Null
+  let pullHookResultsCallback results = suppressedAnonCount <- results
+  let starBucketHook = StarBucket.hook pullHookResultsCallback
+
+  let rows (result: QueryEngine.QueryResult) = result.Rows
+  let withoutHookRows = TestHelpers.run [] csvWithProperStarBucket query |> rows
+
+  let withHookRows =
+    TestHelpers.run [ Led.hook; starBucketHook ] csvWithProperStarBucket query
+    |> rows
+
+  assertRowsDifference
+    withoutHookRows
+    withHookRows
+    [
+      [| String "cs"; String "m"; String "prof"; Integer 4L; Boolean false |],
+      [| String "cs"; String "m"; String "prof"; Integer 5L; Boolean false |]
+    ]
+
+  // 3 is correct, this is the number of suppressed rows, _we exclude_ the merged row
+  // from the star bucket.
+  suppressedAnonCount |> should equal (Integer 3L)
 
 [<Fact>]
 let ``Works with count distinct`` () =
@@ -146,16 +187,6 @@ let ``Ignores real count`` () =
 let ``Ignores global aggregation`` () =
   assertHookDifference
     csvWithVictim
-    """
-    SELECT diffix_count(*, RowIndex)
-    FROM table
-    """
-    []
-
-[<Fact>]
-let ``Ignores if the victim cannot be singled out`` () =
-  assertHookDifference
-    csvWithDifferentTitles
     """
     SELECT diffix_count(*, RowIndex)
     FROM table
