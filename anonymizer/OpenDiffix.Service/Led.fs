@@ -75,9 +75,9 @@ type private LedDiagnostics() =
     logDebug $"Merged buckets: {bucketsMerged}"
     logDebug $"Merge distribution: {mergeHistogramStr}"
 
-type private CacheKey = Row
+type private SiblingsPerColumn = MutableList<Bucket * bool>
 
-/// Determines victim buckets and builds lookup caches.
+/// Returns victim buckets and their siblings per column.
 let private prepareBuckets (aggregationContext: AggregationContext) (buckets: Bucket array) =
   let stopwatch = startStopwatch ()
   let lowCountIndex = Utils.lowCountIndex aggregationContext
@@ -92,8 +92,8 @@ let private prepareBuckets (aggregationContext: AggregationContext) (buckets: Bu
 
   // For each column, we build a cache where we group buckets by their labels EXCLUDING that column.
   // This means that every cache will associate siblings where the respective column is different.
-  let caches =
-    Array.init groupingLabelsLength (fun _i -> Dictionary<Row, MutableList<Bucket * bool>>(Row.equalityComparer))
+  let siblingCaches =
+    Array.init groupingLabelsLength (fun _i -> Dictionary<Row, SiblingsPerColumn>(Row.equalityComparer))
 
   // Filters low count buckets and builds caches in the same pass.
   let victimBuckets =
@@ -102,28 +102,28 @@ let private prepareBuckets (aggregationContext: AggregationContext) (buckets: Bu
       let lowCount = Utils.isLowCount lowCountIndex bucket
       let bucketTuple = bucket, lowCount
       let columnValues = bucket.Group
-      let cacheKeys = Array.zeroCreate<CacheKey> groupingLabelsLength
+      let siblingsPerColumn = Array.zeroCreate<SiblingsPerColumn> groupingLabelsLength
 
-      // Put entries in caches and memo the keys.
+      // Put entries in caches and store a reference to the (mutable) list of siblings.
       for colIndex in 0 .. groupingLabelsLength - 1 do
         let key = slice colIndex columnValues
-        cacheKeys.[colIndex] <- key
-        let siblings = caches.[colIndex] |> Dictionary.getOrInit key (fun _ -> MutableList(3))
+        let siblings = siblingCaches.[colIndex] |> Dictionary.getOrInit key (fun _ -> MutableList(3))
+        siblingsPerColumn.[colIndex] <- siblings
         // We don't actually need more than 3 values.
         // 1 = no siblings; 2 = single sibling; 3 = multiple siblings
         if siblings.Count < 3 then siblings.Add(bucketTuple)
 
-      if lowCount then Some(bucket, cacheKeys) else None
+      if lowCount then Some(bucket, siblingsPerColumn) else None
     )
 
   logDebug $"Cache building took {stopwatch.Elapsed}"
 
-  victimBuckets, caches
+  victimBuckets
 
 /// Main LED logic.
 let private led (aggregationContext: AggregationContext) (buckets: Bucket array) =
   let diagnostics = LedDiagnostics()
-  let victimBuckets, caches = prepareBuckets aggregationContext buckets
+  let victimBuckets = prepareBuckets aggregationContext buckets
 
   let stopwatch = startStopwatch ()
 
@@ -132,13 +132,12 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
 
   /// Returns `Some(victimBucket, mergeTargets)` if victimBucket has an unknown column
   /// and has merge targets (siblings which match isolating column criteria).
-  let chooseMergeTargets (victimBucket: Bucket, cacheKeys: CacheKey array) =
+  let chooseMergeTargets (victimBucket: Bucket, siblingsPerColumn: SiblingsPerColumn array) =
     let mutable hasUnknownColumn = false
     let mergeTargets = MutableList()
 
     for colIndex in 0 .. groupingLabelsLength - 1 do
-      let cacheKey = cacheKeys.[colIndex]
-      let siblings = caches.[colIndex].[cacheKey]
+      let siblings = siblingsPerColumn.[colIndex]
 
       match siblings.Count with
       | 1 ->
