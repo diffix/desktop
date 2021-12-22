@@ -53,7 +53,7 @@ let hook callback (aggregationContext: AggregationContext) (buckets: Bucket seq)
     |> Value.unwrapBoolean
 
   let suppressedAnonCount =
-    // NOTE: we can have a suppress bin consisting of a single suppressed bucket,
+    // NOTE: we can have a star bucket consisting of a single suppressed bucket,
     // which won't be suppressed by itself (different noise seed). In such case,
     // we must enforce the suppression manually.
     if isStarBucketLowCount || bucketsInStarBucket < 2 then
