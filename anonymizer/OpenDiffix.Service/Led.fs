@@ -1,10 +1,22 @@
 module OpenDiffix.Service.Led
 
+open System
 open OpenDiffix.Core
 
-let private startStopwatch () = System.Diagnostics.Stopwatch.StartNew()
+let private startStopwatch () = Diagnostics.Stopwatch.StartNew()
 
 let private logDebug msg = Logger.debug $"[LED] {msg}"
+
+let inline private uncheckedAdd x y = Operators.op_Addition x y
+let inline private uncheckedMul x y = Operators.op_Multiply x y
+
+let private fastRowHash (row: Row) =
+  let mutable hash = 0
+
+  for value in row do
+    hash <- uncheckedAdd (uncheckedMul hash 9176) (value.GetHashCode())
+
+  Math.Abs(hash)
 
 // ----------------------------------------------------------------
 // Bucket merging
@@ -32,7 +44,7 @@ let private mergeGivenAggregatorsInto (targetBucket: Bucket) aggIndexes (sourceB
 // Main LED
 // ----------------------------------------------------------------
 
-type private Interlocked = System.Threading.Interlocked
+type private Interlocked = Threading.Interlocked
 
 type private LedDiagnostics() =
   // Bucket size vs. how many merges for that size occurred
@@ -75,30 +87,53 @@ type private LedDiagnostics() =
     logDebug $"Merged buckets: {bucketsMerged}"
     logDebug $"Merge distribution: {mergeHistogramStr}"
 
+/// Reference wrapper for a System.Threading.SpinLock struct.
+type private SpinLock() =
+  let mutable lock = Threading.SpinLock()
+
+  member this.Enter() =
+    let mutable entered = false
+    lock.Enter(&entered)
+    if not entered then failwith "Failed to enter lock."
+
+  member this.Exit() = lock.Exit()
+
 type private SiblingsPerColumn = MutableList<Bucket * bool>
+
+let private initSiblings () = SiblingsPerColumn(3)
+
+/// Copies source array but skips the given index.
+let private sliceArray skipAt (source: Row) =
+  let targetLength = source.Length - 1
+  let target = Array.zeroCreate targetLength
+  Array.blit source 0 target 0 skipAt
+  Array.blit source (skipAt + 1) target skipAt (targetLength - skipAt)
+  target
 
 /// Returns victim buckets and their siblings per column.
 let private prepareBuckets (aggregationContext: AggregationContext) (buckets: Bucket array) =
   let stopwatch = startStopwatch ()
   let lowCountIndex = Utils.lowCountIndex aggregationContext
   let groupingLabelsLength = aggregationContext.GroupingLabels.Length
-  let cacheKeySize = groupingLabelsLength - 1
 
-  let slice skipAt source =
-    let target = Array.zeroCreate cacheKeySize
-    Array.blit source 0 target 0 skipAt
-    Array.blit source (skipAt + 1) target skipAt (cacheKeySize - skipAt)
-    target
+  let CACHE_DISTRIBUTION = 53 // Prime number for better distribution, determined empirically.
 
   // For each column, we build a cache where we group buckets by their labels EXCLUDING that column.
   // This means that every cache will associate siblings where the respective column is different.
+  // Dictionaries are spread in CACHE_DISTRIBUTION parts to reduce lock contention.
   let siblingCaches =
-    Array.init groupingLabelsLength (fun _i -> Dictionary<Row, SiblingsPerColumn>(Row.equalityComparer))
+    Array.init
+      groupingLabelsLength
+      (fun _col ->
+        Array.init
+          CACHE_DISTRIBUTION
+          (fun _cacheNo -> Dictionary<Row, SiblingsPerColumn>(Row.equalityComparer), SpinLock())
+      )
 
   // Filters low count buckets and builds caches in the same pass.
   let victimBuckets =
     buckets
-    |> Array.choose (fun bucket ->
+    |> Array.Parallel.choose (fun bucket ->
       let lowCount = Utils.isLowCount lowCountIndex bucket
       let bucketTuple = bucket, lowCount
       let columnValues = bucket.Group
@@ -106,12 +141,18 @@ let private prepareBuckets (aggregationContext: AggregationContext) (buckets: Bu
 
       // Put entries in caches and store a reference to the (mutable) list of siblings.
       for colIndex in 0 .. groupingLabelsLength - 1 do
-        let key = slice colIndex columnValues
-        let siblings = siblingCaches.[colIndex] |> Dictionary.getOrInit key (fun _ -> MutableList(3))
+        let key = sliceArray colIndex columnValues
+        let keyHash = fastRowHash key
+        let cache, lock = siblingCaches.[colIndex].[keyHash % CACHE_DISTRIBUTION]
+
+        // Get exclusive access to this cache.
+        lock.Enter()
+        let siblings = cache |> Dictionary.getOrInit key initSiblings
         siblingsPerColumn.[colIndex] <- siblings
         // We don't actually need more than 3 values.
         // 1 = no siblings; 2 = single sibling; 3 = multiple siblings
         if siblings.Count < 3 then siblings.Add(bucketTuple)
+        lock.Exit()
 
       if lowCount then Some(bucket, siblingsPerColumn) else None
     )
