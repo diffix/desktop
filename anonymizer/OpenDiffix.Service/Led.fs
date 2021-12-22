@@ -95,6 +95,7 @@ let private prepareBuckets (aggregationContext: AggregationContext) (buckets: Bu
   let caches =
     Array.init groupingLabelsLength (fun _i -> Dictionary<Row, MutableList<Bucket * bool>>(Row.equalityComparer))
 
+  // Filters low count buckets and builds caches in the same pass.
   let victimBuckets =
     buckets
     |> Array.choose (fun bucket ->
@@ -139,24 +140,20 @@ let private led (aggregationContext: AggregationContext) (buckets: Bucket array)
       let cacheKey = cacheKeys.[colIndex]
       let siblings = caches.[colIndex].[cacheKey]
 
-      if siblings.Count = 1 then
-        // No siblings for this column (Count=1 means itself)
+      match siblings.Count with
+      | 1 ->
+        // No siblings for this column (Count=1 means itself).
+        // A column without siblings is an unknown column.
         hasUnknownColumn <- true
-
-      if siblings.Count = 2 then
-        // Single sibling. Find it and check if it's high count.
-        let siblingBucket =
-          siblings
-          |> Seq.tryPick (fun (siblingBucket, siblingLowCount) ->
-            if not (obj.ReferenceEquals(victimBucket, siblingBucket)) && not siblingLowCount then
-              Some siblingBucket
-            else
-              None
-          )
-
-        match siblingBucket with
-        | Some siblingBucket -> mergeTargets.Add(siblingBucket)
-        | None -> ()
+      | 2 ->
+        // Single sibling (self+other). Find it and check if it's high count.
+        // A column with a single high-count sibling is an isolating column.
+        for siblingBucket, siblingLowCount in siblings do
+          if not (obj.ReferenceEquals(victimBucket, siblingBucket)) && not siblingLowCount then
+            mergeTargets.Add(siblingBucket)
+      | _ ->
+        // Count=3 means there are multiple siblings and has no special meaning.
+        ()
 
     if hasUnknownColumn then diagnostics.IncrementBucketsUnknownColumn()
     if mergeTargets.Count > 0 then diagnostics.IncrementBucketsIsolatingColumn()
