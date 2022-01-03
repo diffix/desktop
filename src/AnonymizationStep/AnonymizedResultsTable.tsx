@@ -56,11 +56,12 @@ function numericRangeCell(binSize: number, v: number) {
   return <Tooltip title={tooltip}>{v}</Tooltip>;
 }
 
-function valueCell(bucketColumn: BucketColumn | undefined, v: number | boolean | string) {
+function valueCell(bucketColumn: BucketColumn | undefined, v: number | boolean | string, isStarBucketRow: boolean) {
   if (
     bucketColumn &&
     (bucketColumn.type === 'integer' || bucketColumn.type === 'real') &&
-    bucketColumn.generalization
+    bucketColumn.generalization &&
+    !isStarBucketRow
   ) {
     return numericRangeCell(bucketColumn.generalization.binSize, v as number);
   } else {
@@ -78,12 +79,12 @@ function renderValue(v: Value) {
 
 function buildCellRenderer(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
   const bucketColumn = bucketColumns.find((c) => c.name === column.name);
-  return (v: Value) => {
+  return (v: Value, row: TableRowData) => {
     // see note on `ellipsis` above
     if (v === null) {
       return nullCell();
     } else {
-      return valueCell(bucketColumn, v);
+      return valueCell(bucketColumn, v, row.isStarBucketRow);
     }
   };
 }
@@ -102,7 +103,7 @@ function makeColumnData(
   title: string,
   dataIndex: RowDataIndex,
   type: ColumnType,
-  render: (v: Value) => React.ReactNode,
+  render: (v: Value, row: TableRowData) => React.ReactNode,
 ) {
   return {
     title,
