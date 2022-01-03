@@ -56,19 +56,6 @@ function numericRangeCell(binSize: number, v: number) {
   return <Tooltip title={tooltip}>{v}</Tooltip>;
 }
 
-function valueCell(bucketColumn: BucketColumn | undefined, v: number | boolean | string, isStarBucketRow: boolean) {
-  if (
-    bucketColumn &&
-    (bucketColumn.type === 'integer' || bucketColumn.type === 'real') &&
-    bucketColumn.generalization &&
-    !isStarBucketRow
-  ) {
-    return numericRangeCell(bucketColumn.generalization.binSize, v as number);
-  } else {
-    return plainStringCell(v.toString());
-  }
-}
-
 function renderValue(v: Value) {
   if (v === null) {
     return nullCell();
@@ -77,14 +64,23 @@ function renderValue(v: Value) {
   }
 }
 
-function buildCellRenderer(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
+function renderBucketValue(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
   const bucketColumn = bucketColumns.find((c) => c.name === column.name);
   return (v: Value, row: TableRowData) => {
     // see note on `ellipsis` above
     if (v === null) {
       return nullCell();
     } else {
-      return valueCell(bucketColumn, v, row.isStarBucketRow);
+      if (
+        bucketColumn &&
+        (bucketColumn.type === 'integer' || bucketColumn.type === 'real') &&
+        bucketColumn.generalization &&
+        !row.isStarBucketRow
+      ) {
+        return numericRangeCell(bucketColumn.generalization.binSize, v as number);
+      } else {
+        return plainStringCell(v.toString());
+      }
     }
   };
 }
@@ -131,7 +127,7 @@ const mapColumn =
       }
     }
 
-    return [makeColumnData(column.name, columnIdx, column.type, buildCellRenderer(column, bucketColumns))];
+    return [makeColumnData(column.name, columnIdx, column.type, renderBucketValue(column, bucketColumns))];
   };
 
 // Rows
