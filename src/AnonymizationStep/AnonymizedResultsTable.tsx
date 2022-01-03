@@ -21,17 +21,17 @@ import './AnonymizedResultsTable.css';
 type TableRowData = RowData & {
   key: number;
   lowCount: AnonymizedResultRow['lowCount'];
-  isSuppressBinRow: boolean;
+  isStarBucketRow: boolean;
 };
 
 // Columns
 
-// Ensures that suppress bin row always comes first, regardless of sorting.
+// Ensures that star bucket row always comes first, regardless of sorting.
 // It must be first in the `Table`'s dataSource
 function anonymizedColumnSorter(type: ColumnType, dataIndex: RowDataIndex) {
   const commonSorter = columnSorter(type, dataIndex);
   return (rowA: TableRowData, rowB: TableRowData): number => {
-    if (rowA.isSuppressBinRow || rowB.isSuppressBinRow) return 0;
+    if (rowA.isStarBucketRow || rowB.isStarBucketRow) return 0;
     return commonSorter(rowA, rowB);
   };
 }
@@ -166,7 +166,7 @@ function mapRow(row: AnonymizedResultRow, i: number) {
   const rowData: TableRowData = {
     key: i,
     lowCount: row.lowCount,
-    isSuppressBinRow: false,
+    isStarBucketRow: false,
   };
 
   addValuesToRowData(rowData, row.values);
@@ -174,17 +174,17 @@ function mapRow(row: AnonymizedResultRow, i: number) {
   return rowData;
 }
 
-function makeSuppressBinData(result: AnonymizedQueryResult) {
+function makeStarBucketData(result: AnonymizedQueryResult) {
   if (result.summary.suppressedAnonCount) {
     const rowData: TableRowData = {
       key: -1,
       // non-null `suppressedAnonCount` implies this
       lowCount: false,
-      isSuppressBinRow: true,
+      isStarBucketRow: true,
     };
 
     const values: AnonymizedValue[] = result.columns.map((column: AnonymizedResultColumn) =>
-      // This TableRowData is for the suppress bin, so all bucket columns hold
+      // This TableRowData is for the star bucket, so all bucket columns hold
       // the star "*", while aggregate columns (counts) are coming from the summary
       column.type === 'aggregate' && column.name === 'Count'
         ? { realValue: result.summary.suppressedCount, anonValue: result.summary.suppressedAnonCount }
@@ -197,7 +197,7 @@ function makeSuppressBinData(result: AnonymizedQueryResult) {
     addValuesToRowData(rowData, values);
     return [rowData];
   } else {
-    // no suppression took place _OR_ the suppress bin was itself suppressed
+    // no suppression took place _OR_ the star bucket was itself suppressed
     return [];
   }
 }
@@ -220,9 +220,9 @@ export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTablePro
   const columns = result.columns.flatMap(mapColumn(mode, bucketColumns));
   const queryData = filterRows(mode, result.rows).map(mapRow);
 
-  const suppressBinData: TableRowData[] = mode === 'anonymized' ? makeSuppressBinData(result) : [];
+  const starBucketData: TableRowData[] = mode === 'anonymized' ? makeStarBucketData(result) : [];
 
-  const data = suppressBinData.concat(queryData);
+  const data = starBucketData.concat(queryData);
 
   return (
     <div className={`AnonymizedResultsTable ${mode}`}>
