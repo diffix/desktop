@@ -243,7 +243,7 @@ let mainCore consoleInput =
   | HasMissingValues hasMissingValues -> handleHasMissingValues hasMissingValues
 
 [<EntryPoint>]
-let main argv =
+let main _argv =
   Logger.backend <- Logger.LogMessage.toString >> eprintfn "%s"
 
   try
