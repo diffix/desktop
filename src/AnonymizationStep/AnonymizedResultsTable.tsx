@@ -64,7 +64,7 @@ function renderValue(v: Value) {
   }
 }
 
-function renderBucketValue(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
+function renderBucketColumnValue(column: AnonymizedResultColumn, bucketColumns: BucketColumn[]) {
   const bucketColumn = bucketColumns.find((c) => c.name === column.name);
   return (v: Value, row: TableRowData) => {
     // see note on `ellipsis` above
@@ -127,7 +127,7 @@ const mapColumn =
       }
     }
 
-    return [makeColumnData(column.name, columnIdx, column.type, renderBucketValue(column, bucketColumns))];
+    return [makeColumnData(column.name, columnIdx, column.type, renderBucketColumnValue(column, bucketColumns))];
   };
 
 // Rows
