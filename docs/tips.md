@@ -6,7 +6,7 @@ This version of __Diffix for Desktop__ is minimalistic, and is missing features 
 
 The values in the Anonymization Summary are not anonymized per se. `Suppressed Count`,	`Suppressed Bins`, and	`Median Distortion` have some built-in anonymity because they are values that are influenced by multiple protected entities. If you wish to release these values, we suggest you round them first (i.e. to be within a few percent of the true value).  We recommend not releasing `Maximum Distortion`, as this is influenced by very few protected entities, and may reveal the presence or absence of outliers in the data. Note, however, that the `* Suppress bin` (the first row of the output) is an anonymized version of `Suppressed Count`, and is safe to release.
 
-## Anonymized bucket counts
+## Anonymized bin counts
 
 Related to the [previous section](#releasing-anonymization-summary-statistics), an anonymized count of the total number of bins (both suppressed and non-suppressed) would clearly be a nice feature. It would avoid both the effort and risk of manually rounding the `Suppressed Bins` value.
 

@@ -2,7 +2,7 @@
 
 ### Next version
 
-- Merge suppressed buckets into a special *-bucket.
+- Combine suppressed bins into a special * bin.
 - Added support for simple low-effect detection (LED).
 - Fixed decimal form inputs causing anonymization failure.
 
