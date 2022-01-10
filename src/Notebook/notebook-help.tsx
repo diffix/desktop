@@ -44,8 +44,8 @@ function AidSelectionHelp() {
         <strong>WARNING:</strong> If this configuration is not done correctly, the data will not be properly anonymized.
       </Paragraph>
       <Paragraph>
-        If the data has one row per person (or other <em>protected entity</em>), then no entity identifier column need be selected. Otherwise,
-        select a column containing a unique ID per protected entity.{' '}
+        If the data has one row per person (or other <em>protected entity</em>), then no entity identifier column need
+        be selected. Otherwise, select a column containing a unique ID per protected entity.{' '}
         <DocsLink page="operation" section="important-configure-the-protected-entity-identifier-column">
           Click here for details on how to set.
         </DocsLink>
@@ -74,10 +74,13 @@ function ColumnSelectionHelp() {
   return (
     <div>
       <Title level={4}>Column Selection</Title>
-      <Paragraph>Select the columns to be anonymized and the amount of generalization per column. Any changes automatically recomputes the anonymized results.</Paragraph>
       <Paragraph>
-        Numeric columns may be generalized as bins. Non-numeric
-        columns may be generalized by selecting a substring (offset and number of characters).{' '}
+        Select the columns to be anonymized and the amount of generalization per column. Any changes automatically
+        recomputes the anonymized results.
+      </Paragraph>
+      <Paragraph>
+        Numeric columns may be generalized as bins. Non-numeric columns may be generalized by selecting a substring
+        (offset and number of characters).{' '}
         <DocsLink page="operation" section="select-columns-and-generalization">
           Click here for details.
         </DocsLink>
@@ -127,8 +130,8 @@ function AnonymizedResultsHelp() {
         <DocsLink page="operation" section="suppress-bin">
           suppress bin
         </DocsLink>{' '}
-        denoted by <Text code>*</Text> column values is shown in the first row. It indicates the combined anonymized count of all
-        suppressed bins.
+        denoted by <Text code>*</Text> column values is shown in the first row. It indicates the combined anonymized
+        count of all suppressed bins.
       </Paragraph>
     </div>
   );
@@ -139,7 +142,8 @@ function CsvExportHelp() {
     <div>
       <Title level={4}>CSV Export</Title>
       <Paragraph>
-        Exports the anonymized results only (not the combined view). The suppress bin, when present, is exported as the first row in the CSV file.
+        Exports the anonymized results only (not the combined view). The suppress bin, when present, is exported as the
+        first row in the CSV file.
       </Paragraph>
     </div>
   );
