@@ -10,6 +10,7 @@ __Diffix for Desktop__ has four phases of operation:
 - Select data and adjust quality
   - Select columns for anonymization
   - Select amount of data generalization
+  - Select the suppression threshold
   - Examine data quality and adjust selected columns and generalization as needed
 - Export anonymized data as CSV
 
@@ -48,7 +49,7 @@ Some data sets have one row of data per protected entity. Examples include surve
 
 These *one-row* data sets often do not have any kind identifier column. The Protected Entity Identifier Column may be set to `None`. __Diffix for Desktop__ treats each row as a protected entity.
 
-Other data sets have multiple rows of data per protected entity. Examples include time series data like geo-location, hospital visits, and website visits. These data sets usually have one or more columns that identify the protected identity. For instance, the following is a geo-location data set where the IMEI (International Mobile Equipment Identifier) identifies the protected entity. In this case, the protected entity itself is a mobile device, but in most cases this effectively represents a person.
+Other data sets have multiple rows of data per protected entity. Examples include time series data like geo-location, hospital visits, and website visits. These data sets usually have at least one column that identifies the protected identity. For instance, the following is a geo-location data set where the IMEI (International Mobile Equipment Identifier) identifies the protected entity. In this case, the protected entity itself is a mobile device, but in most cases this effectively represents a person.
 
 | IMEI | Time                | Latitude  | Longitude |
 | ---- | ------------------- | --------- | --------- |
@@ -84,14 +85,10 @@ __Diffix for Desktop__ suppresses bins that are comprised of too few protected e
 This hides individual data values or combinations of data values that could
 leak private information about individual protected entities.
 
-Different output bins have different suppression thresholds: the threshold used for any
-given output bin is a random value taken from a normal distribution. There is, however, a hard
-lower bound on the suppression threshold. The `suppression threshold` parameter sets this
-hard lower bound. (The mean threshold is the hard lower bound plus two.)
+The `suppression threshold` parameter can be set in __Diffix for Desktop__. 
+Bins pertaining to `suppression threshold` or fewer protected entities are suppressed. The default `suppression threshold` is 3. This is normally a safe setting: bins with one or two protected entities will __always__ be suppressed.
 
-The default `suppression threshold` is 3. This is normally a safe setting: bins with
-one or two protected entities will __always__ be suppressed. There are two cases
-where a higher `suppression threshold` is required:
+There are two cases where a higher `suppression threshold` is required:
 
 1. Small groups of protected entities are closely related, like a family or married
    couple, and there is a column that allows selection of a small group.
@@ -125,6 +122,10 @@ single bin. One solution is to remove all columns that may select an individual.
 however, is to set `suppression threshold` to a value that exceeds the number of
 mobile phones any given individual is likely to have.
 
+Note that `suppression threshold` is a _hard lower bound_ on suppression. The actual threshold
+for any given output bin might be slightly higher. This is because the actual per-bin
+threshold is itself a noisy value: a random value taken from a normal distribution.
+
 ### Higher suppression threshold settings
 
 There is a slight *anonymization* benefit to setting `suppression threshold` to a higher
@@ -135,14 +136,14 @@ to generate output bins comprised of more protected entities is via column gener
 There may also be a *data quality* benefit to setting `suppression threshold` to a higher
 value. This is because bins with very few protected entities have more relative distortion
 than bins with more protected entities. Setting `suppression threshold` to a higher value
-can lead to more suppression, but also to less distortion.
+can lead to more suppression, but also to less average distortion.
 
 ### Other anonymization parameters
 
 There are in total eight parameters that affect the strength of anonymization. They are
 described in TODO. Of these, only the `suppression threshold` is settable in
 __Diffix for Desktop__. The others are set to default values that provide strong
-anonymization at good utility and don't require adjustment.
+anonymization with good utility and don't require adjustment.
 These may become user-settable in future versions should a need arise. The following table
 gives the default values using the parameter names in TODO (note that `low_thresh` is
 the same as `suppression threshold`).
@@ -170,11 +171,11 @@ Columns are selected for inclusion in the anonymized data output using the radia
 
 When a column is selected, the generalization input is exposed. For text columns, you can select a substring by offset and number of characters. For numeric columns, you can select a bin size.
 
-> More generalization (larger substrings or no substring, and larger numeric bins) leads to less suppression and less relative noise, but also less precision.
+> More generalization (shorter substrings or larger numeric bins) leads to less suppression and less relative noise, but also less precision.
 
 ### Toggle between counting rows and counting protected entities (i.e. persons)
 
-If the input data is multi-row, then __Diffix for Desktop__ gives you the choice of counting rows or counting protected entities (i.e. persons). The toggle switch may be found at the bottom of the column selection area.
+If the input data is multi-row, then __Diffix for Desktop__ gives you the choice of counting rows or counting protected entities (e.g. persons). The toggle switch may be found at the bottom of the column selection area.
 
 ## How to interpret the Anonymization Summary
 
@@ -189,27 +190,33 @@ The Anonymization Summary has four statistics:
 
 ### Example 1: Almost no distortion
 
-![](images/distortion-none.png#720)
+| Suppressed Count | Suppressed Bins | Median Distortion | Maximum Distortion |
+| --- | --- | --- | --- |
+| 0 of 440257 (0%) | 0 of 3 (0%) | 0.05% | 0.69% |
 
-The above image illustrates the case when there is almost no distortion. No data is suppressed, the median distortion is a small fraction of 1%, and even the maximum distortion is below 1%. Low distortion occurs where relative few output bins, and each bin contains data for a substantial number of protected entities.
+In this case is almost no distortion. No data is suppressed, the median distortion is a small fraction of 1%, and even the maximum distortion is below 1%. Low distortion occurs where there are relatively few output bins, and each bin contains data for a substantial number of protected entities.
 
 ### Example 2: A long tail
 
-![](images/distortion-suppressed-bins.png#720)
+| Suppressed Count | Suppressed Bins | Median Distortion | Maximum Distortion |
+| --- | --- | --- | --- |
+| 4447 of 440257 (1.01%) | 2398 of 5207 (46.05%) | 1.72% | 75% |
 
-The above image illustrates the case when the output data has a long tail. Most of the data resides in a relatively small number of bins, but a small amount of the data is spread over a large number of bins. In this Anonymization Summary, we see from the `Suppressed Count` that only about 1% of the data is suppressed (4447 rows of a total 440K rows). From the `Suppressed Bins`, however, we see that that 1% of suppressed data is spread over nearly half of the output bins (46%). This may or may not be acceptable data quality, depending on the use case.
+In this case, the output data has a long tail. Most of the data resides in a relatively small number of bins, but a small amount of the data is spread over a large number of bins. In this Anonymization Summary, we see from the `Suppressed Count` that only about 1% of the data is suppressed (4447 rows of a total 440K rows). From the `Suppressed Bins`, however, we see that that 1% of suppressed data is spread over nearly half of the output bins (46%). This may or may not be acceptable data quality, depending on the use case.
 
 The median distortion (relative error) is relatively small (less than 2%), but the maximum distortion is high (75%). This is common when there are some bins containing very few protected entities. Again, this may or may not be a data quality problem depending on the use case.
 
 ### Example 3: Bad data quality
 
-![](images/distortion-bad.png#720)
+| Suppressed Count | Suppressed Bins | Median Distortion | Maximum Distortion |
+| --- | --- | --- | --- |
+| 398784 of 440257 (90.58%) | 11933 of 12995 (91.83%) | 94.87% | 97.06% |
 
-The above image illustrates the case when almost all of the data resides in very small bins. 91% of the data is suppressed (`Suppressed Count`), as is 92% of the bins. The median and maximum distortion (relative error) is nearly the same, and both are high (95% and 97%).
+In this case almost all of the data resides in very small bins. 91% of the data is suppressed (`Suppressed Count`), as is 92% of the bins. The median and maximum distortion (relative error) are both high (95% and 97%).
 
 ## Anonymized Data
 
-A toggle switch at the bottom of the Anonymized Data selects between two views. The `Anonymized` view shows only the anonymized data itself: the selected columns and the count. This data is safe to release. The count refers to rows or to protected entities, whichever was chosen in the column selection area.
+A toggle switch at the bottom of the Anonymized Data selects between two views. The `Anonymized view` shows only the anonymized data itself: the selected columns and the count. This data is safe to release. The count refers to rows or to protected entities, whichever was chosen in the column selection area.
 
 The `Combined view` additionally shows the original data side-by-side with the anonymized data. Because the combined view contains original data, it is not safe to release. The combined view presents two additional columns, `Count (original)` and `Distortion`. `Count (original)` is the true count of the original data. `Distortion` is the relative error between the original count and the anonymized count.
 
@@ -217,15 +224,18 @@ The combined view displays suppressed bins. The `Count (anonymized)` column is l
 
 The combined view lets you examine precisely the distortion and suppression. The anonymized data can be sorted by each column. Sorting by `Count (original)` shows the ascending suppressed bins first, and so is useful for examining what has been suppressed. Sorting by `Distortion` descending shows the bins with the most error first, and so is useful for examining which bins have high distortion.
 
+_Note that the output view displays at most 1000 rows of data._ To view all of the data, use
+the CSV export (Anonymized view only).
+
 ### Suppress bin
 
 The first row in the Anonymized Data table might contain the _suppress bin_, which provides the combined anonymized count of all the bins that were suppressed. The suppress bin shows all column values as `*`.
 
-Note that the suppress bin may itself be suppressed. The suppress bin is only shown in the `Anonymized` view.
+Note that the suppress bin may itself be suppressed. The suppress bin is only shown in the Anonymized view.
 
 ### What is safe to release
 
-Note that the data in the `Anonymized` view is the only data that is properly anonymized by __Diffix for Desktop__. Note in particular that the Anonymization Summary is not anonymized per se. See [Releasing Anonymization Summary statistics](tips.md#releasing-anonymization-summary-statistics).
+Note that the data in the Anonymized view is the only data that is properly anonymized by __Diffix for Desktop__. Note in particular that the Anonymization Summary is not anonymized per se. See [Releasing Anonymization Summary statistics](tips.md#releasing-anonymization-summary-statistics).
 
 ## Export anonymized data to CSV
 
