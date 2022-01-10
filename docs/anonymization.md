@@ -3,7 +3,7 @@
 __Diffix for Desktop__ uses __Diffix__ as its underlying anonymization mechanism. __Diffix__ was co-developed by the __Max Planck Institute for Software Systems__ and __Aircloak GmbH__. __Diffix__ is strong enough to satisfy the GDPR definition of anonymization as non-personal data.
 
 Users of __Diffix for Desktop__ are trusted: they have access to the original
-data and are trusted protect the original data.
+data and are trusted to protect the original data.
 __Diffix for Desktop__ protects against *accidental* release of personal
 data. In other words, when used simply to provide useful data, and not
 with an explicit and willful intent to generate a non-anonymous output, 
@@ -22,11 +22,11 @@ __Diffix__ combines three common anonymization mechanisms:
 
 Noise is commonly used with Differential Privacy mechanisms. Generalization and suppression are commonly used with k-anonymity.
 
-__Diffix__ automatically applies these three mechanisms as needed on a query-by-query basis. __Diffix__ detects how much is contributed to each output bin by each protected entity, and tailors noise and suppression so as to maximize data quality while maintaining strong anonymization. The quality of data anonymized with __Diffix__ usually far exceeds that of Differential Privacy and k-anonymity.
+__Diffix__ automatically applies these three mechanisms as needed on a query-by-query basis. __Diffix__ detects how much is contributed to each output bin by each protected entity, and tailors the amount of noise so as to maximize data quality while maintaining strong anonymization. The quality of data anonymized with __Diffix__ usually far exceeds that of Differential Privacy and k-anonymity.
 
 ## Proportional Noise
 
-__Diffix__ adds pseudo-random noise taken from a normal distribution. The amount of noise (the standard deviation) is proportional to how much is contributed to the count by the heaviest contributors. When counting the number of protected entities, each entity contributes 1, and the noise standard deviation is `SD=1.5`. With high probability, the resulting answer will be within plus or minus 5 of the true answer.
+__Diffix__ adds pseudo-random noise taken from a normal distribution. The amount of noise (the standard deviation) is proportional to how much is contributed to the count by the heaviest contributors. When counting the number of protected entities (versus counting rows), each entity contributes 1, and the noise standard deviation is `SD=1.5`. With high probability, the resulting answer will be within plus or minus 5 of the true answer.
 
 When counting the number of rows, the amount of noise is larger: proportional to the number of rows contributed by the highest contributors. This is similar to the concept of sensitivity in Differential Privacy. Proportional noise protects high contributors in the case where data recipients may have prior knowledge about the heavy contributors.
 
@@ -38,7 +38,7 @@ __Diffix__ recognizes how many protected entities contribute to each output bin.
 
 Rather than apply a single suppression threshold to all bins, __Diffix__ slightly modifies the threshold for different bins. This adds additional uncertainty for recipients that have prior knowledge of protected entities.
 
-By default, __Diffix__ suppresses bins with fewer than 5 protected entities *on average*, corresponding to the `Suppression Threshold` anonymization parameter default value of 3. This can be configured at runtime (see section [Configure anonymization parameters](operation.md#configure-anonymization-parameters)). A minimum value of 2 for `Suppression Threshold` is enforced, therefore __Diffix__ always suppresses bins with only a single contributing protected entity.
+By default, __Diffix__ suppresses bins with fewer than 5 protected entities *on average*, corresponding to the `Suppression Threshold` anonymization parameter default value of 3. This can be configured at runtime (see section [Configure anonymization parameters](operation.md#configure-anonymization-parameters)). A minimum value of 2 for `Suppression Threshold` is enforced.
 
 ## Generalization
 
@@ -60,7 +60,7 @@ subsequent output modifies the generalization range by a tiny amount.
 For instance, suppose there is a `salary` column. The user must avoid
 a series of outputs where the generalization field is set to `1000.01`,
 `1000.02`, `1000.03`, etc. Doing this would effectively allow the
-receiver of the outputs to eliminate some of the noise and detect when
+receiver of the outputs to eliminate some of the noise through averaging and detect when
 a protected entity with a known salary moves from one bin to another.
 
 ### Substring increments on columns with inherent randomness
