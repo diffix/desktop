@@ -194,7 +194,7 @@ The Anonymization Summary has four statistics:
 | --- | --- | --- | --- |
 | 0 of 440257 (0%) | 0 of 3 (0%) | 0.05% | 0.69% |
 
-In this case is almost no distortion. No data is suppressed, the median distortion is a small fraction of 1%, and even the maximum distortion is below 1%. Low distortion occurs where there are relatively few output bins, and each bin contains data for a substantial number of protected entities.
+In this case there is almost no distortion. No data is suppressed, the median distortion is a small fraction of 1%, and even the maximum distortion is below 1%. Low distortion occurs where there are relatively few output bins, and each bin contains data for a substantial number of protected entities.
 
 ### Example 2: A long tail
 
@@ -212,7 +212,7 @@ The median distortion (relative error) is relatively small (less than 2%), but t
 | --- | --- | --- | --- |
 | 398784 of 440257 (90.58%) | 11933 of 12995 (91.83%) | 94.87% | 97.06% |
 
-In this case almost all of the data resides in very small bins. 91% of the data is suppressed (`Suppressed Count`), as is 92% of the bins. The median and maximum distortion (relative error) are both high (95% and 97%).
+In this case, almost all of the data resides in very small bins. 91% of the data is suppressed (`Suppressed Count`), as is 92% of the bins. The median and maximum distortion (relative error) are both high (95% and 97%).
 
 ## Anonymized Data
 
@@ -224,8 +224,7 @@ The combined view displays suppressed bins. The `Count (anonymized)` column is l
 
 The combined view lets you examine precisely the distortion and suppression. The anonymized data can be sorted by each column. Sorting by `Count (original)` shows the ascending suppressed bins first, and so is useful for examining what has been suppressed. Sorting by `Distortion` descending shows the bins with the most error first, and so is useful for examining which bins have high distortion.
 
-_Note that the output view displays at most 1000 rows of data._ To view all of the data, use
-the CSV export (Anonymized view only).
+_Note that the output view displays at most 1000 rows of data._ To view all of the anonymized data, use the CSV export.
 
 ### Suppress bin
 
