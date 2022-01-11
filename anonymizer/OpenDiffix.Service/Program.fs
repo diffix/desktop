@@ -190,10 +190,17 @@ let handleExport
 
   let countColumn = $"diffix_count(%s{countInput}, %s{aidColumn}) AS count"
 
-  let query =
+  // We get a hold of the star bucket results reference via side effects.
+  let mutable suppressedAnonCount = Null
+
+  let hooks, query =
     if Array.isEmpty buckets then
-      $"SELECT %s{countColumn} FROM table"
+      [], $"SELECT %s{countColumn} FROM table"
     else
+      let pullHookResultsCallback results = suppressedAnonCount <- results
+      let starBucketHook = StarBucket.hook pullHookResultsCallback
+
+      [ Led.hook; starBucketHook ],
       $"""
         SELECT %s{String.join ", " buckets}, %s{countColumn}
         FROM table
@@ -201,16 +208,7 @@ let handleExport
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
-  // We get a hold of the star bucket results reference via side effects.
-  let mutable suppressedAnonCount = Null
-  let pullHookResultsCallback results = suppressedAnonCount <- results
-  let starBucketHook = StarBucket.hook pullHookResultsCallback
-
-  let output =
-    anonParams
-    |> runQuery [ Led.hook; starBucketHook ] query inputPath
-    |> csvFormatter suppressedAnonCount
-
+  let output = anonParams |> runQuery hooks query inputPath |> csvFormatter suppressedAnonCount
 
   File.WriteAllText(outputPath, output)
 
