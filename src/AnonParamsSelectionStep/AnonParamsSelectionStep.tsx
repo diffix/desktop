@@ -33,7 +33,7 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
     <>
       <div className="AnonParamsSelectionStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.AnonParamsSelection} status="done" />
-        <Title level={3}>Adjust suppression threshold</Title>
+        <Title level={3}>Suppression configuration</Title>
 
         <Form
           layout="inline"
