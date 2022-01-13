@@ -26,7 +26,7 @@ If the analyst wishes to release other anonymized aggregate statistics, for inst
 
 ## Anonymization parameters
 
-__Diffix__ has a number of anonymization parameters, such as noise level and suppression threshold, that affect the strength of anonymization and data quality. Currently only the suppression
+__Diffix Elm__ has a number of anonymization parameters, such as noise level and suppression threshold, that affect the strength of anonymization and data quality. Currently only the suppression
 threshold hard lower bound can be set. Other parameter settings have defaults that
 optimize for data quality while still providing strong anonymity. If you believe you need to configure
 these other parameters, please contact us at

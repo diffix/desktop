@@ -161,7 +161,7 @@ the specification (note that `low_thresh` is the same as `suppression threshold`
 
 ## Select columns and generalization
 
-Like all data anonymization mechanisms, __Diffix__ distorts and hides data. The more columns included and the finer the data granularity, the more distortion and hiding. __Diffix__ distorts by adding *noise* to counts, and hides data by *suppressing* bins that pertain to too few protected entities.
+Like all data anonymization mechanisms, __Diffix Elm__ distorts and hides data. The more columns included and the finer the data granularity, the more distortion and hiding. __Diffix Elm__ distorts by adding *noise* to counts, and hides data by *suppressing* bins that pertain to too few protected entities.
 
 __Diffix for Desktop__ lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and original data. Through an iterative process of column selection and generalization, and anonymized data inspection, __Diffix for Desktop__ simplifies the task of data anonymization.
 
