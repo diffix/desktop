@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from 'react';
 import { Divider, Typography, Form, InputNumber } from 'antd';
 
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
+import { useMemoStable } from '../shared';
 import { AnonymizationParams } from '../types';
 
 const { Title } = Typography;
@@ -18,16 +19,19 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
   const [lowThreshold, setLowThreshold] = useState<number>(3);
   const minLowThreshold = 2;
 
-  const anonParams = {
-    suppression: {
-      lowThreshold: lowThreshold,
-      layerSD: 1.0,
-      lowMeanGap: 2.0,
-    },
-    outlierCount: { lower: 1, upper: 2 },
-    topCount: { lower: 3, upper: 4 },
-    layerNoiseSD: 1.0,
-  };
+  const anonParams = useMemoStable(
+    () => ({
+      suppression: {
+        lowThreshold: lowThreshold,
+        layerSD: 1.0,
+        lowMeanGap: 2.0,
+      },
+      outlierCount: { lower: 1, upper: 2 },
+      topCount: { lower: 3, upper: 4 },
+      layerNoiseSD: 1.0,
+    }),
+    [lowThreshold],
+  );
 
   return (
     <>
