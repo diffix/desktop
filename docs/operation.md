@@ -79,6 +79,24 @@ The `Sender email` and `Receiver email` each identify a different protected enti
 
 A data set with multiple protected entities needs to be pre-processed to have one protected entity per row before loading into __Diffix for Desktop__. See [Multiple protected entities per row](tips.md#multiple-protected-entities-per-row).
 
+## Select columns and generalization
+
+Like all data anonymization mechanisms, __Diffix Elm__ distorts and hides data. The more columns included and the finer the data granularity, the more distortion and hiding. __Diffix Elm__ distorts by adding *noise* to counts, and hides data by *suppressing* bins that pertain to too few protected entities.
+
+__Diffix for Desktop__ lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and original data. Through an iterative process of column selection and generalization, and anonymized data inspection, __Diffix for Desktop__ simplifies the task of data anonymization.
+
+![](images/quality-iterate.png#640)
+
+Columns are selected for inclusion in the anonymized data output using the radial buttons. As soon as a column is selected, __Diffix for Desktop__ starts computing the anonymized output. If another column is selected or de-selected before the computing finishes, then the computation is halted and a new computation started.
+
+When a column is selected, the generalization input is exposed. For text columns, you can select a substring by offset and number of characters. For numeric columns, you can select a bin size.
+
+> More generalization (shorter substrings or larger numeric bins) leads to less suppression and less relative noise, but also less precision.
+
+### Toggle between counting rows and counting protected entities (i.e. persons)
+
+If the input data is multi-row, then __Diffix for Desktop__ gives you the choice of counting rows or counting protected entities (e.g. persons). The toggle switch may be found at the bottom of the column selection area.
+
 ## Suppression threshold configuration
 
 __Diffix for Desktop__ suppresses bins that are comprised of too few protected entities.
@@ -158,24 +176,6 @@ the specification (note that `low_thresh` is the same as `suppression threshold`
 | `outlier_max` | 2 |
 | `top_min` | 3 |
 | `top_max` | 4 |
-
-## Select columns and generalization
-
-Like all data anonymization mechanisms, __Diffix Elm__ distorts and hides data. The more columns included and the finer the data granularity, the more distortion and hiding. __Diffix Elm__ distorts by adding *noise* to counts, and hides data by *suppressing* bins that pertain to too few protected entities.
-
-__Diffix for Desktop__ lets you control the quality of the anonymized data through column selection and column generalization (binning). It lets you inspect the quality of the anonymized data at a glance with *distortion statistics* and in detail with *side-by-side comparison* of the anonymized and original data. Through an iterative process of column selection and generalization, and anonymized data inspection, __Diffix for Desktop__ simplifies the task of data anonymization.
-
-![](images/quality-iterate.png#640)
-
-Columns are selected for inclusion in the anonymized data output using the radial buttons. As soon as a column is selected, __Diffix for Desktop__ starts computing the anonymized output. If another column is selected or de-selected before the computing finishes, then the computation is halted and a new computation started.
-
-When a column is selected, the generalization input is exposed. For text columns, you can select a substring by offset and number of characters. For numeric columns, you can select a bin size.
-
-> More generalization (shorter substrings or larger numeric bins) leads to less suppression and less relative noise, but also less precision.
-
-### Toggle between counting rows and counting protected entities (i.e. persons)
-
-If the input data is multi-row, then __Diffix for Desktop__ gives you the choice of counting rows or counting protected entities (e.g. persons). The toggle switch may be found at the bottom of the column selection area.
 
 ## How to interpret the Anonymization Summary
 
