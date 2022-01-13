@@ -20,7 +20,7 @@ let private defaultAnonParams =
   """
   {
     "suppression": {
-      "lowThreshold": 3,
+      "lowThreshold": 2,
       "layerSD": 1,
       "lowMeanGap": 2
     },
@@ -150,7 +150,8 @@ let ``Handles Export request for counting rows`` () =
   // star bucket comes as first, also note we're not asserting on the count
   // in order to not depend on data too much
   result.[1] |> should startWith "\"*\",\"*\","
-  result.Length |> should equal 3
+  // at least one bucket on top of star bucket - low lowThreshold ensures this
+  result.Length |> should be (greaterThanOrEqualTo 3)
 
 [<Fact>]
 let ``Handles Export request for counting entities`` () =
@@ -168,7 +169,8 @@ let ``Handles Export request for counting entities`` () =
   // star bucket comes as first, also note we're not asserting on the count
   // in order to not depend on data too much
   result.[1] |> should startWith "\"*\",\"*\","
-  result.Length |> should equal 3
+  // at least one bucket on top of star bucket - low lowThreshold ensures this
+  result.Length |> should be (greaterThanOrEqualTo 3)
 
 [<Fact>]
 let ``Handles Export request with custom anonParams`` () =
