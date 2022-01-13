@@ -1,6 +1,6 @@
 # Anonymization
 
-__Diffix for Desktop__ uses __Diffix Elm__ as its underlying anonymization mechanism. Prior versions of __Diffix__ were developed by the __Max Planck Institute for Software Systems (MPI-SWS)__ and __Aircloak GmbH__. __Diffix Elm__ is developed by __MPI-SWS__ and the __[Open Diffix project](open-diffix.org)__. __Diffix Elm__ is strong enough to satisfy the GDPR definition of anonymization as non-personal data.
+__Diffix for Desktop__ uses __Diffix Elm__ as its underlying anonymization mechanism. Prior versions of __Diffix__ were developed by the __Max Planck Institute for Software Systems (MPI-SWS)__ and __Aircloak GmbH__. __Diffix Elm__ is developed by __MPI-SWS__ and the __[Open Diffix project](https://open-diffix.org)__. __Diffix Elm__ is strong enough to satisfy the GDPR definition of anonymization as non-personal data.
 
 > This page gives an overview of __Diffix Elm__. The [Diffix Elm specification](https://arxiv.org/abs/2201.04351) provides a complete description, including a security analysis and guidance for making a risk assessment. If you would like help in getting approval from your __Data Protection Officer (DPO)__ or __Data Protection Authority (DPA)__, please contact us at [feedback@open-diffix.org](mailto:feedback@open-diffix.org).
 
