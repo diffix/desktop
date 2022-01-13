@@ -140,13 +140,13 @@ can lead to more suppression, but also to less average distortion.
 
 ### Other anonymization parameters
 
-There are in total eight parameters that affect the strength of anonymization. They are
-described in TODO. Of these, only the `suppression threshold` is settable in
+There are in total eight parameters that affect the strength of anonymization. They are described in 
+[the Diffix Elm specification](https://arxiv.org/abs/2201.04351).
+Of these, only the `suppression threshold` is settable in
 __Diffix for Desktop__. The others are set to default values that provide strong
 anonymization with good utility and don't require adjustment.
-These may become user-settable in future versions should a need arise. The following table
-gives the default values using the parameter names in TODO (note that `low_thresh` is
-the same as `suppression threshold`).
+These may become user-settable in future versions should a need arise. The following table gives the default values using the parameter names in
+the specification (note that `low_thresh` is the same as `suppression threshold`).
 
 | Anonymization parameter | Default setting |
 | --- | --- |
