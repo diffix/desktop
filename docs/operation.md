@@ -66,12 +66,12 @@ For this *multi-row* data set, the IMEI column is configured in __Diffix for Des
 
 In some multi-row data sets, a single row may pertain to multiple different protected entities. Examples include bank transactions, email records, and call records. Here is an example of a data set for email records:
 
-| Record ID | Sender email | Receiver email | Time                | ... |
-| --------- | ------------ | -------------- | ------------------- | --- |
-| 1234      | a@b.com      | c@d.com        | 2021-10-01 21:34:19 | ... |
-| 1235      | a@b.com      | e@f.com        | 2021-10-01 21:36:21 | ... |
-| 1236      | c@d.com      | e@f.com        | 2021-10-01 22:02:51 | ... |
-| ...       | ...          | ...            | ...                 | ... |
+| Record ID | Sender email   | Receiver email | Time                | ... |
+| --------- | -------------- | -------------- | ------------------- | --- |
+| 1234      | a@<i></i>b.com | c@<i></i>d.com | 2021-10-01 21:34:19 | ... |
+| 1235      | a@<i></i>b.com | e@<i></i>f.com | 2021-10-01 21:36:21 | ... |
+| 1236      | c@<i></i>d.com | e@<i></i>f.com | 2021-10-01 22:02:51 | ... |
+| ...       | ...            | ...            | ...                 | ... |
 
 The `Sender email` and `Receiver email` each identify a different protected entity.
 
