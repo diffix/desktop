@@ -1,6 +1,6 @@
 ## Changelog
 
-### Next version
+### Version 1.0.0
 
 - Combine suppressed bins into a special * bin.
 - Added support for simple low-effect detection (LED).
