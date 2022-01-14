@@ -12,7 +12,7 @@ License text copyright (c) 2017 MariaDB Corporation Ab, All Rights Reserved.
 
 Licensor:             __Max Planck Gesellschaft (MPG)__
 
-Licensed Work:        __Diffix for Desktop 0.4.0__
+Licensed Work:        __Diffix for Desktop 1.0.0__
 
 Additional Use Grant:
 
