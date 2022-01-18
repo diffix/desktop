@@ -1,5 +1,9 @@
 ## Changelog
 
+### Next Version
+
+- Fixed meaning of `LowMeanGap` anonymization parameter to spec.
+
 ### Version 1.0.0
 
 - Combine suppressed bins into a special * bin.
