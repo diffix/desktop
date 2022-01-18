@@ -22,7 +22,7 @@ let private defaultAnonParams =
     "suppression": {
       "lowThreshold": 2,
       "layerSD": 1,
-      "lowMeanGap": 2
+      "lowMeanGap": 1
     },
     "outlierCount": {
       "lower": 2,
