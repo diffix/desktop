@@ -2,7 +2,7 @@
   "name": "DiffixForDesktop",
   "productName": "Diffix for Desktop",
   "author": "Max Planck Gesellschaft (MPG)",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Desktop application for anonymizing data using Open Diffix Elm.",
   "main": ".webpack/main",
   "scripts": {
