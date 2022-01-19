@@ -1,6 +1,6 @@
 ## Changelog
 
-### Next version
+### Version 1.0.1
 
 - Adjusts the computation of the supression threshold mean to spec.
 
