@@ -1,6 +1,6 @@
 ## Changelog
 
-### Next version
+### Version 1.0.1
 
 - Adjusts the computation of the suppression threshold mean to spec.
 - Fixes new release link in update notification message.
