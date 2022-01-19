@@ -1,8 +1,8 @@
 ## Changelog
 
-### Next Version
+### Version 1.0.1
 
-- Fixed meaning of `LowMeanGap` anonymization parameter to spec.
+- Adjusts the computation of the supression threshold mean to spec.
 
 ### Version 1.0.0
 
