@@ -3,6 +3,7 @@
 ### Next version
 
 - Adjusts the computation of the suppression threshold mean to spec.
+- Fixes new release link in update notification message.
 
 ### Version 1.0.0
 

@@ -8,7 +8,7 @@ const notificationContent = (version: string) => {
       <br />
       Click{' '}
       <strong>
-        <a href={`https://github.com/diffix/desktop/releases/tag/v${version}`} target="_blank" rel="noreferrer">
+        <a href={`https://github.com/diffix/desktop/releases/tag/${version}`} target="_blank" rel="noreferrer">
           here
         </a>
       </strong>{' '}
