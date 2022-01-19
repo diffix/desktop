@@ -2,7 +2,7 @@
 
 ### Next version
 
-- Adjusts the computation of the supression threshold mean to spec.
+- Adjusts the computation of the suppression threshold mean to spec.
 
 ### Version 1.0.0
 
