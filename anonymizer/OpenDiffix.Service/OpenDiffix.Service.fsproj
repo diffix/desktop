@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Include="JsonEncodersDecoders.fs" />
     <Compile Include="CSVDataProvider.fs" />
+    <Compile Include="CSVFormatter.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
