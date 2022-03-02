@@ -78,5 +78,5 @@ let ``Formats nulls`` () =
   let suppressedAnonCount = Null
   let CSVResult = (CSVFormatter.format suppressedAnonCount result).Split('\n')
 
-  CSVResult.[1] |> should equal "NULL,NULL,NULL,NULL,NULL"
+  CSVResult.[1] |> should equal ",,,,"
   CSVResult.Length |> should equal 2

@@ -8,6 +8,7 @@ let private quoteString (string: string) =
 
 let private csvFormat value =
   match value with
+  | Null -> ""
   | String string -> quoteString string
   | _ -> Value.toString value
 
