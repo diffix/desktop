@@ -7,7 +7,7 @@ open OpenDiffix.Core
 open OpenDiffix.Core.QueryEngine
 
 [<Fact>]
-let ``Formats result with star bucket`` () =
+let ``Formats result`` () =
   let result =
     {
       Columns =
@@ -18,11 +18,14 @@ let ``Formats result with star bucket`` () =
           { Name = "active"; Type = BooleanType }
           { Name = "count"; Type = IntegerType }
         ]
-      Rows = [ [| Integer 18L; String "Berlin"; Real 0.5; Boolean true; Integer 1L |] ]
+      Rows =
+        [
+          [| String "*"; String "*"; String "*"; String "*"; Integer 2L |]
+          [| Integer 18L; String "Berlin"; Real 0.5; Boolean true; Integer 1L |]
+        ]
     }
 
-  let suppressedAnonCount = Integer 2L
-  let CSVResult = (CSVFormatter.format suppressedAnonCount result).Split('\n')
+  let CSVResult = (CSVFormatter.format result).Split('\n')
 
   CSVResult.[0]
   |> should equal "\"age\",\"city\",\"discount\",\"active\",\"count\""
@@ -32,21 +35,6 @@ let ``Formats result with star bucket`` () =
   CSVResult.Length |> should equal 3
 
 [<Fact>]
-let ``Formats result without the star bucket`` () =
-  let result =
-    {
-      Columns = [ { Name = "count"; Type = IntegerType } ]
-      Rows = [ [| Integer 1L |] ]
-    }
-
-  let suppressedAnonCount = Null
-  let CSVResult = (CSVFormatter.format suppressedAnonCount result).Split('\n')
-
-  CSVResult.[0] |> should equal "\"count\""
-  CSVResult.[1] |> should equal "1"
-  CSVResult.Length |> should equal 2
-
-[<Fact>]
 let ``Handles quotes`` () =
   let result =
     {
@@ -54,8 +42,7 @@ let ``Handles quotes`` () =
       Rows = [ [| String "\"John Quoted\"" |] ]
     }
 
-  let suppressedAnonCount = Null
-  let CSVResult = (CSVFormatter.format suppressedAnonCount result).Split('\n')
+  let CSVResult = (CSVFormatter.format result).Split('\n')
 
   CSVResult.[1] |> should equal "\"\"\"John Quoted\"\"\""
   CSVResult.Length |> should equal 2
@@ -75,8 +62,7 @@ let ``Formats nulls`` () =
       Rows = [ [| Null; Null; Null; Null; Null |] ]
     }
 
-  let suppressedAnonCount = Null
-  let CSVResult = (CSVFormatter.format suppressedAnonCount result).Split('\n')
+  let CSVResult = (CSVFormatter.format result).Split('\n')
 
   CSVResult.[1] |> should equal ",,,,"
   CSVResult.Length |> should equal 2

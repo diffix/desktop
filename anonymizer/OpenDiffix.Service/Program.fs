@@ -56,6 +56,21 @@ let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
     LayerNoiseSD = requestAnonParams.LayerNoiseSD
   }
 
+let prependStarBucketRow suppressedAnonCount result =
+  if suppressedAnonCount <> Null then
+    let starBucketRow =
+      result.Columns
+      |> List.map (
+        function
+        | { Name = "count" } -> suppressedAnonCount
+        | _ -> String "*"
+      )
+      |> Array.ofList
+
+    { result with Rows = starBucketRow :: result.Rows }
+  else
+    result
+
 let handlePreview
   {
     InputPath = inputPath
@@ -174,13 +189,12 @@ let handleExport
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
-  let output =
+  let result =
     anonParams
     |> runQuery hooks query inputPath
-    |> CSVFormatter.format suppressedAnonCount
+    |> prependStarBucketRow suppressedAnonCount
 
-  File.WriteAllText(outputPath, output)
-
+  File.WriteAllText(outputPath, CSVFormatter.format result)
   ""
 
 let handleHasMissingValues
