@@ -1,5 +1,9 @@
 ## Changelog
 
+### Next version
+
+- Fixed input data with a "count" column resulting in incorrect suppress bin.
+
 ### Version 1.0.1
 
 - Adjusts the computation of the suppression threshold mean to spec.
