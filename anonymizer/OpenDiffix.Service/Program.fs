@@ -56,15 +56,11 @@ let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
     LayerNoiseSD = requestAnonParams.LayerNoiseSD
   }
 
-let prependStarBucketRow suppressedAnonCount result =
+let prependStarBucketRow suppressedAnonCount countColumnIndex result =
   if suppressedAnonCount <> Null then
     let starBucketRow =
       result.Columns
-      |> List.map (
-        function
-        | { Name = "count" } -> suppressedAnonCount
-        | _ -> String "*"
-      )
+      |> List.mapi (fun columnIndex _ -> if columnIndex = countColumnIndex then suppressedAnonCount else String "*")
       |> Array.ofList
 
     { result with Rows = starBucketRow :: result.Rows }
@@ -192,7 +188,7 @@ let handleExport
   let result =
     anonParams
     |> runQuery hooks query inputPath
-    |> prependStarBucketRow suppressedAnonCount
+    |> prependStarBucketRow suppressedAnonCount buckets.Length
 
   File.WriteAllText(outputPath, CSVFormatter.format result)
   ""
