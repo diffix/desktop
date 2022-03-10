@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CSVFormatter.Tests.fs" />
+    <Compile Include="CSVDataProvider.Tests.fs" />
     <Compile Include="Program.Tests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

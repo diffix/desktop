@@ -103,6 +103,29 @@ let ``Handles Preview request for counting entities`` () =
   response |> should haveSubstring "rows"
 
 [<Fact>]
+let ``Preview request recognizes input data types correctly`` () =
+  let request =
+    $"""
+    {{"type":"Preview",%s{defaultQueryParams defaultAnonParams},"countInput":"Rows","rows":1000}}
+    """
+
+  let queryParamsCastAge =
+    $"""
+    "inputPath": "%s{dataPath}",
+    "aidColumn": "id",
+    "salt": "1",
+    "anonParams": %s{defaultAnonParams},
+    "buckets": ["cast(age as integer)", "city"]
+    """
+
+  let requestCastAge =
+    $"""
+    {{"type":"Preview",%s{queryParamsCastAge},"countInput":"Rows","rows":1000}}
+    """
+
+  request |> mainCore |> should equal (requestCastAge |> mainCore)
+
+[<Fact>]
 let ``Handles Preview request with custom anonParams`` () =
   let suppressNoneAnonParams =
     """
