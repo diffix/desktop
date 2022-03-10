@@ -60,7 +60,7 @@ let prependStarBucketRow suppressedAnonCount countColumnIndex result =
   if suppressedAnonCount <> Null then
     let starBucketRow =
       result.Columns
-      |> List.mapi (fun columnIdx _ -> if columnIdx = countColumnIndex then suppressedAnonCount else String "*")
+      |> List.mapi (fun columnIndex _ -> if columnIndex = countColumnIndex then suppressedAnonCount else String "*")
       |> Array.ofList
 
     { result with Rows = starBucketRow :: result.Rows }
@@ -166,38 +166,29 @@ let handleExport
     | Entities -> $"distinct %s{aidColumn}"
 
   let countColumn = $"diffix_count(%s{countInput}, %s{aidColumn}) AS count"
-  let columns = Array.concat [ buckets; [| countColumn |] ]
-  let countColumnIndex = Array.findIndex (fun column -> column = countColumn) columns
-
-  let bucketColumnGroupByIndices =
-    columns
-    |> Array.indexed
-    |> Array.filter (fun (_, column) -> column <> countColumn)
-    // GROUP BY expects 1-based indexing
-    |> Array.map (fst >> (+) 1)
 
   // We get a hold of the star bucket results reference via side effects.
   let mutable suppressedAnonCount = Null
 
   let hooks, query =
     if Array.isEmpty buckets then
-      [], $"""SELECT %s{String.join ", " columns} FROM table"""
+      [], $"SELECT %s{countColumn} FROM table"
     else
       let pullHookResultsCallback results = suppressedAnonCount <- results
       let starBucketHook = StarBucket.hook pullHookResultsCallback
 
       [ Led.hook; starBucketHook ],
       $"""
-        SELECT %s{String.join ", " columns}
+        SELECT %s{String.join ", " buckets}, %s{countColumn}
         FROM table
-        GROUP BY %s{String.join ", " bucketColumnGroupByIndices}
+        GROUP BY %s{String.join ", " [ 1 .. buckets.Length ]}
         HAVING NOT diffix_low_count(%s{aidColumn})
       """
 
   let result =
     anonParams
     |> runQuery hooks query inputPath
-    |> prependStarBucketRow suppressedAnonCount countColumnIndex
+    |> prependStarBucketRow suppressedAnonCount buckets.Length
 
   File.WriteAllText(outputPath, CSVFormatter.format result)
   ""
