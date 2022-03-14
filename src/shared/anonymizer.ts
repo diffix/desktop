@@ -65,16 +65,19 @@ class DiffixAnonymizer implements Anonymizer {
 
     switch (column.type) {
       case 'integer':
+        return column.generalization
+          ? this.makeBinSQL(columnName, column.generalization) + ` AS ${columnName}`
+          : `cast(${columnName} AS integer) AS ${columnName}`;
       case 'real':
         return column.generalization
           ? this.makeBinSQL(columnName, column.generalization) + ` AS ${columnName}`
-          : columnName;
+          : `cast(${columnName} AS real) AS ${columnName}`;
       case 'text':
         return column.generalization
           ? this.makeSubstringSQL(columnName, column.generalization) + ` AS ${columnName}`
           : columnName;
       case 'boolean':
-        return columnName;
+        return `cast(${columnName} AS boolean) AS ${columnName}`;
     }
   };
 

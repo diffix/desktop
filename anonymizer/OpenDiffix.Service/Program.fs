@@ -51,6 +51,7 @@ let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
     TableSettings = Map.empty
     Salt = Text.Encoding.UTF8.GetBytes(salt)
     Suppression = requestAnonParams.Suppression
+    AccessLevel = PublishTrusted
     OutlierCount = requestAnonParams.OutlierCount
     TopCount = requestAnonParams.TopCount
     LayerNoiseSD = requestAnonParams.LayerNoiseSD
