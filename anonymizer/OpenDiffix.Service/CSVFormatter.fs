@@ -9,6 +9,9 @@ let private quoteString (string: string) =
 let private csvFormat value =
   match value with
   | Null -> ""
+  // Lowercase `Boolean` in order to be consistent with JavaScript rendering.
+  | Boolean false -> "false"
+  | Boolean true -> "true"
   | String string -> quoteString string
   | _ -> Value.toString value
 
