@@ -31,7 +31,7 @@ let ``Formats result`` () =
   |> should equal "\"age\",\"city\",\"discount\",\"active\",\"count\""
 
   CSVResult.[1] |> should equal "\"*\",\"*\",\"*\",\"*\",2"
-  CSVResult.[2] |> should equal "18,\"Berlin\",0.5,True,1"
+  CSVResult.[2] |> should equal "18,\"Berlin\",0.5,true,1"
   CSVResult.Length |> should equal 3
 
 [<Fact>]
