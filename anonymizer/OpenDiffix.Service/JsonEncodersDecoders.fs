@@ -87,7 +87,6 @@ let rec private typeName =
   | IntegerType -> "integer"
   | RealType -> "real"
   | StringType -> "text"
-  | ListType itemType -> typeName itemType + "[]"
   | UnknownType _ -> "unknown"
 
 let private encodeType = typeName >> Encode.string
