@@ -18,6 +18,8 @@ let private openCsvStream stream =
 
   csv
 
+/// Reads all data from the CSV as `Value.String`. The caller is responsible for casting these values in the SQL query,
+/// e.g. `cast(int_col as integer)`.
 type DataProvider(stream: TextReader) =
   let csv = openCsvStream stream
 
