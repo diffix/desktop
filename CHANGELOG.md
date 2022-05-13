@@ -3,6 +3,10 @@
 ### Next version
 
 - Fixed input data with a "count" column resulting in incorrect suppress bin.
+- Various adjustments to noise generation in order to improve determinism (results will change).
+- App now uses invariant culture for decimals separator, regardless of system settings.
+- Fixed supression summary info when running in "count entities" mode.
+- Fixed a crash happening when encountering invalid values in a `boolean` column.
 
 ### Version 1.0.1
 
