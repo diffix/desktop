@@ -6,7 +6,7 @@
 - Various adjustments to noise generation in order to improve determinism (results will change).
 - App now uses invariant culture for decimals separator, regardless of system settings.
 - Fixed supression summary info when running in "count entities" mode.
-- Produce `Null` on invalid value when casting to `boolean`.
+- Fixed a crash happening when encountering invalid values in a `boolean` column.
 
 ### Version 1.0.1
 
