@@ -108,7 +108,7 @@ let ``Handles Preview request with custom anonParams`` () =
     """
     {
       "suppression": {
-        "lowThreshold": 0,
+        "lowThreshold": 1,
         "layerSD": 0,
         "lowMeanGap": 0
       },

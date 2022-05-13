@@ -2,6 +2,7 @@ module OpenDiffix.Service.Program
 
 open System
 open System.IO
+open System.Globalization
 
 open OpenDiffix.Core
 open OpenDiffix.Core.QueryEngine
@@ -55,6 +56,7 @@ let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
     OutlierCount = requestAnonParams.OutlierCount
     TopCount = requestAnonParams.TopCount
     LayerNoiseSD = requestAnonParams.LayerNoiseSD
+    Strict = false
   }
 
 let prependStarBucketRow suppressedAnonCount countColumnIndex result =
@@ -105,7 +107,10 @@ let handlePreview
 
   // We get a hold of the star bucket results reference via side effects.
   let mutable suppressedAnonCount = Null
-  let pullHookResultsCallback results = suppressedAnonCount <- results
+
+  let pullHookResultsCallback aggCtx bucket =
+    suppressedAnonCount <- Bucket.finalizeAggregate 2 aggCtx bucket
+
   let starBucketHook = StarBucket.hook pullHookResultsCallback
 
   let result = runQuery [ Led.hook; starBucketHook ] query inputPath anonParams
@@ -175,7 +180,9 @@ let handleExport
     if Array.isEmpty buckets then
       [], $"SELECT %s{countColumn} FROM table"
     else
-      let pullHookResultsCallback results = suppressedAnonCount <- results
+      let pullHookResultsCallback aggCtx bucket =
+        suppressedAnonCount <- Bucket.finalizeAggregate 0 aggCtx bucket
+
       let starBucketHook = StarBucket.hook pullHookResultsCallback
 
       [ Led.hook; starBucketHook ],
@@ -214,6 +221,9 @@ let handleHasMissingValues
   queryResult.Rows.Length > 0 |> encodeResponse
 
 let mainCore consoleInput =
+  // Default to invariant culture regardless of system default.
+  CultureInfo.DefaultThreadCurrentCulture <- CultureInfo.InvariantCulture
+
   match consoleInput |> decodeRequest with
   | Load load -> handleLoad load
   | Preview preview -> handlePreview preview
