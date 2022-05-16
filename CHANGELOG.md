@@ -7,6 +7,7 @@
 - App now uses invariant culture for decimals separator, regardless of system settings.
 - Fixed supression summary info when running in "count entities" mode.
 - Fixed a crash happening when encountering invalid values in a `boolean` column.
+- Upgraded to using .NET 6.0 for the anonymizer service.
 
 ### Version 1.0.1
 
