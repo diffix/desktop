@@ -52,12 +52,12 @@ class DiffixAnonymizer implements Anonymizer {
     });
   }
 
-  private makeBinSQL = (columnName: string, { binSize }: NumericGeneralization) => {
-    return `floor_by(cast(${columnName} AS real), ${binSize})`;
+  private makeBinSQL = (columnName: string, columnType: string, { binSize }: NumericGeneralization) => {
+    return `floor_by(cast(${columnName} AS ${columnType}), ${binSize}) AS ${columnName}`;
   };
 
   private makeSubstringSQL = (columnName: string, { substringStart, substringLength }: StringGeneralization) => {
-    return `substring(${columnName}, ${substringStart}, ${substringLength})`;
+    return `substring(${columnName}, ${substringStart}, ${substringLength}) AS ${columnName}`;
   };
 
   private mapBucketToSQL = (column: BucketColumn) => {
@@ -66,16 +66,14 @@ class DiffixAnonymizer implements Anonymizer {
     switch (column.type) {
       case 'integer':
         return column.generalization
-          ? this.makeBinSQL(columnName, column.generalization) + ` AS ${columnName}`
+          ? this.makeBinSQL(columnName, 'integer', column.generalization)
           : `cast(${columnName} AS integer) AS ${columnName}`;
       case 'real':
         return column.generalization
-          ? this.makeBinSQL(columnName, column.generalization) + ` AS ${columnName}`
+          ? this.makeBinSQL(columnName, 'real', column.generalization)
           : `cast(${columnName} AS real) AS ${columnName}`;
       case 'text':
-        return column.generalization
-          ? this.makeSubstringSQL(columnName, column.generalization) + ` AS ${columnName}`
-          : columnName;
+        return column.generalization ? this.makeSubstringSQL(columnName, column.generalization) : columnName;
       case 'boolean':
         return `cast(${columnName} AS boolean) AS ${columnName}`;
     }
