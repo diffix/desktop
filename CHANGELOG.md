@@ -8,6 +8,7 @@
 - Fixed supression summary info when running in "count entities" mode.
 - Fixed a crash happening when encountering invalid values in a `boolean` column.
 - Upgraded to using .NET 6.0 for the anonymizer service.
+- Fixed type casting of generalized `integer` columns, which prevented expression normalization.
 
 ### Version 1.0.1
 
