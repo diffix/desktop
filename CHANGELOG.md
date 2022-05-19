@@ -1,6 +1,6 @@
 ## Changelog
 
-### Next version
+### Version 1.0.2
 
 - Fixed input data with a "count" column resulting in incorrect suppress bin.
 - Various adjustments to noise generation in order to improve determinism (results will change).
