@@ -1,13 +1,16 @@
-import { app, BrowserWindow, ipcMain, dialog, shell, protocol, Menu, MenuItemConstructorOptions } from 'electron';
 import { execFile } from 'child_process';
-import util from 'util';
-import fs from 'fs';
 import crypto from 'crypto';
-import path from 'path';
-import stream from 'stream';
+import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions, protocol, shell } from 'electron';
 import fetch from 'electron-fetch';
+import fs from 'fs';
+import i18n from 'i18next';
+import i18nFsBackend from 'i18next-fs-backend';
+import path from 'path';
 import semver from 'semver';
+import stream from 'stream';
+import util from 'util';
 
+import { i18nConfig } from './shared/config';
 import { PageId } from './Docs';
 
 const asyncExecFile = util.promisify(execFile);
@@ -23,6 +26,20 @@ if (require('electron-squirrel-startup')) {
 
 const isMac = process.platform === 'darwin';
 const resourcesLocation = path.join(app.getAppPath(), app.isPackaged ? '..' : '.');
+
+// Localization
+
+i18n.use(i18nFsBackend).init({
+  ...i18nConfig,
+  backend: {
+    loadPath: path.join(resourcesLocation, 'assets', 'locales', '{{lng}}/{{ns}}.json'),
+    addPath: path.join(resourcesLocation, 'assets', 'locales', '{{lng}}/{{ns}}.missing.json'),
+    ident: 2,
+  },
+  debug: i18nConfig.debug && !app.isPackaged,
+  saveMissing: true,
+  initImmediate: false,
+});
 
 // App menu
 
@@ -114,6 +131,7 @@ function createWindow() {
     webPreferences: {
       contextIsolation: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      additionalArguments: [`--language=${i18n.language}`],
     },
     icon: path.join(resourcesLocation, 'assets', 'icon.png'),
   });
@@ -157,6 +175,12 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
+});
+
+i18n.on('languageChanged', (lng) => {
+  // TODO: Rebuild app menu
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  mainWindow?.webContents.send('language_changed', lng);
 });
 
 const diffixName = 'OpenDiffix.Service' + (process.platform === 'win32' ? '.exe' : '');

@@ -1,4 +1,32 @@
 import { ipcRenderer } from 'electron';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import { i18nConfig } from './shared/config';
+
+import de from '../assets/locales/de/translation.json';
+import en from '../assets/locales/en/translation.json';
+
+const args = window.process.argv;
+let initialLanguage = 'en';
+for (let i = args.length - 1; i >= 0; i--) {
+  const arg = args[i];
+  if (arg.startsWith('--language=')) {
+    initialLanguage = arg.substring('--language='.length);
+    break;
+  }
+}
+
+i18n.use(initReactI18next).init({
+  ...i18nConfig,
+  lng: initialLanguage,
+  resources: { en: { [i18nConfig.ns]: en }, de: { [i18nConfig.ns]: de } },
+});
+
+ipcRenderer.on('language_changed', (_event, language) => {
+  i18n.changeLanguage(language);
+});
+
+window.i18n = i18n;
 
 let nextTaskId = 1;
 

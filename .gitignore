@@ -1,3 +1,6 @@
+# Missing translations
+assets/locales/**/*.missing.json
+
 # Logs
 logs
 *.log

@@ -1,12 +1,12 @@
+import { Button, Empty, Tabs } from 'antd';
+import { find, findIndex } from 'lodash';
 import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Empty, Tabs } from 'antd';
+import { I18nextProvider } from 'react-i18next';
 import { useImmer } from 'use-immer';
-import { find, findIndex } from 'lodash';
-
-import { AnonymizerContext, anonymizer, useStaticValue } from '../shared';
 import { Docs, DocsFunctionsContext, PageId } from '../Docs';
 import { Notebook } from '../Notebook';
+import { anonymizer, AnonymizerContext, useStaticValue } from '../shared';
 import { useCheckUpdates } from './use-check-updates';
 
 import './App.css';
@@ -185,5 +185,10 @@ export const App: FunctionComponent = () => {
 };
 
 export function render(): void {
-  ReactDOM.render(<App />, document.getElementById('root'));
+  ReactDOM.render(
+    <I18nextProvider i18n={window.i18n}>
+      <App />
+    </I18nextProvider>,
+    document.getElementById('root'),
+  );
 }
