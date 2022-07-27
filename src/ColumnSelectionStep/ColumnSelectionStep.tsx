@@ -1,9 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
-import { Form, Button, Divider, InputNumber, Radio, Switch, Typography, Tooltip } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { useImmer } from 'use-immer';
+import { Button, Divider, Form, InputNumber, Radio, Switch, Tooltip, Typography } from 'antd';
 import { assign } from 'lodash';
-
+import React, { FunctionComponent, useState } from 'react';
+import { useImmer } from 'use-immer';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { useMemoStable } from '../shared';
 import {

@@ -1,8 +1,7 @@
-import React, { FunctionComponent, useContext } from 'react';
 import { Typography } from 'antd';
-import { noop } from 'lodash';
 import classNames from 'classnames';
-
+import { noop } from 'lodash';
+import React, { FunctionComponent, useContext } from 'react';
 import { PageId } from './Docs';
 
 const { Link } = Typography;

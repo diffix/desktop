@@ -1,7 +1,6 @@
-import React, { FunctionComponent, useCallback, useState } from 'react';
-import { Divider, Typography, Upload } from 'antd';
 import { FileOutlined } from '@ant-design/icons';
-
+import { Divider, Typography, Upload } from 'antd';
+import React, { FunctionComponent, useCallback, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { File } from '../types';
 

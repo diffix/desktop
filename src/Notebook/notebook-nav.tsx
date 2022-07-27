@@ -1,11 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import { Steps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { useInViewport } from 'react-in-viewport';
-import { useImmer } from 'use-immer';
+import { Steps } from 'antd';
 import { produce } from 'immer';
 import { debounce, findLastIndex, noop } from 'lodash';
-
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import { useInViewport } from 'react-in-viewport';
+import { useImmer } from 'use-immer';
 import { useStaticValue } from '../shared';
 
 const { Step } = Steps;

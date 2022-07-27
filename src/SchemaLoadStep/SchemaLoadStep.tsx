@@ -1,6 +1,5 @@
-import React, { FunctionComponent, useEffect } from 'react';
 import { Divider, message, Result, Space, Spin, Typography } from 'antd';
-
+import React, { FunctionComponent, useEffect } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { File, TableSchema } from '../types';
 import { DataPreviewTable } from './DataPreviewTable';

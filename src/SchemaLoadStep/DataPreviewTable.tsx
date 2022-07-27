@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from 'react';
-
 import { columnSorter, ResponsiveTable } from '../shared';
 import { TableSchema, Value } from '../types';
 

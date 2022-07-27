@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
 import { notification } from 'antd';
+import React, { useEffect } from 'react';
 
 const notificationContent = (version: string) => {
   return (

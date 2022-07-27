@@ -1,18 +1,17 @@
-import React, { FunctionComponent, useState } from 'react';
 import { Tooltip } from 'antd';
-
+import React, { FunctionComponent, useState } from 'react';
 import { columnSorter, formatPercentage, relativeNoise, ResponsiveTable } from '../shared';
 import {
   AnonymizedQueryResult,
   AnonymizedResultColumn,
   AnonymizedResultRow,
+  AnonymizedValue,
+  BucketColumn,
   ColumnType,
   DisplayMode,
   RowData,
-  Value,
-  BucketColumn,
-  AnonymizedValue,
   RowDataIndex,
+  Value,
 } from '../types';
 import { DisplayModeSwitch } from './DisplayModeSwitch';
 

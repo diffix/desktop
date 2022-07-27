@@ -9,9 +9,8 @@ import path from 'path';
 import semver from 'semver';
 import stream from 'stream';
 import util from 'util';
-
-import { i18nConfig } from './shared/config';
 import { PageId } from './Docs';
+import { i18nConfig } from './shared/config';
 
 const asyncExecFile = util.promisify(execFile);
 const asyncPipeline = util.promisify(stream.pipeline);

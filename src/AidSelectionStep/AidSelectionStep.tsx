@@ -1,10 +1,8 @@
-import React, { FunctionComponent, useState } from 'react';
-import { Typography, Select, Divider, Alert } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-
+import { Alert, Divider, Select, Typography } from 'antd';
+import React, { FunctionComponent, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { TableSchema } from '../types';
-
 import { useMissingAid } from './use-missing-aid';
 
 import './AidSelectionStep.css';

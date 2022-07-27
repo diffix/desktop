@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ComputedData } from '../types';
 
 export function useCachedData<T>(resultData: ComputedData<T>, initialData: T): T {

@@ -1,6 +1,5 @@
+import { Divider, Form, InputNumber, Typography } from 'antd';
 import React, { FunctionComponent, useState } from 'react';
-import { Divider, Typography, Form, InputNumber } from 'antd';
-
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { useMemoStable } from '../shared';
 import { AnonymizationParams } from '../types';

@@ -1,15 +1,14 @@
-import React, { FunctionComponent } from 'react';
 import { Divider } from 'antd';
-
-import { FileLoadStep } from '../FileLoadStep';
-import { SchemaLoadStep } from '../SchemaLoadStep';
+import React, { FunctionComponent } from 'react';
 import { AidSelectionStep } from '../AidSelectionStep';
-import { ColumnSelectionStep } from '../ColumnSelectionStep';
 import { AnonParamsSelectionStep } from '../AnonParamsSelectionStep';
 import { AnonymizationStep } from '../AnonymizationStep';
+import { ColumnSelectionStep } from '../ColumnSelectionStep';
+import { FileLoadStep } from '../FileLoadStep';
+import { SchemaLoadStep } from '../SchemaLoadStep';
 import { Layout } from '../shared';
-import { NotebookNavProvider, NotebookNav } from './notebook-nav';
 import { NotebookHelp } from './notebook-help';
+import { NotebookNav, NotebookNavProvider } from './notebook-nav';
 
 import './Notebook.css';
 

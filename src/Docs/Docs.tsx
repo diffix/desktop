@@ -1,18 +1,17 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { Anchor, Typography } from 'antd';
 import { find } from 'lodash';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import invariant from 'tiny-invariant';
-
 import { Layout, usePrevious } from '../shared';
 import { Markdown, TableOfContents, TableOfContentsLink } from './Markdown';
 
 import './Docs.css';
 
-import operationSource from '../../docs/operation.md';
+import changelogSource from '../../CHANGELOG.md';
 import anonymizationSource from '../../docs/anonymization.md';
+import operationSource from '../../docs/operation.md';
 import tipsSource from '../../docs/tips.md';
 import licenseSource from '../../LICENSE.md';
-import changelogSource from '../../CHANGELOG.md';
 
 const { Link } = Anchor;
 const { Title } = Typography;

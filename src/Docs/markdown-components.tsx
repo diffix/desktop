@@ -1,8 +1,7 @@
-import React, { FunctionComponent } from 'react';
 import { Divider, Typography } from 'antd';
-import { Components } from 'react-markdown';
 import classNames from 'classnames';
-
+import React, { FunctionComponent } from 'react';
+import { Components } from 'react-markdown';
 import { allPageIds, PageId } from './Docs';
 import { DocsLink } from './DocsLink';
 

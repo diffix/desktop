@@ -1,8 +1,7 @@
-import React from 'react';
 import { Typography } from 'antd';
-
-import { NotebookNavStep, useNavState } from './notebook-nav';
+import React from 'react';
 import { DocsLink } from '../Docs';
+import { NotebookNavStep, useNavState } from './notebook-nav';
 
 const { Paragraph, Text, Title } = Typography;
 

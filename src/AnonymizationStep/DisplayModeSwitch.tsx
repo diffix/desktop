@@ -1,6 +1,5 @@
-import React, { FunctionComponent } from 'react';
 import { Radio } from 'antd';
-
+import React, { FunctionComponent } from 'react';
 import { DisplayMode } from '../types';
 
 export type DisplayModeSwitchProps = {

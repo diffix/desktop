@@ -1,7 +1,6 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Button, Descriptions, Divider, message, Result, Space, Spin, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-
+import { Button, Descriptions, Divider, message, Result, Space, Spin, Typography } from 'antd';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { anonymizer, formatPercentage, useCachedData } from '../shared';
 import {
