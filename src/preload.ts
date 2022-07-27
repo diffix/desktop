@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron';
 import i18n from 'i18next';
+import { set } from 'lodash';
 import { initReactI18next } from 'react-i18next';
 import { i18nConfig } from './shared/config';
 
@@ -22,11 +23,19 @@ i18n.use(initReactI18next).init({
   resources: { en: { [i18nConfig.ns]: en }, de: { [i18nConfig.ns]: de } },
 });
 
+window.i18n = i18n;
+window.i18nMissingKeys = {};
+
+i18n.on('missingKey', (lngs, namespace, key) => {
+  const keyPath = key.split(i18nConfig.keySeparator);
+  for (const lng of lngs) {
+    set(window.i18nMissingKeys, [lng, namespace, ...keyPath], keyPath[keyPath.length - 1]);
+  }
+});
+
 ipcRenderer.on('language_changed', (_event, language) => {
   i18n.changeLanguage(language);
 });
-
-window.i18n = i18n;
 
 let nextTaskId = 1;
 

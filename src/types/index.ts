@@ -171,6 +171,7 @@ export {};
 declare global {
   interface Window {
     i18n: i18n;
+    i18nMissingKeys: Record<string, unknown>;
     callService(request: unknown, signal: AbortSignal): Promise<Response>;
     selectExportFile(defaultPath: string): Promise<string | null>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;

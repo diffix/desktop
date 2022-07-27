@@ -36,7 +36,6 @@ i18n.use(i18nFsBackend).init({
     ident: 2,
   },
   debug: i18nConfig.debug && !app.isPackaged,
-  saveMissing: true,
   initImmediate: false,
 });
 

@@ -1,6 +1,12 @@
 import { isEqual } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { TFunction, useTranslation } from 'react-i18next';
 import { ComputedData } from '../types';
+import { i18nConfig } from './config';
+
+export function useT(prefix?: string): TFunction<typeof i18nConfig.ns, string> {
+  return useTranslation(i18nConfig.ns, { keyPrefix: prefix }).t;
+}
 
 export function useCachedData<T>(resultData: ComputedData<T>, initialData: T): T {
   const ref = useRef(initialData);
