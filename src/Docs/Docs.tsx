@@ -8,9 +8,16 @@ import { Markdown, TableOfContents, TableOfContentsLink } from './Markdown';
 import './Docs.css';
 
 import changelogSource from '../../CHANGELOG.md';
-import anonymizationSource from '../../docs/anonymization.md';
-import operationSource from '../../docs/operation.md';
-import tipsSource from '../../docs/tips.md';
+
+import anonymizationSourceEn from '../../docs/en/anonymization.md';
+import anonymizationSourceDe from '../../docs/de/anonymization.md';
+
+import operationSourceEn from '../../docs/en/operation.md';
+import operationSourceDe from '../../docs/de/operation.md';
+
+import tipsSourceEn from '../../docs/en/tips.md';
+import tipsSourceDe from '../../docs/de/tips.md';
+
 import licenseSource from '../../LICENSE.md';
 
 const { Link } = Anchor;
@@ -20,27 +27,42 @@ const docsPages = [
   {
     id: 'operation',
     title: 'Operation',
-    source: operationSource,
+    source: {
+      en: operationSourceEn,
+      de: operationSourceDe,
+    },
   },
   {
     id: 'anonymization',
     title: 'Anonymization',
-    source: anonymizationSource,
+    source: {
+      en: anonymizationSourceEn,
+      de: anonymizationSourceDe,
+    },
   },
   {
     id: 'tips',
     title: 'Tips and Tricks',
-    source: tipsSource,
+    source: {
+      en: tipsSourceEn,
+      de: tipsSourceDe,
+    },
   },
   {
     id: 'changelog',
     title: 'Changelog',
-    source: changelogSource,
+    source: {
+      en: changelogSource,
+      de: changelogSource,
+    },
   },
   {
     id: 'license',
     title: 'License',
-    source: licenseSource,
+    source: {
+      en: licenseSource,
+      de: licenseSource,
+    },
   },
 ] as const;
 
@@ -145,7 +167,10 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
         )}
       </Layout.Sidebar>
       <Layout.Content ref={containerRef} className="Docs-content">
-        <Markdown source={currentPage.source} onTableOfContents={setTableOfContents} />
+        <Markdown
+          source={currentPage.source[window.i18n.language as 'en' | 'de']}
+          onTableOfContents={setTableOfContents}
+        />
       </Layout.Content>
     </Layout>
   );

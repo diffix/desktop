@@ -113,8 +113,8 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'docs', privileges: { bypassCSP:
 
 function registerProtocols() {
   protocol.registerFileProtocol('docs', (request, callback) => {
-    const url = request.url.substr('docs://'.length);
-    callback(path.join(resourcesLocation, 'docs', url));
+    const url = request.url.substring('docs://'.length);
+    callback(path.join(resourcesLocation, 'docs', i18n.language, url));
   });
 }
 
