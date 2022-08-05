@@ -1,1 +1,106 @@
-{}
+{
+  "AidSelectionStep": {
+    "Select the protected entity identifier column": "Select the protected entity identifier column",
+    "CAUTION:": "CAUTION:",
+    "When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity.": "When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity.",
+    "Select a column or 'None'": "Select a column or 'None'",
+    "[None]": "[None]"
+  },
+  "AnonParamsSelectionStep": {
+    "Suppression configuration": "Suppression configuration",
+    "Suppression Threshold": "Suppression Threshold",
+    "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.": "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed."
+  },
+  "AnonymizationResults": {
+    "Anonymized data": "Anonymized data",
+    "Here is what the result looks like:": "Here is what the result looks like:",
+    "Export anonymized data to CSV": "Export anonymized data to CSV",
+    "_anonymized.csv": "_anonymized.csv",
+    "Exporting anonymized data to {{filePath}}...": "Exporting anonymized data to {{filePath}}...",
+    "Anonymized data exported successfully!": "Anonymized data exported successfully!"
+  },
+  "AnonymizationSummary": {
+    "Anonymization summary": "Anonymization summary",
+    "Suppressed Count": "Suppressed Count",
+    "of": "of",
+    "Suppressed Bins": "Suppressed Bins",
+    "Median Distortion": "Median Distortion",
+    "Maximum Distortion": "Maximum Distortion"
+  },
+  "AnonymizedResultsTable": {
+    "Anonymized": "Anonymized",
+    "Combined view": "Combined view",
+    "Suppress bin": "Suppress bin",
+    "(anonymized)": "(anonymized)",
+    "(original)": "(original)",
+    "Distortion": "Distortion"
+  },
+  "App": {
+    "Documentation": "Documentation",
+    "New Notebook": "New Notebook",
+    "Diffix for Desktop": "Diffix for Desktop",
+    "No open notebooks": "No open notebooks",
+    "Create New": "Create New"
+  },
+  "ColumnSelectionStep": {
+    "Select columns for anonymization": "Select columns for anonymization",
+    "Column": "Column",
+    "Selected": "Selected",
+    "Type:": "Type:",
+    "type": {
+      "boolean": "boolean",
+      "real": "real",
+      "text": "text",
+      "integer": "integer"
+    },
+    "Count": "Count",
+    "Count rows": "Count rows",
+    "Rows": "Rows",
+    "Count protected entities": "Count protected entities",
+    "Entities": "Entities",
+    "Generalization": "Generalization"
+  },
+  "Docs": {
+    "Documentation": "Documentation",
+    "Anonymization": "Anonymization",
+    "Tips and Tricks": "Tips and Tricks",
+    "Changelog": "Changelog",
+    "License": "License",
+    "Operation": "Operation"
+  },
+  "FileLoadStep": {
+    "Import data to anonymize": "Import data to anonymize",
+    "Import data from CSV file": "Import data from CSV file",
+    "Click or drag file to this area to import": "Click or drag file to this area to import"
+  },
+  "GeneralizationControls": {
+    "Substring start": "Substring start",
+    "Substring length": "Substring length",
+    "Bin size": "Bin size"
+  },
+  "NotebookNavSteps": {
+    "CSV Import": "CSV Import",
+    "Load data from CSV": "Load data from CSV",
+    "Data Preview": "Data Preview",
+    "Preview contents of file": "Preview contents of file",
+    "ID Selection": "ID Selection",
+    "Select the entity identifier column": "Select the entity identifier column",
+    "Column Selection": "Column Selection",
+    "Select columns for anonymization": "Select columns for anonymization",
+    "Suppression Configuration": "Suppression Configuration",
+    "Set the Suppression Threshold": "Set the Suppression Threshold",
+    "Anonymization Summary": "Anonymization Summary",
+    "Review distortion statistics": "Review distortion statistics",
+    "Anonymized Results": "Anonymized Results",
+    "Preview anonymized results": "Preview anonymized results",
+    "CSV Export": "CSV Export",
+    "Export anonymized data to CSV": "Export anonymized data to CSV"
+  },
+  "SchemaLoadStep": {
+    "Loading schema": "Loading schema",
+    "Successfully imported {{fileName}}": "Successfully imported {{fileName}}",
+    "Here is what the data looks like:": "Here is what the data looks like:",
+    "(only the first 1000 rows are shown)": "(only the first 1000 rows are shown)",
+    "Loaded {{fileName}}": "Loaded {{fileName}}"
+  }
+}

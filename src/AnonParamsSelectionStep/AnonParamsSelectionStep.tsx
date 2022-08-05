@@ -1,7 +1,7 @@
 import { Divider, Form, InputNumber, Typography } from 'antd';
 import React, { FunctionComponent, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
-import { useMemoStable } from '../shared';
+import { useMemoStable, useT } from '../shared';
 import { AnonymizationParams } from '../types';
 
 const { Title } = Typography;
@@ -15,6 +15,7 @@ export type AnonParamsSelectionStepData = {
 };
 
 export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepProps> = ({ children }) => {
+  const t = useT('AnonParamsSelectionStep');
   const [lowThreshold, setLowThreshold] = useState<number>(3);
   const minLowThreshold = 2;
 
@@ -36,7 +37,7 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
     <>
       <div className="AnonParamsSelectionStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.AnonParamsSelection} status="done" />
-        <Title level={3}>Suppression configuration</Title>
+        <Title level={3}>{t('Suppression configuration')}</Title>
 
         <Form
           layout="inline"
@@ -44,8 +45,10 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
           onValuesChange={({ lowThreshold }) => setLowThreshold(Math.round(lowThreshold))}
         >
           <Form.Item
-            label="Suppression Threshold"
-            tooltip="Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed"
+            label={t('Suppression Threshold')}
+            tooltip={t(
+              'Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.',
+            )}
             name="lowThreshold"
           >
             <InputNumber

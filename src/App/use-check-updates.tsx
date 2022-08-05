@@ -1,7 +1,8 @@
 import { notification } from 'antd';
 import React, { useEffect } from 'react';
+import { getT, TFunc } from '../shared';
 
-const notificationContent = (version: string) => {
+const notificationContent = (version: string, t: TFunc) => {
   return (
     <>
       A more recent version ({version}) is available.
@@ -21,9 +22,10 @@ async function checkForUpdates() {
   try {
     const newerVersion = await window.checkForUpdates();
     if (newerVersion) {
+      const t = getT('check-updates');
       notification.info({
-        message: 'Update Available',
-        description: notificationContent(newerVersion),
+        message: t('Update Available'),
+        description: notificationContent(newerVersion, t),
         duration: 10,
       });
     }

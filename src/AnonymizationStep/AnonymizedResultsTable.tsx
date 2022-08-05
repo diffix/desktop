@@ -1,6 +1,6 @@
-import { Tooltip } from 'antd';
+import { Radio, Tooltip } from 'antd';
 import React, { FunctionComponent, useState } from 'react';
-import { columnSorter, formatPercentage, relativeNoise, ResponsiveTable } from '../shared';
+import { columnSorter, formatPercentage, relativeNoise, ResponsiveTable, TFunc, useT } from '../shared';
 import {
   AnonymizedQueryResult,
   AnonymizedResultColumn,
@@ -13,7 +13,6 @@ import {
   RowDataIndex,
   Value,
 } from '../types';
-import { DisplayModeSwitch } from './DisplayModeSwitch';
 
 import './AnonymizedResultsTable.css';
 
@@ -112,16 +111,22 @@ function makeColumnData(
 const AGG_COLUMN_TYPE = 'real';
 
 const mapColumn =
-  (mode: DisplayMode, bucketColumns: BucketColumn[]) => (column: AnonymizedResultColumn, columnIdx: number) => {
+  (mode: DisplayMode, bucketColumns: BucketColumn[], t: TFunc) =>
+  (column: AnonymizedResultColumn, columnIdx: number) => {
     if (column.type === 'aggregate') {
       switch (mode) {
         case 'anonymized':
           return [makeColumnData(column.name, `${columnIdx}_anon`, AGG_COLUMN_TYPE, renderValue)];
         case 'combined':
           return [
-            makeColumnData(column.name + ' (anonymized)', `${columnIdx}_anon`, AGG_COLUMN_TYPE, renderLowCountValue),
-            makeColumnData(column.name + ' (original)', `${columnIdx}_real`, AGG_COLUMN_TYPE, renderValue),
-            makeColumnData('Distortion', `${columnIdx}_diff`, AGG_COLUMN_TYPE, renderRelativeNoiseValue),
+            makeColumnData(
+              column.name + ' ' + t('(anonymized)'),
+              `${columnIdx}_anon`,
+              AGG_COLUMN_TYPE,
+              renderLowCountValue,
+            ),
+            makeColumnData(column.name + ' ' + t('(original)'), `${columnIdx}_real`, AGG_COLUMN_TYPE, renderValue),
+            makeColumnData(t('Distortion'), `${columnIdx}_diff`, AGG_COLUMN_TYPE, renderRelativeNoiseValue),
           ];
       }
     }
@@ -170,7 +175,7 @@ function mapRow(row: AnonymizedResultRow, i: number) {
   return rowData;
 }
 
-function makeStarBucketData(result: AnonymizedQueryResult) {
+function makeStarBucketData(result: AnonymizedQueryResult, t: TFunc) {
   if (result.summary.suppressedAnonCount) {
     const rowData: TableRowData = {
       key: -1,
@@ -188,7 +193,7 @@ function makeStarBucketData(result: AnonymizedQueryResult) {
     );
 
     const firstStarInRowIdx = values.findIndex((v) => v === '*');
-    if (firstStarInRowIdx > -1) values[firstStarInRowIdx] = '* (Suppress bin)';
+    if (firstStarInRowIdx > -1) values[firstStarInRowIdx] = `* (${t('Suppress bin')})`;
 
     addValuesToRowData(rowData, values);
     return [rowData];
@@ -211,12 +216,13 @@ export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTablePro
   result,
   bucketColumns,
 }) => {
+  const t = useT('AnonymizedResultsTable');
   const [mode, setMode] = useState<DisplayMode>('anonymized');
 
-  const columns = result.columns.flatMap(mapColumn(mode, bucketColumns));
+  const columns = result.columns.flatMap(mapColumn(mode, bucketColumns, t));
   const queryData = filterRows(mode, result.rows).map(mapRow);
 
-  const starBucketData: TableRowData[] = mode === 'anonymized' ? makeStarBucketData(result) : [];
+  const starBucketData: TableRowData[] = mode === 'anonymized' ? makeStarBucketData(result, t) : [];
 
   const data = starBucketData.concat(queryData);
 
@@ -228,7 +234,12 @@ export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTablePro
         columns={columns}
         dataSource={data}
         rowClassName={rowClassName}
-        footer={() => <DisplayModeSwitch value={mode} onChange={setMode} />}
+        footer={() => (
+          <Radio.Group value={mode} onChange={(e) => setMode(e.target.value)}>
+            <Radio.Button value="anonymized">{t('Anonymized')}</Radio.Button>
+            <Radio.Button value="combined">{t('Combined view')}</Radio.Button>
+          </Radio.Group>
+        )}
       />
     </div>
   );

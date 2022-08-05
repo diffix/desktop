@@ -2,7 +2,7 @@ import { Anchor, Typography } from 'antd';
 import { find } from 'lodash';
 import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import invariant from 'tiny-invariant';
-import { Layout, usePrevious } from '../shared';
+import { Layout, usePrevious, useT } from '../shared';
 import { Markdown, TableOfContents, TableOfContentsLink } from './Markdown';
 
 import './Docs.css';
@@ -71,6 +71,7 @@ export type DocsProps = {
 };
 
 export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scrollInvalidator, onPageChange }) => {
+  const t = useT('Docs');
   const containerRef = useRef<HTMLDivElement>(null);
   const [tableOfContents, setTableOfContents] = useState<TableOfContents>([]);
 
@@ -114,7 +115,7 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
   return (
     <Layout className="Docs">
       <Layout.Sidebar className="Docs-sidebar">
-        <Title level={4}>Documentation</Title>
+        <Title level={4}>{t('Documentation')}</Title>
         {docsPages.map((page) =>
           page.id === pageId ? (
             <Anchor
@@ -130,14 +131,14 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
             <div key={page.id} className="Docs-nav-link ant-anchor-link">
               <a
                 className="ant-anchor-link-title"
-                title={page.title}
+                title={t(page.title)}
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
                   onPageChange(page.id);
                 }}
               >
-                {page.title}
+                {t(page.title)}
               </a>
             </div>
           ),

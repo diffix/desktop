@@ -2,6 +2,7 @@ import { FileOutlined } from '@ant-design/icons';
 import { Divider, Typography, Upload } from 'antd';
 import React, { FunctionComponent, useCallback, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
+import { useT } from '../shared';
 import { File } from '../types';
 
 const { Dragger } = Upload;
@@ -18,6 +19,7 @@ export type FileLoadStepData = {
 };
 
 export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children, onLoad }) => {
+  const t = useT('FileLoadStep');
   const [file, setFile] = useState<File | null>(null);
   const removeFile = useCallback(() => setFile(null), []);
 
@@ -25,7 +27,7 @@ export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children, o
     <>
       <div className="FileLoadStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.CsvImport} status={file ? 'done' : 'active'} />
-        <Title level={3}>Import data to anonymize</Title>
+        <Title level={3}>{t('Import data to anonymize')}</Title>
         <Dragger
           accept=".csv,.tsv,.txt"
           fileList={[]}
@@ -42,8 +44,8 @@ export const FileLoadStep: FunctionComponent<FileLoadStepProps> = ({ children, o
           <p className="ant-upload-drag-icon">
             <FileOutlined />
           </p>
-          <p className="ant-upload-text">Import data from CSV file</p>
-          <p className="ant-upload-hint">Click or drag file to this area to import</p>
+          <p className="ant-upload-text">{t('Import data from CSV file')}</p>
+          <p className="ant-upload-hint">{t('Click or drag file to this area to import')}</p>
         </Dragger>
       </div>
       {/* Render next step */}
