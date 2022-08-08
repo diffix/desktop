@@ -216,7 +216,7 @@ export const AnonymizedResultsTable: FunctionComponent<AnonymizedResultsTablePro
   result,
   bucketColumns,
 }) => {
-  const t = useT('AnonymizedResultsTable');
+  const t = useT('AnonymizationResults::AnonymizedResultsTable');
   const [mode, setMode] = useState<DisplayMode>('anonymized');
 
   const columns = result.columns.flatMap(mapColumn(mode, bucketColumns, t));

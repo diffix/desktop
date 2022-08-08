@@ -233,7 +233,7 @@ function mapText(text: string, focused: boolean) {
 
 const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[]; focusedStep: NotebookNavStep }>(
   ({ steps, focusedStep }) => {
-    const t = useT('NotebookNavSteps');
+    const t = useT('Sidebar::NotebookNavSteps');
     const navFunctions = useNavFunctions();
     const status = (step: NotebookNavStep) => mapStatus(steps[step].status);
 

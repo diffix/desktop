@@ -69,7 +69,7 @@ function GeneralizationControls({
   column: ColumnState;
   updateColumn: (values: Partial<ColumnState>) => void;
 }) {
-  const t = useT('GeneralizationControls');
+  const t = useT('ColumnSelectionStep::GeneralizationControls');
   switch (column.type) {
     case 'integer':
     case 'real': {
