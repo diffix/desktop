@@ -68,6 +68,28 @@ function setupMenu() {
       ],
     },
     {
+      label: '&Settings',
+      submenu: [
+        {
+          label: 'Language',
+          submenu: [
+            {
+              label: 'English',
+              type: 'radio',
+              checked: i18n.language === 'en',
+              click: () => i18n.changeLanguage('en'),
+            },
+            {
+              label: 'Deutsch',
+              type: 'radio',
+              checked: i18n.language === 'de',
+              click: () => i18n.changeLanguage('de'),
+            },
+          ],
+        },
+      ],
+    },
+    {
       label: '&Help',
       submenu: [
         {
