@@ -51,27 +51,29 @@ function openURL(url: string) {
 }
 
 function setupMenu() {
+  const t = i18n.getFixedT(null, null, 'App::Menu');
+  // Todo: Localize macOS app menu.
   const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
   const template: MenuItemConstructorOptions[] = [
     ...(isMac ? [macAppMenu] : []),
     {
-      label: '&View',
+      label: t('View::&View'),
       submenu: [
-        { role: 'copy' },
-        { role: 'selectAll' },
+        { role: 'copy', label: t('View::Copy') },
+        { role: 'selectAll', label: t('View::Select All') },
         { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
+        { role: 'resetZoom', label: t('View::Actual Size') },
+        { role: 'zoomIn', label: t('View::Zoom In') },
+        { role: 'zoomOut', label: t('View::Zoom Out') },
         { type: 'separator' },
-        { role: 'togglefullscreen' },
+        { role: 'togglefullscreen', label: t('View::Toggle Full Screen') },
       ],
     },
     {
-      label: '&Settings',
+      label: t('Settings::&Settings'),
       submenu: [
         {
-          label: 'Language',
+          label: t('Settings::Language'),
           submenu: [
             {
               label: 'English',
@@ -90,35 +92,35 @@ function setupMenu() {
       ],
     },
     {
-      label: '&Help',
+      label: t('Help::&Help'),
       submenu: [
         {
-          label: 'Documentation',
+          label: t('Help::Documentation'),
           click: () => openDocs('operation'),
         },
         {
-          label: 'Changelog',
+          label: t('Help::Changelog'),
           click: () => openDocs('changelog'),
         },
         {
-          label: 'License',
+          label: t('Help::License'),
           click: () => openDocs('license'),
         },
         { type: 'separator' },
         {
-          label: 'Learn More',
+          label: t('Help::Learn More'),
           click: () => openURL('https://open-diffix.org'),
         },
         {
-          label: 'Community Discussions',
+          label: t('Help::Community Discussions'),
           click: () => openURL('https://github.com/diffix/desktop/discussions'),
         },
         {
-          label: 'Search Issues',
+          label: t('Help::Search Issues'),
           click: () => openURL('https://github.com/diffix/desktop/issues'),
         },
         {
-          label: 'Latest Releases',
+          label: t('Help::Latest Releases'),
           click: () => openURL('https://github.com/diffix/desktop/releases'),
         },
       ],
@@ -198,7 +200,7 @@ app.on('activate', () => {
 });
 
 i18n.on('languageChanged', (lng) => {
-  // TODO: Rebuild app menu
+  setupMenu();
   const mainWindow = BrowserWindow.getAllWindows()[0];
   mainWindow?.webContents.send('language_changed', lng);
 });

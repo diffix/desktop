@@ -1,5 +1,30 @@
 {
   "App": {
+    "Menu": {
+      "View": {
+        "&View": "&View",
+        "Copy": "Copy",
+        "Select All": "Select All",
+        "Actual Size": "Actual Size",
+        "Zoom In": "Zoom In",
+        "Zoom Out": "Zoom Out",
+        "Toggle Full Screen": "Toggle Full Screen"
+      },
+      "Settings": {
+        "&Settings": "&Settings",
+        "Language": "Language"
+      },
+      "Help": {
+        "&Help": "&Help",
+        "Documentation": "Documentation",
+        "Changelog": "Changelog",
+        "License": "License",
+        "Learn More": "Learn More",
+        "Community Discussions": "Community Discussions",
+        "Search Issues": "Search Issues",
+        "Latest Releases": "Latest Releases"
+      }
+    },
     "Documentation": "Documentation",
     "New Notebook": "New Notebook",
     "Diffix for Desktop": "Diffix for Desktop",
