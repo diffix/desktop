@@ -40,6 +40,10 @@
     "No open notebooks": "No open notebooks",
     "Create New": "Create New"
   },
+  "check-updates": {
+    "Update Available": "Update Available",
+    "A more recent version ({{version}}) is available.<br/>Click <6><0>here</0></6> to open the release page.": "A more recent version ({{version}}) is available.<br/>Click <6><0>here</0></6> to open the release page."
+  },
   "Docs": {
     "Documentation": "Documentation",
     "Anonymization": "Anonymization",

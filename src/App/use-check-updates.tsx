@@ -1,11 +1,13 @@
 import { notification } from 'antd';
 import React, { useEffect } from 'react';
+import { Trans } from 'react-i18next';
 import { getT, TFunc } from '../shared';
 
 const notificationContent = (version: string, t: TFunc) => {
   return (
-    <>
-      A more recent version ({version}) is available.
+    // Needs an explicit i18n because the notification is rendered in a portal.
+    <Trans i18n={window.i18n} t={t}>
+      A more recent version ({{ version }}) is available.
       <br />
       Click{' '}
       <strong>
@@ -14,7 +16,7 @@ const notificationContent = (version: string, t: TFunc) => {
         </a>
       </strong>{' '}
       to open the release page.
-    </>
+    </Trans>
   );
 };
 
