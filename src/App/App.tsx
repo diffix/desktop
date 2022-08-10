@@ -2,13 +2,13 @@ import { Button, ConfigProvider, Empty, Tabs } from 'antd';
 import deDE from 'antd/es/locale/de_DE';
 import enUS from 'antd/es/locale/en_US';
 import { find, findIndex } from 'lodash';
-import React, { FunctionComponent, useMemo } from 'react';
+import React, { FunctionComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { I18nextProvider } from 'react-i18next';
 import { useImmer } from 'use-immer';
 import { Docs, DocsFunctionsContext, PageId } from '../Docs';
 import { Notebook } from '../Notebook';
-import { anonymizer, AnonymizerContext, TFunc, useT } from '../shared';
+import { anonymizer, AnonymizerContext, getT, TFunc, useStaticValue, useT } from '../shared';
 import { useCheckUpdates } from './use-check-updates';
 
 import './App.css';
@@ -55,12 +55,13 @@ function newDocsTab(page: PageId, section: string | null, t: TFunc): TabInfo {
   };
 }
 
-function setWindowTitle(state: AppState, t: TFunc) {
+function setWindowTitle(state: AppState) {
+  const t = getT('App');
   const tab = find(state.tabs, { id: state.activeTab });
   if (tab) {
     window.setMainWindowTitle(tab.title + ' - ' + t('Diffix for Desktop'));
   } else {
-    window.setMainWindowTitle('Diffix for Desktop');
+    window.setMainWindowTitle(t('Diffix for Desktop'));
   }
 }
 
@@ -83,7 +84,7 @@ export const App: FunctionComponent = () => {
           const addedNotebook = newNotebookTab(t);
           state.tabs.push(addedNotebook);
           state.activeTab = addedNotebook.id;
-          setWindowTitle(state, t);
+          setWindowTitle(state);
         });
         return;
 
@@ -98,7 +99,7 @@ export const App: FunctionComponent = () => {
           if (id === state.activeTab && tabs.length !== 0) {
             state.activeTab = tabs[Math.min(index, tabs.length - 1)].id;
           }
-          setWindowTitle(state, t);
+          setWindowTitle(state);
         });
         return;
     }
@@ -107,7 +108,7 @@ export const App: FunctionComponent = () => {
   function setActiveTab(id: string) {
     updateState((state) => {
       state.activeTab = id;
-      setWindowTitle(state, t);
+      setWindowTitle(state);
     });
   }
 
@@ -117,32 +118,28 @@ export const App: FunctionComponent = () => {
       if (tab) {
         tab.title = title;
       }
-      setWindowTitle(state, t);
+      setWindowTitle(state);
     });
   }
 
-  const docsFunctions = useMemo(
-    () => ({
-      openDocs(page: PageId, section: string | null = null) {
-        updateState((state) => {
-          const existingTab = state.tabs.find((t) => t.type === 'docs') as DocsTab | undefined;
-          if (existingTab) {
-            existingTab.page = page;
-            existingTab.section = section;
-            existingTab.scrollInvalidator++;
-            state.activeTab = existingTab.id;
-          } else {
-            const newTab = newDocsTab(page, section, t);
-            state.tabs.push(newTab);
-            state.activeTab = newTab.id;
-          }
-          setWindowTitle(state, t);
-        });
-      },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [t],
-  );
+  const docsFunctions = useStaticValue(() => ({
+    openDocs(page: PageId, section: string | null = null) {
+      updateState((state) => {
+        const existingTab = state.tabs.find((t) => t.type === 'docs') as DocsTab | undefined;
+        if (existingTab) {
+          existingTab.page = page;
+          existingTab.section = section;
+          existingTab.scrollInvalidator++;
+          state.activeTab = existingTab.id;
+        } else {
+          const newTab = newDocsTab(page, section, t);
+          state.tabs.push(newTab);
+          state.activeTab = newTab.id;
+        }
+        setWindowTitle(state);
+      });
+    },
+  }));
 
   window.onOpenDocs = (page) => docsFunctions.openDocs(page);
 
