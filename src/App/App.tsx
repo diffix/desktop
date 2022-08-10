@@ -1,4 +1,6 @@
-import { Button, Empty, Tabs } from 'antd';
+import { Button, ConfigProvider, Empty, Tabs } from 'antd';
+import deDE from 'antd/es/locale/de_DE';
+import enUS from 'antd/es/locale/en_US';
 import { find, findIndex } from 'lodash';
 import React, { FunctionComponent, useMemo } from 'react';
 import ReactDOM from 'react-dom';
@@ -147,44 +149,46 @@ export const App: FunctionComponent = () => {
   const { tabs, activeTab } = state;
 
   return (
-    <AnonymizerContext.Provider value={anonymizer}>
-      <DocsFunctionsContext.Provider value={docsFunctions}>
-        <div className="App">
-          {tabs.length !== 0 ? (
-            <Tabs type="editable-card" activeKey={activeTab} onChange={setActiveTab} onEdit={onEdit}>
-              {tabs.map((tab) => (
-                <TabPane tab={tab.title} key={tab.id}>
-                  {tab.type === 'notebook' ? (
-                    <Notebook isActive={activeTab === tab.id} onTitleChange={(title) => setTitle(tab.id, title)} />
-                  ) : (
-                    <Docs
-                      onTitleChange={(title) => setTitle(tab.id, title)}
-                      page={tab.page}
-                      onPageChange={(page) =>
-                        updateState((state) => {
-                          const docsTab = find(state.tabs, { id: tab.id }) as DocsTab;
-                          docsTab.page = page;
-                          docsTab.section = null;
-                          docsTab.scrollInvalidator++;
-                        })
-                      }
-                      section={tab.section}
-                      scrollInvalidator={tab.scrollInvalidator}
-                    />
-                  )}
-                </TabPane>
-              ))}
-            </Tabs>
-          ) : (
-            <Empty className="App-empty" description={t('No open notebooks')}>
-              <Button type="primary" onClick={() => onEdit(null, 'add')}>
-                {t('Create New')}
-              </Button>
-            </Empty>
-          )}
-        </div>
-      </DocsFunctionsContext.Provider>
-    </AnonymizerContext.Provider>
+    <ConfigProvider locale={window.i18n.language === 'de' ? deDE : enUS}>
+      <AnonymizerContext.Provider value={anonymizer}>
+        <DocsFunctionsContext.Provider value={docsFunctions}>
+          <div className="App">
+            {tabs.length !== 0 ? (
+              <Tabs type="editable-card" activeKey={activeTab} onChange={setActiveTab} onEdit={onEdit}>
+                {tabs.map((tab) => (
+                  <TabPane tab={tab.title} key={tab.id}>
+                    {tab.type === 'notebook' ? (
+                      <Notebook isActive={activeTab === tab.id} onTitleChange={(title) => setTitle(tab.id, title)} />
+                    ) : (
+                      <Docs
+                        onTitleChange={(title) => setTitle(tab.id, title)}
+                        page={tab.page}
+                        onPageChange={(page) =>
+                          updateState((state) => {
+                            const docsTab = find(state.tabs, { id: tab.id }) as DocsTab;
+                            docsTab.page = page;
+                            docsTab.section = null;
+                            docsTab.scrollInvalidator++;
+                          })
+                        }
+                        section={tab.section}
+                        scrollInvalidator={tab.scrollInvalidator}
+                      />
+                    )}
+                  </TabPane>
+                ))}
+              </Tabs>
+            ) : (
+              <Empty className="App-empty" description={t('No open notebooks')}>
+                <Button type="primary" onClick={() => onEdit(null, 'add')}>
+                  {t('Create New')}
+                </Button>
+              </Empty>
+            )}
+          </div>
+        </DocsFunctionsContext.Provider>
+      </AnonymizerContext.Provider>
+    </ConfigProvider>
   );
 };
 
