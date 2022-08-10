@@ -1,6 +1,15 @@
 {
   "App": {
     "Menu": {
+      "AppMenu": {
+        "Diffix for Desktop": "Diffix for Desktop",
+        "About Diffix for Desktop": "About Diffix for Desktop",
+        "Services": "Services",
+        "Hide Diffix for Desktop": "Hide Diffix for Desktop",
+        "Hide Others": "Hide Others",
+        "Show All": "Show All",
+        "Quit Diffix for Desktop": "Quit Diffix for Desktop"
+      },
       "View": {
         "&View": "&View",
         "Copy": "Copy",

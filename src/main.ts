@@ -52,8 +52,22 @@ function openURL(url: string) {
 
 function setupMenu() {
   const t = i18n.getFixedT(null, null, 'App::Menu');
-  // Todo: Localize macOS app menu.
-  const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
+
+  const macAppMenu: MenuItemConstructorOptions = {
+    label: t(`AppMenu::${app.name}`),
+    submenu: [
+      { role: 'about', label: t(`AppMenu::About ${app.name}`) },
+      { type: 'separator' },
+      { role: 'services', label: t('AppMenu::Services') },
+      { type: 'separator' },
+      { role: 'hide', label: t(`AppMenu::Hide ${app.name}`) },
+      { role: 'hideOthers', label: t('AppMenu::Hide Others') },
+      { role: 'unhide', label: t('AppMenu::Show All') },
+      { type: 'separator' },
+      { role: 'quit', label: t(`AppMenu::Quit ${app.name}`) },
+    ],
+  };
+
   const template: MenuItemConstructorOptions[] = [
     ...(isMac ? [macAppMenu] : []),
     {
