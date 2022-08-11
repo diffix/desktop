@@ -1,7 +1,7 @@
-import React, { FunctionComponent, useEffect } from 'react';
 import { Divider, message, Result, Space, Spin, Typography } from 'antd';
-
+import React, { FunctionComponent, useEffect } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
+import { getT, useT } from '../shared';
 import { File, TableSchema } from '../types';
 import { DataPreviewTable } from './DataPreviewTable';
 import { useSchema } from './use-schema';
@@ -18,10 +18,12 @@ export type SchemaLoadStepData = {
 };
 
 export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ children, file }) => {
+  const t = useT('SchemaLoadStep');
   const schema = useSchema(file);
   useEffect(() => {
     if (schema.state === 'completed') {
-      message.success(`Loaded ${schema.value.file.name}`);
+      const t = getT('SchemaLoadStep'); // Get a fresh version so hook won't complain.
+      message.success(t('Loaded {{fileName}}', { fileName: schema.value.file.name }));
     }
   }, [schema]);
 
@@ -31,11 +33,11 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
         <>
           <div className="SchemaLoadStep notebook-step completed">
             <NotebookNavAnchor step={NotebookNavStep.DataPreview} status="done" />
-            <Title level={3}>Successfully imported {schema.value.file.name}</Title>
+            <Title level={3}>{t('Successfully imported {{fileName}}', { fileName: schema.value.file.name })}</Title>
             <div className="mb-1">
-              <Text>Here is what the data looks like:</Text>
+              <Text>{t('Here is what the data looks like:')}</Text>
               {schema.value.rowsPreview.length === 1000 && (
-                <Text type="secondary"> (only the first 1000 rows are shown)</Text>
+                <Text type="secondary"> {t('(only the first 1000 rows are shown)')}</Text>
               )}
             </div>
             <DataPreviewTable schema={schema.value} />
@@ -52,8 +54,8 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
           <NotebookNavAnchor step={NotebookNavStep.DataPreview} status="failed" />
           <Result
             status="error"
-            title="Schema discovery failed"
-            subTitle="Something went wrong while loading the schema."
+            title={t('Schema discovery failed')}
+            subTitle={t('Something went wrong while loading the schema.')}
           />
         </div>
       );
@@ -64,7 +66,7 @@ export const SchemaLoadStep: FunctionComponent<SchemaLoadStepProps> = ({ childre
           <NotebookNavAnchor step={NotebookNavStep.DataPreview} status="loading" />
           <Space direction="vertical">
             <Spin size="large" />
-            <Text type="secondary">Loading schema</Text>
+            <Text type="secondary">{t('Loading schema')}</Text>
           </Space>
         </div>
       );

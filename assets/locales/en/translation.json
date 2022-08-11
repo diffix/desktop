@@ -1,0 +1,183 @@
+{
+  "App": {
+    "Menu": {
+      "AppMenu": {
+        "Diffix for Desktop": "Diffix for Desktop",
+        "About Diffix for Desktop": "About Diffix for Desktop",
+        "Services": "Services",
+        "Hide Diffix for Desktop": "Hide Diffix for Desktop",
+        "Hide Others": "Hide Others",
+        "Show All": "Show All",
+        "Quit Diffix for Desktop": "Quit Diffix for Desktop"
+      },
+      "View": {
+        "&View": "&View",
+        "Copy": "Copy",
+        "Select All": "Select All",
+        "Actual Size": "Actual Size",
+        "Zoom In": "Zoom In",
+        "Zoom Out": "Zoom Out",
+        "Toggle Full Screen": "Toggle Full Screen"
+      },
+      "Settings": {
+        "&Settings": "&Settings",
+        "Language": "Language"
+      },
+      "Help": {
+        "&Help": "&Help",
+        "Documentation": "Documentation",
+        "Changelog": "Changelog",
+        "License": "License",
+        "Learn More": "Learn More",
+        "Community Discussions": "Community Discussions",
+        "Search Issues": "Search Issues",
+        "Latest Releases": "Latest Releases"
+      }
+    },
+    "Documentation": "Documentation",
+    "New Notebook": "New Notebook",
+    "Diffix for Desktop": "Diffix for Desktop",
+    "No open notebooks": "No open notebooks",
+    "Create New": "Create New"
+  },
+  "check-updates": {
+    "Update Available": "Update Available",
+    "A more recent version ({{version}}) is available.<br/>Click <6><0>here</0></6> to open the release page.": "A more recent version ({{version}}) is available.<br/>Click <6><0>here</0></6> to open the release page."
+  },
+  "Docs": {
+    "Documentation": "Documentation",
+    "Anonymization": "Anonymization",
+    "Tips and Tricks": "Tips and Tricks",
+    "Changelog": "Changelog",
+    "License": "License",
+    "Operation": "Operation"
+  },
+  "Sidebar": {
+    "NotebookNavSteps": {
+      "CSV Import": "CSV Import",
+      "Load data from CSV": "Load data from CSV",
+      "Data Preview": "Data Preview",
+      "Preview contents of file": "Preview contents of file",
+      "ID Selection": "ID Selection",
+      "Select the entity identifier column": "Select the entity identifier column",
+      "Column Selection": "Column Selection",
+      "Select columns for anonymization": "Select columns for anonymization",
+      "Suppression Configuration": "Suppression Configuration",
+      "Set the Suppression Threshold": "Set the Suppression Threshold",
+      "Anonymization Summary": "Anonymization Summary",
+      "Review distortion statistics": "Review distortion statistics",
+      "Anonymized Results": "Anonymized Results",
+      "Preview anonymized results": "Preview anonymized results",
+      "CSV Export": "CSV Export",
+      "Export anonymized data to CSV": "Export anonymized data to CSV"
+    },
+    "CsvImportHelp": {
+      "CSV Import": "CSV Import",
+      "<strong>Diffix for Desktop</strong> auto-detects the CSV delimiter, as well as the field type (text and numeric). <3>Click here for details.</3>": "<strong>Diffix for Desktop</strong> auto-detects the CSV delimiter, as well as the field type (text and numeric). <3>Click here for details.</3>",
+      "<0>Sample CSV files</0> are available for testing purposes.": "<0>Sample CSV files</0> are available for testing purposes."
+    },
+    "DataPreviewHelp": {
+      "Data Preview": "Data Preview",
+      "Use the data preview to confirm that the data was imported correctly.": "Use the data preview to confirm that the data was imported correctly."
+    },
+    "AidSelectionHelp": {
+      "ID Selection": "ID Selection",
+      "<strong>WARNING:</strong> If this configuration is not done correctly, the data will not be properly anonymized.": "<strong>WARNING:</strong> If this configuration is not done correctly, the data will not be properly anonymized.",
+      "If the data has one row per person (or other <1>protected entity</1>), then no entity identifier column need be selected. Otherwise, select a column containing a unique ID per protected entity. <4>Click here for details on how to set.</4>": "If the data has one row per person (or other <1>protected entity</1>), then no entity identifier column need be selected. Otherwise, select a column containing a unique ID per protected entity. <4>Click here for details on how to set.</4>"
+    },
+    "ColumnSelectionHelp": {
+      "Column Selection": "Column Selection",
+      "Select the columns to be anonymized and the amount of generalization per column. Any changes automatically recomputes the anonymized results.": "Select the columns to be anonymized and the amount of generalization per column. Any changes automatically recomputes the anonymized results.",
+      "Numeric columns may be generalized as bins. Non-numeric columns may be generalized by selecting a substring (offset and number of characters). <2>Click here for details.</2>": "Numeric columns may be generalized as bins. Non-numeric columns may be generalized by selecting a substring (offset and number of characters). <2>Click here for details.</2>",
+      "The <1>Count</1> toggle below the column selection selects whether to count rows or to count the number of protected entities for each bin in the anonymized output.": "The <1>Count</1> toggle below the column selection selects whether to count rows or to count the number of protected entities for each bin in the anonymized output."
+    },
+    "AnonParamsSelectionHelp": {
+      "Suppression Threshold Configuration": "Suppression Threshold Configuration",
+      "The suppression threshold determines the minimum number of protected entities that comprise any bin. Bins with fewer entities than this threshold are suppressed. Changing this threshold automatically recomputes the anonymized results. <2>Click here for details on how to set.</2>": "The suppression threshold determines the minimum number of protected entities that comprise any bin. Bins with fewer entities than this threshold are suppressed. Changing this threshold automatically recomputes the anonymized results. <2>Click here for details on how to set.</2>"
+    },
+    "AnonymizationSummaryHelp": {
+      "Anonymization Summary": "Anonymization Summary",
+      "<strong>Diffix for Desktop</strong> distorts the data in two ways. It perturbs counts, and it suppresses data that pertains to too few protected entities. The summary is useful for determining the overall quality of the anonymized data: the relative count distortion and the amount of suppression. Data quality may be improved by selecting fewer columns, or by generalizing more. <3>Click here for details.</3>": "<strong>Diffix for Desktop</strong> distorts the data in two ways. It perturbs counts, and it suppresses data that pertains to too few protected entities. The summary is useful for determining the overall quality of the anonymized data: the relative count distortion and the amount of suppression. Data quality may be improved by selecting fewer columns, or by generalizing more. <3>Click here for details.</3>"
+    },
+    "AnonymizedResultsHelp": {
+      "Anonymized Results": "Anonymized Results",
+      "The anonymized results may be viewed side-by-side with the non-anonymized results using the <2>Combined view</2>button. Suppressed bins are shaded in grey. Non-suppressed bins give the true count side-by-side with the anonymized count, and display the relative count distortion. This combined view is useful for determining the precise causes of distortion and suppression, and for deciding in detail if the quality of the anonymized data is satisfactory. <5>Click here for details.</5>": "The anonymized results may be viewed side-by-side with the non-anonymized results using the <2>Combined view</2>button. Suppressed bins are shaded in grey. Non-suppressed bins give the true count side-by-side with the anonymized count, and display the relative count distortion. This combined view is useful for determining the precise causes of distortion and suppression, and for deciding in detail if the quality of the anonymized data is satisfactory. <5>Click here for details.</5>",
+      "The <2>suppress bin</2> denoted by <5>*</5> column values is shown in the first row. It indicates the combined anonymized count of all suppressed bins.": "The <2>suppress bin</2> denoted by <5>*</5> column values is shown in the first row. It indicates the combined anonymized count of all suppressed bins."
+    },
+    "CsvExportHelp": {
+      "CSV Export": "CSV Export",
+      "Exports the anonymized results only (not the combined view). The suppress bin, when present, is exported as the first row in the CSV file.": "Exports the anonymized results only (not the combined view). The suppress bin, when present, is exported as the first row in the CSV file."
+    }
+  },
+  "FileLoadStep": {
+    "Import data to anonymize": "Import data to anonymize",
+    "Import data from CSV file": "Import data from CSV file",
+    "Click or drag file to this area to import": "Click or drag file to this area to import"
+  },
+  "SchemaLoadStep": {
+    "Loading schema": "Loading schema",
+    "Loaded {{fileName}}": "Loaded {{fileName}}",
+    "Successfully imported {{fileName}}": "Successfully imported {{fileName}}",
+    "Here is what the data looks like:": "Here is what the data looks like:",
+    "(only the first 1000 rows are shown)": "(only the first 1000 rows are shown)"
+  },
+  "AidSelectionStep": {
+    "Select the protected entity identifier column": "Select the protected entity identifier column",
+    "CAUTION:": "CAUTION:",
+    "When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity.": "When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity.",
+    "Select a column or 'None'": "Select a column or 'None'",
+    "[None]": "[None]"
+  },
+  "ColumnSelectionStep": {
+    "Select columns for anonymization": "Select columns for anonymization",
+    "Column": "Column",
+    "Selected": "Selected",
+    "Type:": "Type:",
+    "type": {
+      "boolean": "boolean",
+      "integer": "integer",
+      "real": "real",
+      "text": "text"
+    },
+    "Count": "Count",
+    "Count rows": "Count rows",
+    "Rows": "Rows",
+    "Entities": "Entities",
+    "Count protected entities": "Count protected entities",
+    "Generalization": "Generalization",
+    "GeneralizationControls": {
+      "Bin size": "Bin size",
+      "Substring start": "Substring start",
+      "Substring length": "Substring length"
+    }
+  },
+  "AnonParamsSelectionStep": {
+    "Suppression configuration": "Suppression configuration",
+    "Suppression Threshold": "Suppression Threshold",
+    "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.": "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed."
+  },
+  "AnonymizationSummary": {
+    "Anonymization summary": "Anonymization summary",
+    "Suppressed Count": "Suppressed Count",
+    "Suppressed Bins": "Suppressed Bins",
+    "Median Distortion": "Median Distortion",
+    "Maximum Distortion": "Maximum Distortion",
+    "of": "of"
+  },
+  "AnonymizationResults": {
+    "Anonymized data": "Anonymized data",
+    "Here is what the result looks like:": "Here is what the result looks like:",
+    "AnonymizedResultsTable": {
+      "Anonymized": "Anonymized",
+      "Combined view": "Combined view",
+      "Suppress bin": "Suppress bin",
+      "(anonymized)": "(anonymized)",
+      "(original)": "(original)",
+      "Distortion": "Distortion"
+    },
+    "Export anonymized data to CSV": "Export anonymized data to CSV",
+    "_anonymized.csv": "_anonymized.csv",
+    "Exporting anonymized data to {{filePath}}...": "Exporting anonymized data to {{filePath}}...",
+    "Anonymized data exported successfully!": "Anonymized data exported successfully!"
+  }
+}

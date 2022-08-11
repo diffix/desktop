@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { Table, TableProps } from 'antd';
 import useComponentSize from '@rehooks/component-size';
+import { Table, TableProps } from 'antd';
+import React, { useRef } from 'react';
 
 import './ResponsiveTable.css';
 

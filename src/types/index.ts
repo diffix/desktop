@@ -1,4 +1,5 @@
 import { RcFile } from 'antd/lib/upload';
+import { i18n } from 'i18next';
 import { PageId } from '../Docs';
 
 // UI State
@@ -169,6 +170,8 @@ export type Task<T> = {
 export {};
 declare global {
   interface Window {
+    i18n: i18n;
+    i18nMissingKeys: Record<string, unknown>;
     callService(request: unknown, signal: AbortSignal): Promise<Response>;
     selectExportFile(defaultPath: string): Promise<string | null>;
     hashFile(fileName: string, signal: AbortSignal): Promise<string>;

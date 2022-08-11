@@ -1,14 +1,16 @@
-import { app, BrowserWindow, ipcMain, dialog, shell, protocol, Menu, MenuItemConstructorOptions } from 'electron';
 import { execFile } from 'child_process';
-import util from 'util';
-import fs from 'fs';
 import crypto from 'crypto';
-import path from 'path';
-import stream from 'stream';
+import { app, BrowserWindow, dialog, ipcMain, Menu, MenuItemConstructorOptions, protocol, shell } from 'electron';
 import fetch from 'electron-fetch';
+import fs from 'fs';
+import i18n from 'i18next';
+import i18nFsBackend from 'i18next-fs-backend';
+import path from 'path';
 import semver from 'semver';
-
+import stream from 'stream';
+import util from 'util';
 import { PageId } from './Docs';
+import { i18nConfig } from './shared/config';
 
 const asyncExecFile = util.promisify(execFile);
 const asyncPipeline = util.promisify(stream.pipeline);
@@ -24,6 +26,19 @@ if (require('electron-squirrel-startup')) {
 const isMac = process.platform === 'darwin';
 const resourcesLocation = path.join(app.getAppPath(), app.isPackaged ? '..' : '.');
 
+// Localization
+
+i18n.use(i18nFsBackend).init({
+  ...i18nConfig,
+  backend: {
+    loadPath: path.join(resourcesLocation, 'assets', 'locales', '{{lng}}/{{ns}}.json'),
+    addPath: path.join(resourcesLocation, 'assets', 'locales', '{{lng}}/{{ns}}.missing.json'),
+    ident: 2,
+  },
+  debug: i18nConfig.debug && !app.isPackaged,
+  initImmediate: false,
+});
+
 // App menu
 
 function openDocs(page: PageId) {
@@ -36,52 +51,90 @@ function openURL(url: string) {
 }
 
 function setupMenu() {
-  const macAppMenu: MenuItemConstructorOptions = { role: 'appMenu' };
+  const t = i18n.getFixedT(null, null, 'App::Menu');
+
+  const macAppMenu: MenuItemConstructorOptions = {
+    label: t(`AppMenu::${app.name}`),
+    submenu: [
+      { role: 'about', label: t(`AppMenu::About ${app.name}`) },
+      { type: 'separator' },
+      { role: 'services', label: t('AppMenu::Services') },
+      { type: 'separator' },
+      { role: 'hide', label: t(`AppMenu::Hide ${app.name}`) },
+      { role: 'hideOthers', label: t('AppMenu::Hide Others') },
+      { role: 'unhide', label: t('AppMenu::Show All') },
+      { type: 'separator' },
+      { role: 'quit', label: t(`AppMenu::Quit ${app.name}`) },
+    ],
+  };
+
   const template: MenuItemConstructorOptions[] = [
     ...(isMac ? [macAppMenu] : []),
     {
-      label: '&View',
+      label: t('View::&View'),
       submenu: [
-        { role: 'copy' },
-        { role: 'selectAll' },
+        { role: 'copy', label: t('View::Copy') },
+        { role: 'selectAll', label: t('View::Select All') },
         { type: 'separator' },
-        { role: 'resetZoom' },
-        { role: 'zoomIn' },
-        { role: 'zoomOut' },
+        { role: 'resetZoom', label: t('View::Actual Size') },
+        { role: 'zoomIn', label: t('View::Zoom In') },
+        { role: 'zoomOut', label: t('View::Zoom Out') },
         { type: 'separator' },
-        { role: 'togglefullscreen' },
+        { role: 'togglefullscreen', label: t('View::Toggle Full Screen') },
       ],
     },
     {
-      label: '&Help',
+      label: t('Settings::&Settings'),
       submenu: [
         {
-          label: 'Documentation',
+          label: t('Settings::Language'),
+          submenu: [
+            {
+              label: 'English',
+              type: 'radio',
+              checked: i18n.language === 'en',
+              click: () => i18n.changeLanguage('en'),
+            },
+            {
+              label: 'Deutsch',
+              type: 'radio',
+              checked: i18n.language === 'de',
+              click: () => i18n.changeLanguage('de'),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: t('Help::&Help'),
+      submenu: [
+        {
+          label: t('Help::Documentation'),
           click: () => openDocs('operation'),
         },
         {
-          label: 'Changelog',
+          label: t('Help::Changelog'),
           click: () => openDocs('changelog'),
         },
         {
-          label: 'License',
+          label: t('Help::License'),
           click: () => openDocs('license'),
         },
         { type: 'separator' },
         {
-          label: 'Learn More',
+          label: t('Help::Learn More'),
           click: () => openURL('https://open-diffix.org'),
         },
         {
-          label: 'Community Discussions',
+          label: t('Help::Community Discussions'),
           click: () => openURL('https://github.com/diffix/desktop/discussions'),
         },
         {
-          label: 'Search Issues',
+          label: t('Help::Search Issues'),
           click: () => openURL('https://github.com/diffix/desktop/issues'),
         },
         {
-          label: 'Latest Releases',
+          label: t('Help::Latest Releases'),
           click: () => openURL('https://github.com/diffix/desktop/releases'),
         },
       ],
@@ -98,8 +151,8 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'docs', privileges: { bypassCSP:
 
 function registerProtocols() {
   protocol.registerFileProtocol('docs', (request, callback) => {
-    const url = request.url.substr('docs://'.length);
-    callback(path.join(resourcesLocation, 'docs', url));
+    const url = request.url.substring('docs://'.length);
+    callback(path.join(resourcesLocation, 'docs', i18n.language, url));
   });
 }
 
@@ -114,6 +167,7 @@ function createWindow() {
     webPreferences: {
       contextIsolation: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      additionalArguments: [`--language=${i18n.language}`],
     },
     icon: path.join(resourcesLocation, 'assets', 'icon.png'),
   });
@@ -157,6 +211,12 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
+});
+
+i18n.on('languageChanged', (lng) => {
+  setupMenu();
+  const mainWindow = BrowserWindow.getAllWindows()[0];
+  mainWindow?.webContents.send('language_changed', lng);
 });
 
 const diffixName = 'OpenDiffix.Service' + (process.platform === 'win32' ? '.exe' : '');

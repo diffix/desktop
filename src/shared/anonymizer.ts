@@ -1,21 +1,21 @@
 import { createContext, useContext } from 'react';
 import {
+  AnonymizationParams,
   AnonymizedQueryResult,
   AnonymizedResultColumn,
   AnonymizedResultRow,
   Anonymizer,
   BucketColumn,
-  HasMissingValuesResponse,
   ColumnType,
   CountInput,
   File,
+  HasMissingValuesResponse,
   LoadResponse,
   NumericGeneralization,
   PreviewResponse,
   StringGeneralization,
   TableSchema,
   Task,
-  AnonymizationParams,
 } from '../types';
 import { runTask } from './utils';
 

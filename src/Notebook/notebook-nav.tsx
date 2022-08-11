@@ -1,12 +1,11 @@
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import { Steps } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { useInViewport } from 'react-in-viewport';
-import { useImmer } from 'use-immer';
+import { Steps } from 'antd';
 import { produce } from 'immer';
 import { debounce, findLastIndex, noop } from 'lodash';
-
-import { useStaticValue } from '../shared';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import { useInViewport } from 'react-in-viewport';
+import { useImmer } from 'use-immer';
+import { useStaticValue, useT } from '../shared';
 
 const { Step } = Steps;
 
@@ -234,6 +233,7 @@ function mapText(text: string, focused: boolean) {
 
 const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[]; focusedStep: NotebookNavStep }>(
   ({ steps, focusedStep }) => {
+    const t = useT('Sidebar::NotebookNavSteps');
     const navFunctions = useNavFunctions();
     const status = (step: NotebookNavStep) => mapStatus(steps[step].status);
 
@@ -265,43 +265,43 @@ const NotebookNavSteps = React.memo<{ steps: NotebookNavStepState[]; focusedStep
       >
         <Step
           status={status(NotebookNavStep.CsvImport)}
-          title={mapText('CSV Import', focusedStep === NotebookNavStep.CsvImport)}
-          description="Load data from CSV"
+          title={mapText(t('CSV Import'), focusedStep === NotebookNavStep.CsvImport)}
+          description={t('Load data from CSV')}
         />
         <Step
           status={status(NotebookNavStep.DataPreview)}
-          title={mapText('Data Preview', focusedStep === NotebookNavStep.DataPreview)}
-          description="Preview contents of file"
+          title={mapText(t('Data Preview'), focusedStep === NotebookNavStep.DataPreview)}
+          description={t('Preview contents of file')}
         />
         <Step
           status={status(NotebookNavStep.AidSelection)}
-          title={mapText('ID Selection', focusedStep === NotebookNavStep.AidSelection)}
-          description="Select the entity identifier column"
+          title={mapText(t('ID Selection'), focusedStep === NotebookNavStep.AidSelection)}
+          description={t('Select the entity identifier column')}
         />
         <Step
           status={status(NotebookNavStep.ColumnSelection)}
-          title={mapText('Column Selection', focusedStep === NotebookNavStep.ColumnSelection)}
-          description="Select columns for anonymization"
+          title={mapText(t('Column Selection'), focusedStep === NotebookNavStep.ColumnSelection)}
+          description={t('Select columns for anonymization')}
         />
         <Step
           status={status(NotebookNavStep.AnonParamsSelection)}
-          title={mapText('Suppression Configuration', focusedStep === NotebookNavStep.AnonParamsSelection)}
-          description="Set the Suppression Threshold"
+          title={mapText(t('Suppression Configuration'), focusedStep === NotebookNavStep.AnonParamsSelection)}
+          description={t('Set the Suppression Threshold')}
         />
         <Step
           status={status(NotebookNavStep.AnonymizationSummary)}
-          title={mapText('Anonymization Summary', focusedStep === NotebookNavStep.AnonymizationSummary)}
-          description="Review distortion statistics"
+          title={mapText(t('Anonymization Summary'), focusedStep === NotebookNavStep.AnonymizationSummary)}
+          description={t('Review distortion statistics')}
         />
         <Step
           status={status(NotebookNavStep.AnonymizedResults)}
-          title={mapText('Anonymized Results', focusedStep === NotebookNavStep.AnonymizedResults)}
-          description="Preview anonymized results"
+          title={mapText(t('Anonymized Results'), focusedStep === NotebookNavStep.AnonymizedResults)}
+          description={t('Preview anonymized results')}
         />
         <Step
           status={status(NotebookNavStep.CsvExport)}
-          title={mapText('CSV Export', focusedStep === NotebookNavStep.CsvExport)}
-          description="Export anonymized data to CSV"
+          title={mapText(t('CSV Export'), focusedStep === NotebookNavStep.CsvExport)}
+          description={t('Export anonymized data to CSV')}
         />
       </Steps>
     );

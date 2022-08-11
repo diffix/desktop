@@ -1,9 +1,8 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Button, Descriptions, Divider, message, Result, Space, Spin, Typography } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-
+import { Button, Descriptions, Divider, message, Result, Space, Spin, Typography } from 'antd';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
-import { anonymizer, formatPercentage, useCachedData } from '../shared';
+import { anonymizer, formatPercentage, TFunc, useCachedData, useT } from '../shared';
 import {
   AnonymizationParams,
   AnonymizationSummary,
@@ -43,40 +42,41 @@ const emptySummary: AnonymizationSummary = {
 
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: emptySummary };
 
-function summaryDescriptions(summary: AnonymizationSummary) {
+function summaryDescriptions(summary: AnonymizationSummary, t: TFunc) {
   return (
     <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
-      <Descriptions.Item label="Suppressed Count">
-        {`${summary.suppressedCount} of ${summary.totalCount} (${formatPercentage(
+      <Descriptions.Item label={t('Suppressed Count')}>
+        {`${summary.suppressedCount} ${t('of')} ${summary.totalCount} (${formatPercentage(
           summary.suppressedCount / summary.totalCount,
         )})`}
       </Descriptions.Item>
-      <Descriptions.Item label="Suppressed Bins">
-        {`${summary.suppressedBuckets} of ${summary.totalBuckets} (${formatPercentage(
+      <Descriptions.Item label={t('Suppressed Bins')}>
+        {`${summary.suppressedBuckets} ${t('of')} ${summary.totalBuckets} (${formatPercentage(
           summary.suppressedBuckets / summary.totalBuckets,
         )})`}
       </Descriptions.Item>
-      <Descriptions.Item label="Median Distortion">{formatPercentage(summary.medianDistortion)}</Descriptions.Item>
-      <Descriptions.Item label="Maximum Distortion">{formatPercentage(summary.maxDistortion)}</Descriptions.Item>
+      <Descriptions.Item label={t('Median Distortion')}>{formatPercentage(summary.medianDistortion)}</Descriptions.Item>
+      <Descriptions.Item label={t('Maximum Distortion')}>{formatPercentage(summary.maxDistortion)}</Descriptions.Item>
     </Descriptions>
   );
 }
 
 function AnonymizationSummary({ result: { summary }, loading }: CommonProps) {
+  const t = useT('AnonymizationSummary');
   return (
     <div className="AnonymizationSummary notebook-step">
       <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status={loading ? 'loading' : 'done'} />
-      <Title level={3}>Anonymization summary</Title>
+      <Title level={3}>{t('Anonymization summary')}</Title>
       {summary === emptySummary ? (
         <div className="text-center">
           <Space direction="vertical">
             <Spin size="large" />
-            <Text type="secondary">Anonymizing data</Text>
+            <Text type="secondary">{t('Anonymization summary')}</Text>
           </Space>
         </div>
       ) : (
         <div className="AnonymizationSummary-spin-container">
-          <Spin spinning={loading}>{summaryDescriptions(summary)}</Spin>
+          <Spin spinning={loading}>{summaryDescriptions(summary, t)}</Spin>
         </div>
       )}
     </div>
@@ -89,21 +89,26 @@ async function exportResult(
   bucketColumns: BucketColumn[],
   countInput: CountInput,
   anonParams: AnonymizationParams,
+  t: TFunc,
 ) {
-  const defaultPath = schema.file.path.replace(/\.\w*$/, '') + '_anonymized.csv';
+  const defaultPath = schema.file.path.replace(/\.\w*$/, '') + t('_anonymized.csv');
   const filePath = await window.selectExportFile(defaultPath);
   if (!filePath) return;
 
-  message.loading({ content: `Exporting anonymized data to ${filePath}...`, key: filePath, duration: 0 });
+  message.loading({
+    content: t('Exporting anonymized data to {{filePath}}...', { filePath }),
+    key: filePath,
+    duration: 0,
+  });
 
   try {
     const exportTask = anonymizer.export(schema, aidColumn, bucketColumns, countInput, filePath, anonParams);
     await exportTask.result;
 
-    message.success({ content: 'Anonymized data exported successfully!', key: filePath, duration: 10 });
+    message.success({ content: t('Anonymized data exported successfully!'), key: filePath, duration: 10 });
   } catch (e) {
     console.error(e);
-    message.error({ content: 'Anonymized data export failed!', key: filePath, duration: 10 });
+    message.error({ content: t('Anonymized data export failed!'), key: filePath, duration: 10 });
   }
 }
 
@@ -116,6 +121,7 @@ function AnonymizationResults({
   result,
   loading,
 }: CommonProps) {
+  const t = useT('AnonymizationResults');
   const [exported, setExported] = useState(false);
   useEffect(() => {
     setExported(false);
@@ -125,10 +131,12 @@ function AnonymizationResults({
     <>
       <div className="AnonymizationResults notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.AnonymizedResults} status={loading ? 'loading' : 'done'} />
-        <Title level={3}>Anonymized data</Title>
+        <Title level={3}>{t('Anonymized data')}</Title>
         <div className="mb-1">
-          <Text>Here is what the result looks like:</Text>
-          {result.rows.length === MAX_ROWS && <Text type="secondary"> (only the first {MAX_ROWS} rows are shown)</Text>}
+          <Text>{t('Here is what the result looks like:')}</Text>
+          {result.rows.length === MAX_ROWS && (
+            <Text type="secondary"> {t('(only the first {{rows}} rows are shown)', { rows: MAX_ROWS })}</Text>
+          )}
         </div>
         <AnonymizedResultsTable loading={loading} result={result} bucketColumns={bucketColumns} />
       </div>
@@ -145,11 +153,11 @@ function AnonymizationResults({
           size="large"
           disabled={loading || !result.rows.length}
           onClick={() => {
-            exportResult(schema, aidColumn, bucketColumns, countInput, anonParams);
+            exportResult(schema, aidColumn, bucketColumns, countInput, anonParams, t);
             setExported(true);
           }}
         >
-          Export anonymized data to CSV
+          {t('Export anonymized data to CSV')}
         </Button>
         <div className="AnonymizationExport-reserved-space"></div>
       </div>
@@ -172,6 +180,7 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({
   countInput,
   anonParams,
 }) => {
+  const t = useT('AnonymizationStep');
   const computedResult = useQuery(schema, aidColumn, bucketColumns, countInput, anonParams);
   const cachedResult = useCachedData(computedResult, emptyQueryResult);
 
@@ -209,7 +218,7 @@ export const AnonymizationStep: FunctionComponent<AnonymizationStepProps> = ({
         <div className="AnonymizationStep notebook-step failed">
           <NotebookNavAnchor step={NotebookNavStep.AnonymizationSummary} status="failed" />
           <NotebookNavAnchor step={NotebookNavStep.AnonymizedResults} status="failed" />
-          <Result status="error" title="Anonymization failed" subTitle="Something went wrong." />
+          <Result status="error" title={t('Anonymization failed')} subTitle={t('Something went wrong.')} />
         </div>
       );
   }

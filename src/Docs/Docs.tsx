@@ -1,18 +1,24 @@
-import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import { Anchor, Typography } from 'antd';
 import { find } from 'lodash';
+import React, { FunctionComponent, useEffect, useRef, useState } from 'react';
 import invariant from 'tiny-invariant';
-
-import { Layout, usePrevious } from '../shared';
+import { Layout, usePrevious, useT } from '../shared';
 import { Markdown, TableOfContents, TableOfContentsLink } from './Markdown';
 
 import './Docs.css';
 
-import operationSource from '../../docs/operation.md';
-import anonymizationSource from '../../docs/anonymization.md';
-import tipsSource from '../../docs/tips.md';
-import licenseSource from '../../LICENSE.md';
 import changelogSource from '../../CHANGELOG.md';
+
+import anonymizationSourceEn from '../../docs/en/anonymization.md';
+import anonymizationSourceDe from '../../docs/de/anonymization.md';
+
+import operationSourceEn from '../../docs/en/operation.md';
+import operationSourceDe from '../../docs/de/operation.md';
+
+import tipsSourceEn from '../../docs/en/tips.md';
+import tipsSourceDe from '../../docs/de/tips.md';
+
+import licenseSource from '../../LICENSE.md';
 
 const { Link } = Anchor;
 const { Title } = Typography;
@@ -21,27 +27,42 @@ const docsPages = [
   {
     id: 'operation',
     title: 'Operation',
-    source: operationSource,
+    source: {
+      en: operationSourceEn,
+      de: operationSourceDe,
+    },
   },
   {
     id: 'anonymization',
     title: 'Anonymization',
-    source: anonymizationSource,
+    source: {
+      en: anonymizationSourceEn,
+      de: anonymizationSourceDe,
+    },
   },
   {
     id: 'tips',
     title: 'Tips and Tricks',
-    source: tipsSource,
+    source: {
+      en: tipsSourceEn,
+      de: tipsSourceDe,
+    },
   },
   {
     id: 'changelog',
     title: 'Changelog',
-    source: changelogSource,
+    source: {
+      en: changelogSource,
+      de: changelogSource,
+    },
   },
   {
     id: 'license',
     title: 'License',
-    source: licenseSource,
+    source: {
+      en: licenseSource,
+      de: licenseSource,
+    },
   },
 ] as const;
 
@@ -72,6 +93,7 @@ export type DocsProps = {
 };
 
 export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scrollInvalidator, onPageChange }) => {
+  const t = useT('Docs');
   const containerRef = useRef<HTMLDivElement>(null);
   const [tableOfContents, setTableOfContents] = useState<TableOfContents>([]);
 
@@ -115,7 +137,7 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
   return (
     <Layout className="Docs">
       <Layout.Sidebar className="Docs-sidebar">
-        <Title level={4}>Documentation</Title>
+        <Title level={4}>{t('Documentation')}</Title>
         {docsPages.map((page) =>
           page.id === pageId ? (
             <Anchor
@@ -131,21 +153,24 @@ export const Docs: FunctionComponent<DocsProps> = ({ page: pageId, section, scro
             <div key={page.id} className="Docs-nav-link ant-anchor-link">
               <a
                 className="ant-anchor-link-title"
-                title={page.title}
+                title={t(page.title)}
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
                   onPageChange(page.id);
                 }}
               >
-                {page.title}
+                {t(page.title)}
               </a>
             </div>
           ),
         )}
       </Layout.Sidebar>
       <Layout.Content ref={containerRef} className="Docs-content">
-        <Markdown source={currentPage.source} onTableOfContents={setTableOfContents} />
+        <Markdown
+          source={currentPage.source[window.i18n.language as 'en' | 'de']}
+          onTableOfContents={setTableOfContents}
+        />
       </Layout.Content>
     </Layout>
   );

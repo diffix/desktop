@@ -1,10 +1,9 @@
-import React, { FunctionComponent, useState } from 'react';
-import { Typography, Select, Divider, Alert } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-
+import { Alert, Divider, Select, Typography } from 'antd';
+import React, { FunctionComponent, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
+import { useT } from '../shared';
 import { TableSchema } from '../types';
-
 import { useMissingAid } from './use-missing-aid';
 
 import './AidSelectionStep.css';
@@ -18,6 +17,7 @@ type MissingAidWarningProps = {
 };
 
 const MissingAidWarning: FunctionComponent<MissingAidWarningProps> = ({ schema, aidColumn }) => {
+  const t = useT('AidSelectionStep');
   const computedResult = useMissingAid(schema, aidColumn);
 
   return computedResult.state === 'completed' && computedResult.value ? (
@@ -25,7 +25,8 @@ const MissingAidWarning: FunctionComponent<MissingAidWarningProps> = ({ schema, 
       className="MissingAidWarning"
       message={
         <>
-          <strong>CAUTION:</strong>The protected entity identifier column contains missing values.
+          <strong>{t('CAUTION:')}</strong>
+          {t('The protected entity identifier column contains missing values.')}
         </>
       }
       type="warning"
@@ -46,18 +47,21 @@ export type AidSelectionStepData = {
 };
 
 export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema, children }) => {
+  const t = useT('AidSelectionStep');
   const [aidColumn, setAidColumn] = useState('');
   return (
     <>
       <div className="AidSelectionStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.AidSelection} status={aidColumn ? 'done' : 'active'} />
-        <Title level={3}>Select the protected entity identifier column</Title>
+        <Title level={3}>{t('Select the protected entity identifier column')}</Title>
         <Alert
           className="AidSelectionStep-notice"
           message={
             <>
-              <strong>CAUTION:</strong> When no identifier column is present in the data, you must ensure that each
-              individual row from the input file represents a unique entity.
+              <strong>{t('CAUTION:')}</strong>{' '}
+              {t(
+                'When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity.',
+              )}
             </>
           }
           type="info"
@@ -68,13 +72,13 @@ export const AidSelectionStep: FunctionComponent<AidSelectionProps> = ({ schema,
         <Select
           className="AidSelectionStep-select"
           showSearch
-          placeholder="Select a column or 'None'"
+          placeholder={t("Select a column or 'None'")}
           optionFilterProp="children"
           onChange={(column: string) => setAidColumn(column)}
           filterOption={true}
         >
           <Option key={-1} value="RowIndex">
-            [None]
+            {t('[None]')}
           </Option>
           {schema.columns.map((column, index) => (
             <Option key={index} value={column.name}>

@@ -1,23 +1,37 @@
-import React from 'react';
 import { Typography } from 'antd';
-
-import { NotebookNavStep, useNavState } from './notebook-nav';
+import React, { FunctionComponent } from 'react';
+import { Trans } from 'react-i18next';
 import { DocsLink } from '../Docs';
+import { TFunc, useT as useBaseT } from '../shared';
+import { NotebookNavStep, useNavState } from './notebook-nav';
 
-const { Paragraph, Text, Title } = Typography;
+const { Paragraph: ParagraphBase, Text, Title } = Typography;
+
+function useT(component: string): TFunc {
+  return useBaseT('Sidebar::' + component);
+}
+
+export const Paragraph: FunctionComponent<{ t: TFunc }> = ({ t, children }) => {
+  return (
+    <ParagraphBase>
+      <Trans t={t}>{children}</Trans>
+    </ParagraphBase>
+  );
+};
 
 function CsvImportHelp() {
+  const t = useT('CsvImportHelp');
   return (
     <div>
-      <Title level={4}>CSV Import</Title>
-      <Paragraph>
-        <strong>Diffix for Desktop</strong> auto-detects the CSV deliminter, as well as the field type (text and
+      <Title level={4}>{t('CSV Import')}</Title>
+      <Paragraph t={t}>
+        <strong>Diffix for Desktop</strong> auto-detects the CSV delimiter, as well as the field type (text and
         numeric).{' '}
         <DocsLink page="operation" section="load-table-from-csv">
           Click here for details.
         </DocsLink>
       </Paragraph>
-      <Paragraph>
+      <Paragraph t={t}>
         <DocsLink page="operation" section="sample-csv-files">
           Sample CSV files
         </DocsLink>{' '}
@@ -28,22 +42,24 @@ function CsvImportHelp() {
 }
 
 function DataPreviewHelp() {
+  const t = useT('DataPreviewHelp');
   return (
     <div>
-      <Title level={4}>Data Preview</Title>
-      <Paragraph>Use the data preview to confirm that the data was imported correctly.</Paragraph>
+      <Title level={4}>{t('Data Preview')}</Title>
+      <Paragraph t={t}>Use the data preview to confirm that the data was imported correctly.</Paragraph>
     </div>
   );
 }
 
 function AidSelectionHelp() {
+  const t = useT('AidSelectionHelp');
   return (
     <div>
-      <Title level={4}>ID Selection</Title>
-      <Paragraph>
+      <Title level={4}>{t('ID Selection')}</Title>
+      <Paragraph t={t}>
         <strong>WARNING:</strong> If this configuration is not done correctly, the data will not be properly anonymized.
       </Paragraph>
-      <Paragraph>
+      <Paragraph t={t}>
         If the data has one row per person (or other <em>protected entity</em>), then no entity identifier column need
         be selected. Otherwise, select a column containing a unique ID per protected entity.{' '}
         <DocsLink page="operation" section="important-configure-the-protected-entity-identifier-column">
@@ -55,10 +71,11 @@ function AidSelectionHelp() {
 }
 
 function AnonParamsSelectionHelp() {
+  const t = useT('AnonParamsSelectionHelp');
   return (
     <div>
-      <Title level={4}>Suppression Threshold Configuration</Title>
-      <Paragraph>
+      <Title level={4}>{t('Suppression Threshold Configuration')}</Title>
+      <Paragraph t={t}>
         The suppression threshold determines the minimum number of protected entities that comprise any bin. Bins with
         fewer entities than this threshold are suppressed. Changing this threshold automatically recomputes the
         anonymized results.{' '}
@@ -71,21 +88,22 @@ function AnonParamsSelectionHelp() {
 }
 
 function ColumnSelectionHelp() {
+  const t = useT('ColumnSelectionHelp');
   return (
     <div>
-      <Title level={4}>Column Selection</Title>
-      <Paragraph>
+      <Title level={4}>{t('Column Selection')}</Title>
+      <Paragraph t={t}>
         Select the columns to be anonymized and the amount of generalization per column. Any changes automatically
         recomputes the anonymized results.
       </Paragraph>
-      <Paragraph>
+      <Paragraph t={t}>
         Numeric columns may be generalized as bins. Non-numeric columns may be generalized by selecting a substring
         (offset and number of characters).{' '}
         <DocsLink page="operation" section="select-columns-and-generalization">
           Click here for details.
         </DocsLink>
       </Paragraph>
-      <Paragraph>
+      <Paragraph t={t}>
         The <Text code>Count</Text> toggle below the column selection selects whether to count rows or to count the
         number of protected entities for each bin in the anonymized output.
       </Paragraph>
@@ -94,10 +112,11 @@ function ColumnSelectionHelp() {
 }
 
 function AnonymizationSummaryHelp() {
+  const t = useT('AnonymizationSummaryHelp');
   return (
     <div>
-      <Title level={4}>Anonymization Summary</Title>
-      <Paragraph>
+      <Title level={4}>{t('Anonymization Summary')}</Title>
+      <Paragraph t={t}>
         <strong>Diffix for Desktop</strong> distorts the data in two ways. It perturbs counts, and it suppresses data
         that pertains to too few protected entities. The summary is useful for determining the overall quality of the
         anonymized data: the relative count distortion and the amount of suppression. Data quality may be improved by
@@ -111,10 +130,11 @@ function AnonymizationSummaryHelp() {
 }
 
 function AnonymizedResultsHelp() {
+  const t = useT('AnonymizedResultsHelp');
   return (
     <div>
-      <Title level={4}>Anonymized Results</Title>
-      <Paragraph>
+      <Title level={4}>{t('Anonymized Results')}</Title>
+      <Paragraph t={t}>
         The anonymized results may be viewed side-by-side with the non-anonymized results using the{' '}
         <Text code>Combined view</Text>
         button. Suppressed bins are shaded in grey. Non-suppressed bins give the true count side-by-side with the
@@ -125,7 +145,7 @@ function AnonymizedResultsHelp() {
           Click here for details.
         </DocsLink>
       </Paragraph>
-      <Paragraph>
+      <Paragraph t={t}>
         The{' '}
         <DocsLink page="operation" section="suppress-bin">
           suppress bin
@@ -138,10 +158,11 @@ function AnonymizedResultsHelp() {
 }
 
 function CsvExportHelp() {
+  const t = useT('CsvExportHelp');
   return (
     <div>
-      <Title level={4}>CSV Export</Title>
-      <Paragraph>
+      <Title level={4}>{t('CSV Export')}</Title>
+      <Paragraph t={t}>
         Exports the anonymized results only (not the combined view). The suppress bin, when present, is exported as the
         first row in the CSV file.
       </Paragraph>

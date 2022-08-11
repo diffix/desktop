@@ -1,11 +1,10 @@
-import React, { FunctionComponent, useState } from 'react';
-import { Form, Button, Divider, InputNumber, Radio, Switch, Typography, Tooltip } from 'antd';
 import { CloseCircleOutlined } from '@ant-design/icons';
-import { useImmer } from 'use-immer';
+import { Button, Divider, Form, InputNumber, Radio, Switch, Tooltip, Typography } from 'antd';
 import { assign } from 'lodash';
-
+import React, { FunctionComponent, useState } from 'react';
+import { useImmer } from 'use-immer';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
-import { useMemoStable } from '../shared';
+import { useMemoStable, useT } from '../shared';
 import {
   BucketColumn,
   ColumnType,
@@ -70,6 +69,7 @@ function GeneralizationControls({
   column: ColumnState;
   updateColumn: (values: Partial<ColumnState>) => void;
 }) {
+  const t = useT('ColumnSelectionStep::GeneralizationControls');
   switch (column.type) {
     case 'integer':
     case 'real': {
@@ -77,7 +77,7 @@ function GeneralizationControls({
       const isActive = column.binSize !== null && column.binSize >= minValue;
       return (
         <Form className={'GeneralizationControls' + (isActive ? ' active' : '')} layout="inline">
-          <Form.Item label="Bin size" name="binSize">
+          <Form.Item label={t('Bin size')} name="binSize">
             <span key={column.resetCount}>
               <InputNumber
                 size="small"
@@ -94,7 +94,7 @@ function GeneralizationControls({
       const isActive = column.substringLength !== null;
       return (
         <Form className={'GeneralizationControls' + (isActive ? ' active' : '')} layout="inline">
-          <Form.Item label="Substring start" name="substringStart">
+          <Form.Item label={t('Substring start')} name="substringStart">
             <span key={column.resetCount}>
               <InputNumber
                 // `precision` and `Math.round` in change handler both needed to protect from decimals
@@ -107,7 +107,7 @@ function GeneralizationControls({
               />
             </span>
           </Form.Item>
-          <Form.Item label="Substring length" name="substringLength">
+          <Form.Item label={t('Substring length')} name="substringLength">
             <span key={column.resetCount}>
               <InputNumber
                 // `precision` and `Math.round` in change handler both needed to protect from decimals
@@ -128,6 +128,7 @@ function GeneralizationControls({
 }
 
 export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = ({ children, schema, aidColumn }) => {
+  const t = useT('ColumnSelectionStep');
   const [columns, setColumns] = useImmer<ColumnState[]>(() =>
     schema.columns.map(({ name, type }) => ({
       name,
@@ -170,13 +171,13 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
     <>
       <div className="ColumnSelectionStep notebook-step">
         <NotebookNavAnchor step={NotebookNavStep.ColumnSelection} status="done" />
-        <Title level={3}>Select columns for anonymization</Title>
+        <Title level={3}>{t('Select columns for anonymization')}</Title>
         <table className="ColumnSelectionStep-table">
           <thead>
             <tr>
-              <th className="ColumnSelectionStep-th-name">Column</th>
-              <th className="ColumnSelectionStep-th-switch">Selected</th>
-              <th className="ColumnSelectionStep-th-generalization">{anySelected && 'Generalization'}</th>
+              <th className="ColumnSelectionStep-th-name">{t('Column')}</th>
+              <th className="ColumnSelectionStep-th-switch">{t('Selected')}</th>
+              <th className="ColumnSelectionStep-th-generalization">{anySelected && t('Generalization')}</th>
               <th className="ColumnSelectionStep-th-clear-generalization" />
             </tr>
           </thead>
@@ -187,7 +188,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                 setColumns((draft) => void assign(draft[index], values));
               return (
                 <tr key={index}>
-                  <td className="ColumnSelectionStep-td-name" title={`Type: ${column.type}`}>
+                  <td className="ColumnSelectionStep-td-name" title={`${t('Type:')} ${t('type::' + column.type)}`}>
                     {column.name}
                   </td>
                   <td className="ColumnSelectionStep-td-switch">
@@ -206,7 +207,7 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                         type="text"
                         shape="circle"
                         icon={<CloseCircleOutlined />}
-                        title="Clear values"
+                        title={t('Clear values')}
                         onClick={() => {
                           updateColumn({
                             binSize: null,
@@ -223,8 +224,8 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
             })}
             {hasAidColumn && (
               <tr key={columns.length} className="ColumnSelectionStep-tr-count">
-                <td className="ColumnSelectionStep-td-name" title="Type: integer">
-                  <strong>Count</strong>
+                <td className="ColumnSelectionStep-td-name" title={t('Type:') + ' ' + t('type::integer')}>
+                  <strong>{t('Count')}</strong>
                 </td>
                 <td className="ColumnSelectionStep-td-switch">
                   <Radio.Group
@@ -233,11 +234,11 @@ export const ColumnSelectionStep: FunctionComponent<ColumnSelectionStepProps> = 
                     buttonStyle="solid"
                     onChange={(e) => setCountInput(e.target.value)}
                   >
-                    <Tooltip title="Count rows">
-                      <Radio.Button value="Rows">Rows</Radio.Button>
+                    <Tooltip title={t('Count rows')}>
+                      <Radio.Button value="Rows">{t('Rows')}</Radio.Button>
                     </Tooltip>
-                    <Tooltip title="Count protected entities">
-                      <Radio.Button value="Entities">Entities</Radio.Button>
+                    <Tooltip title={t('Count protected entities')}>
+                      <Radio.Button value="Entities">{t('Entities')}</Radio.Button>
                     </Tooltip>
                   </Radio.Group>
                 </td>

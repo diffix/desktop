@@ -1,11 +1,10 @@
+import { toString } from 'mdast-util-to-string';
+import { toc } from 'mdast-util-toc';
 import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkSlug from 'remark-slug';
-import { toc } from 'mdast-util-toc';
-import { toString } from 'mdast-util-to-string';
 import invariant from 'tiny-invariant';
-
 import { components } from './markdown-components';
 
 import './Markdown.css';

@@ -1,6 +1,22 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { TFunction, useTranslation } from 'react-i18next';
 import { ComputedData } from '../types';
+import { i18nConfig } from './config';
+
+export type TFunc = TFunction<typeof i18nConfig.ns, string>;
+
+export function useT(prefix?: string): TFunc {
+  return useTranslation(i18nConfig.ns, { keyPrefix: prefix }).t;
+}
+
+/**
+ * Imperatively gets a TFunc instance with the given prefix.
+ * Useful for effects outside of the render cycle.
+ */
+export function getT(prefix?: string): TFunc {
+  return window.i18n.getFixedT(null, i18nConfig.ns, prefix);
+}
 
 export function useCachedData<T>(resultData: ComputedData<T>, initialData: T): T {
   const ref = useRef(initialData);
