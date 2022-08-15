@@ -119,7 +119,9 @@
     "Loaded {{fileName}}": "Loaded {{fileName}}",
     "Successfully imported {{fileName}}": "Successfully imported {{fileName}}",
     "Here is what the data looks like:": "Here is what the data looks like:",
-    "(only the first 1000 rows are shown)": "(only the first 1000 rows are shown)"
+    "(only the first 1000 rows are shown)": "(only the first 1000 rows are shown)",
+    "Schema discovery failed": "Schema discovery failed",
+    "Something went wrong while loading the schema.": "Something went wrong while loading the schema."
   },
   "AidSelectionStep": {
     "Select the protected entity identifier column": "Select the protected entity identifier column",
@@ -140,8 +142,8 @@
       "text": "text"
     },
     "Count": "Count",
-    "Count rows": "Count rows",
     "Rows": "Rows",
+    "Count rows": "Count rows",
     "Entities": "Entities",
     "Count protected entities": "Count protected entities",
     "Generalization": "Generalization",
@@ -155,6 +157,10 @@
     "Suppression configuration": "Suppression configuration",
     "Suppression Threshold": "Suppression Threshold",
     "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.": "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed."
+  },
+  "AnonymizationStep": {
+    "Anonymization failed": "Anonymization failed",
+    "Something went wrong.": "Something went wrong."
   },
   "AnonymizationSummary": {
     "Anonymization summary": "Anonymization summary",
