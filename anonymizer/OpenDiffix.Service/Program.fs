@@ -57,6 +57,7 @@ let getAnonParams (requestAnonParams: RequestAnonParams) (salt: string) =
     TopCount = requestAnonParams.TopCount
     LayerNoiseSD = requestAnonParams.LayerNoiseSD
     Strict = false
+    RecoverOutliers = requestAnonParams.RecoverOutliers
   }
 
 let prependStarBucketRow suppressedAnonCount countColumnIndex result =
@@ -108,8 +109,9 @@ let handlePreview
   // We get a hold of the star bucket results reference via side effects.
   let mutable suppressedAnonCount = Null
 
-  let pullHookResultsCallback aggCtx bucket =
+  let pullHookResultsCallback aggCtx bucket buckets =
     suppressedAnonCount <- Bucket.finalizeAggregate 2 aggCtx bucket
+    buckets
 
   let starBucketHook = StarBucket.hook pullHookResultsCallback
 
@@ -119,6 +121,7 @@ let handlePreview
   let mutable suppressedBuckets = 0
   let mutable totalCount = 0
   let mutable suppressedCount = 0
+  let mutable totalAnonCount = suppressedAnonCount |> safeUnwrapCount |> Option.defaultValue 0
 
   let distortions = Array.create result.Rows.Length 0.0
 
@@ -135,8 +138,10 @@ let handlePreview
       let distortion = float (abs (noisyCount - realCount)) / float realCount
       let anonBucket = totalBuckets - suppressedBuckets - 1
       distortions.[anonBucket] <- distortion
+      totalAnonCount <- totalAnonCount + noisyCount
 
   let anonBuckets = totalBuckets - suppressedBuckets
+  let totalDistortion = float (abs (totalAnonCount - totalCount)) / float totalCount
   let distortions = if anonBuckets = 0 then [| 0.0 |] else Array.truncate anonBuckets distortions
   Array.sortInPlace distortions
 
@@ -149,6 +154,7 @@ let handlePreview
       SuppressedAnonCount = safeUnwrapCount suppressedAnonCount
       MaxDistortion = Array.last distortions
       MedianDistortion = distortions.[anonBuckets / 2]
+      TotalDistortion = totalDistortion
     }
 
   encodeResponse { Summary = summary; Rows = List.truncate rows result.Rows }
@@ -180,8 +186,9 @@ let handleExport
     if Array.isEmpty buckets then
       [], $"SELECT %s{countColumn} FROM table"
     else
-      let pullHookResultsCallback aggCtx bucket =
+      let pullHookResultsCallback aggCtx bucket buckets =
         suppressedAnonCount <- Bucket.finalizeAggregate 0 aggCtx bucket
+        buckets
 
       let starBucketHook = StarBucket.hook pullHookResultsCallback
 

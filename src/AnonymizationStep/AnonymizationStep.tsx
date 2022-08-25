@@ -38,13 +38,14 @@ const emptySummary: AnonymizationSummary = {
   suppressedAnonCount: null,
   maxDistortion: 0,
   medianDistortion: 0,
+  totalDistortion: 0,
 };
 
 const emptyQueryResult: AnonymizedQueryResult = { columns: [], rows: [], summary: emptySummary };
 
 function summaryDescriptions(summary: AnonymizationSummary, t: TFunc) {
   return (
-    <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 2, md: 4 }}>
+    <Descriptions className="AnonymizationSummary-descriptions" layout="vertical" bordered column={{ sm: 3, md: 5 }}>
       <Descriptions.Item label={t('Suppressed Count')}>
         {`${summary.suppressedCount} ${t('of')} ${summary.totalCount} (${formatPercentage(
           summary.suppressedCount / summary.totalCount,
@@ -57,6 +58,7 @@ function summaryDescriptions(summary: AnonymizationSummary, t: TFunc) {
       </Descriptions.Item>
       <Descriptions.Item label={t('Median Distortion')}>{formatPercentage(summary.medianDistortion)}</Descriptions.Item>
       <Descriptions.Item label={t('Maximum Distortion')}>{formatPercentage(summary.maxDistortion)}</Descriptions.Item>
+      <Descriptions.Item label={t('Total Distortion')}>{formatPercentage(summary.totalDistortion)}</Descriptions.Item>
     </Descriptions>
   );
 }

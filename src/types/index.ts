@@ -67,6 +67,7 @@ export type AnonymizationSummary = {
   suppressedAnonCount: number | null;
   maxDistortion: number;
   medianDistortion: number;
+  totalDistortion: number;
 };
 
 export type LoadResponse = {

@@ -154,7 +154,9 @@
   "AnonParamsSelectionStep": {
     "Suppression configuration": "Suppression configuration",
     "Suppression Threshold": "Suppression Threshold",
-    "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.": "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed."
+    "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.": "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.",
+    "Redistribute Outliers Label": "Redistribute Outliers",
+    "Redistribute Outliers Tooltip": "If enabled, flattened data from outliers is anonymized and redistributed across all buckets. If disabled, flattened data from outliers is dropped."
   },
   "AnonymizationSummary": {
     "Anonymization summary": "Anonymization summary",
@@ -162,6 +164,7 @@
     "Suppressed Bins": "Suppressed Bins",
     "Median Distortion": "Median Distortion",
     "Maximum Distortion": "Maximum Distortion",
+    "Total Distortion": "Total Distortion",
     "of": "of"
   },
   "AnonymizationResults": {

@@ -1,4 +1,4 @@
-import { Divider, Form, InputNumber, Typography } from 'antd';
+import { Divider, Form, InputNumber, Checkbox, Typography } from 'antd';
 import React, { FunctionComponent, useState } from 'react';
 import { NotebookNavAnchor, NotebookNavStep } from '../Notebook';
 import { useMemoStable, useT } from '../shared';
@@ -18,6 +18,7 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
   const t = useT('AnonParamsSelectionStep');
   const [lowThreshold, setLowThreshold] = useState<number>(3);
   const minLowThreshold = 2;
+  const [recoverOutliers, setRecoverOutliers] = useState<boolean>(true);
 
   const anonParams = useMemoStable(
     () => ({
@@ -29,8 +30,9 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
       outlierCount: { lower: 1, upper: 2 },
       topCount: { lower: 3, upper: 4 },
       layerNoiseSD: 1.0,
+      recoverOutliers: recoverOutliers,
     }),
-    [lowThreshold],
+    [lowThreshold, recoverOutliers],
   );
 
   return (
@@ -41,8 +43,11 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
 
         <Form
           layout="inline"
-          initialValues={{ lowThreshold: lowThreshold }}
-          onValuesChange={({ lowThreshold }) => setLowThreshold(Math.round(lowThreshold))}
+          initialValues={{ lowThreshold: lowThreshold, recoverOutliers: recoverOutliers }}
+          onValuesChange={({ lowThreshold, recoverOutliers }) => {
+            if (lowThreshold != null) setLowThreshold(Math.round(lowThreshold));
+            if (recoverOutliers != null) setRecoverOutliers(recoverOutliers);
+          }}
         >
           <Form.Item
             label={t('Suppression Threshold')}
@@ -57,6 +62,14 @@ export const AnonParamsSelectionStep: FunctionComponent<AnonParamsSelectionStepP
               size="middle"
               min={minLowThreshold}
             />
+          </Form.Item>
+          <Form.Item
+            label={t('Redistribute Outliers Label')}
+            tooltip={t('Redistribute Outliers Tooltip')}
+            name="recoverOutliers"
+            valuePropName="checked"
+          >
+            <Checkbox />
           </Form.Item>
         </Form>
       </div>

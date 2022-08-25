@@ -13,6 +13,7 @@ type Summary =
     SuppressedAnonCount: int option
     MaxDistortion: float
     MedianDistortion: float
+    TotalDistortion: float
   }
 
 type LoadResponse = QueryEngine.QueryResult
@@ -33,6 +34,8 @@ type RequestAnonParams =
     OutlierCount: Interval
     TopCount: Interval
     LayerNoiseSD: float
+
+    RecoverOutliers: bool
   }
 
 type PreviewRequest =
@@ -88,6 +91,7 @@ let rec private typeName =
   | RealType -> "real"
   | StringType -> "text"
   | UnknownType _ -> "unknown"
+  | ListType _ -> "list"
 
 let private encodeType = typeName >> Encode.string
 
