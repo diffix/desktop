@@ -1,1 +1,189 @@
-{}
+{
+  "App": {
+    "Menu": {
+      "AppMenu": {
+        "Diffix for Desktop": "Diffix für Desktop",
+        "About Diffix for Desktop": "Über Diffix für Desktop",
+        "Services": "Dienstleistungen",
+        "Hide Diffix for Desktop": "Diffix für Desktop verstecken",
+        "Hide Others": "Andere verstecken",
+        "Show All": "Alle anzeigen",
+        "Quit Diffix for Desktop": "Diffix für Desktop beenden"
+      },
+      "View": {
+        "&View": "Ansicht",
+        "Copy": "Kopieren",
+        "Select All": "Alle auswählen",
+        "Actual Size": "Tatsächliche Größe",
+        "Zoom In": "Vergrößern",
+        "Zoom Out": "Verkleinern",
+        "Toggle Full Screen": "Vollbild umschalten"
+      },
+      "Settings": {
+        "&Settings": "&Einstellungen",
+        "Language": "Sprache"
+      },
+      "Help": {
+        "&Help": "&Hilfe",
+        "Documentation": "Dokumentation",
+        "Changelog": "Änderungsübersicht",
+        "License": "Lizenz",
+        "Learn More": "Mehr erfahren",
+        "Community Discussions": "Gemeinschaftsdiskussionen",
+        "Search Issues": "Suche GitHub",
+        "Latest Releases": "Neueste Veröffentlichungen"
+      }
+    },
+    "Documentation": "Dokumentation",
+    "New Notebook": "Neues Notebook",
+    "Diffix for Desktop": "Diffix für Desktop",
+    "No open notebooks": "Keine offenen Notebooks",
+    "Create New": "Neues erstellen"
+  },
+  "check-updates": {
+    "Update Available": "Update verfügbar",
+    "A more recent version ({{version}}) is available.<br/>Click <6><0>here</0></6> to open the release page.": "Eine neuere Version ({{version}}) ist verfügbar.<br/>Klicken Sie <6><0>hier</0></6> um die Release-Seite zu öffnen."
+  },
+  "Docs": {
+    "Documentation": "Dokumentation",
+    "Anonymization": "Anonymisierung",
+    "Tips and Tricks": "Tipps und Tricks",
+    "Changelog": "Änderungsübersicht",
+    "License": "Lizenz",
+    "Operation": "Operation"
+  },
+  "Sidebar": {
+    "NotebookNavSteps": {
+      "CSV Import": "CSV Import",
+      "Load data from CSV": "Daten aus CSV laden",
+      "Data Preview": "Datenvorschau",
+      "Preview contents of file": "Inhaltsvorschau",
+      "ID Selection": "ID-Auswahl",
+      "Select the entity identifier column": "Wählen Sie die ID-Spalte aus",
+      "Column Selection": "Auswahl der Spalten",
+      "Select columns for anonymization": "Spalten für die Anonymisierung auswählen",
+      "Suppression Configuration": "Konfiguration der Unterdrückung ",
+      "Set the Suppression Threshold": "Einstellen der Unterdrückungsschwelle",
+      "Anonymization Summary": "Zusammenfassung der Anonymisierung",
+      "Review distortion statistics": "Überprüfen der Verzerrungsstatistiken",
+      "Anonymized Results": "Anonymisierte Ergebnisse",
+      "Preview anonymized results": "Vorschauen der anonymisierten Ergebnisse",
+      "CSV Export": "CSV Export",
+      "Export anonymized data to CSV": "Anonymisierte Ergebnisse in CSV exportieren"
+    },
+    "CsvImportHelp": {
+      "CSV Import": "CSV Import",
+      "<strong>Diffix for Desktop</strong> auto-detects the CSV delimiter, as well as the field type (text and numeric). <3>Click here for details.</3>": "<strong>Diffix für Desktop</strong> erkennt automatisch das CSV-Begrenzungszeichen sowie den Feldtyp (Text und numerisch). <3>Klicken Sie hier für Details.</3>",
+      "<0>Sample CSV files</0> are available for testing purposes.": "<0>Musterdaten (.CSV)</0> sind zu Testzwecken verfügbar."
+    },
+    "DataPreviewHelp": {
+      "Data Preview": "Datenvorschau",
+      "Use the data preview to confirm that the data was imported correctly.": "Verwenden Sie die Datenvorschau, um zu überprüfen, ob die Daten korrekt importiert wurden."
+    },
+    "AidSelectionHelp": {
+      "ID Selection": "ID Auswahl",
+      "<strong>WARNING:</strong> If this configuration is not done correctly, the data will not be properly anonymized.": "<strong>WARNUNG:</strong> Wenn diese Konfiguration nicht korrekt vorgenommen wird, werden die Daten nicht richtig anonymisiert.",
+      "If the data has one row per person (or other <1>protected entity</1>), then no entity identifier column need be selected. Otherwise, select a column containing a unique ID per protected entity. <4>Click here for details on how to set.</4>": "Wenn die Daten eine Zeile pro Person (oder eine andere <1>geschützte Einheit</1>) enthalten, muss keine Spalte mit der Entitätskennung ausgewählt werden. Andernfalls muss eine Spalte ausgewählt werden, die eine eindeutige ID pro geschützter Entität enthält. <4>Klicken Sie hier für Details zur Einstellung.</4>"
+    },
+    "ColumnSelectionHelp": {
+      "Column Selection": "Auswahl der Spalten",
+      "Select the columns to be anonymized and the amount of generalization per column. Any changes automatically recomputes the anonymized results.": "Wählen Sie die zu anonymisierenden Spalten und den Grad der Generalisierung pro Spalte. Bei Änderungen werden die anonymisierten Ergebnisse automatisch neu berechnet.",
+      "Numeric columns may be generalized as bins. Non-numeric columns may be generalized by selecting a substring (offset and number of characters). <2>Click here for details.</2>": "Numerische Spalten können als Behälter verallgemeinert werden. Nichtnumerische Spalten können durch Auswahl einer Teilzeichenkette (Offset und Anzahl der Zeichen) verallgemeinert werden. <2>Klicken Sie hier für Details.</2>",
+      "The <1>Count</1> toggle below the column selection selects whether to count rows or to count the number of protected entities for each bin in the anonymized output.": "Der <1>Zähler</1> unterhalb der Spaltenauswahl wählt aus, ob Zeilen oder die Anzahl geschützter Entitäten für jeden Behälter in der anonymisierten Ausgabe gezählt werden soll."
+    },
+    "AnonParamsSelectionHelp": {
+      "Suppression Threshold Configuration": "Konfiguration des Unterdrückungsschwellenwerts",
+      "The suppression threshold determines the minimum number of protected entities that comprise any bin. Bins with fewer entities than this threshold are suppressed. Changing this threshold automatically recomputes the anonymized results. <2>Click here for details on how to set.</2>": "Der Schwellenwert für die Unterdrückung bestimmt die Mindestanzahl geschützter Einheiten, die eine beliebige Ablage umfassen. Behälter mit weniger Entitäten als dieser Schwellenwert werden unterdrückt. Wenn dieser Schwellenwert geändert wird, werden die anonymisierten Ergebnisse automatisch neu berechnet. <2>Klicken Sie hier für weitere Details zur Einstellung.</2>"
+    },
+    "AnonymizationSummaryHelp": {
+      "Anonymization Summary": "Zusammenfassung der Anonymisierung",
+      "<strong>Diffix for Desktop</strong> distorts the data in two ways. It perturbs counts, and it suppresses data that pertains to too few protected entities. The summary is useful for determining the overall quality of the anonymized data: the relative count distortion and the amount of suppression. Data quality may be improved by selecting fewer columns, or by generalizing more. <3>Click here for details.</3>": "<strong>Diffix für Desktop</strong> verzerrt die Daten auf zwei Arten. Es verzerrt die Zählungen und unterdrückt Daten, die sich auf zu wenige geschützte Personen beziehen. Die Zusammenfassung ist nützlich, um die Gesamtqualität der anonymisierten Daten zu bestimmen: die relative Zählverzerrung und das Ausmaß der Unterdrückung. Die Datenqualität kann durch die Auswahl von weniger Spalten oder durch eine stärkere Generalisierung verbessert werden. <3>Klicken Sie hier für weitere Details.</3>"
+    },
+    "AnonymizedResultsHelp": {
+      "Anonymized Results": "Anonymisierte Ergebnisse",
+      "The anonymized results may be viewed side-by-side with the non-anonymized results using the <2>Combined view</2>button. Suppressed bins are shaded in grey. Non-suppressed bins give the true count side-by-side with the anonymized count, and display the relative count distortion. This combined view is useful for determining the precise causes of distortion and suppression, and for deciding in detail if the quality of the anonymized data is satisfactory. <5>Click here for details.</5>": "Die anonymisierten Ergebnisse können über die Schaltfläche <2>Kombinierte Ansicht</2> zusammen mit den nicht anonymisierten Ergebnissen betrachtet werden. Unterdrückte Behälter sind grau schattiert. Nicht unterdrückte Behälter zeigen die tatsächliche Zählung neben der anonymisierten Zählung und die relative Zählverzerrung an. Diese kombinierte Ansicht ist nützlich, um die genauen Ursachen der Verzerrung und Unterdrückung zu ermitteln und um im Detail zu entscheiden, ob die Qualität der anonymisierten Daten zufriedenstellend ist. <5>Klicken Sie hier für weiter Details.</5>",
+      "The <2>suppress bin</2> denoted by <5>*</5> column values is shown in the first row. It indicates the combined anonymized count of all suppressed bins.": "Der <2>unterdrückte Bereich</2>, der durch <5>*</5> Spaltenwerte gekennzeichnet ist, wird in der ersten Zeile angezeigt. Sie gibt die kombinierte anonymisierte Anzahl aller unterdrückten Behälter an."
+    },
+    "CsvExportHelp": {
+      "CSV Export": "CSV Export",
+      "Exports the anonymized results only (not the combined view). The suppress bin, when present, is exported as the first row in the CSV file.": "Exportiert nur die anonymisierten Ergebnisse - nicht die kombinierte Ansicht. Das Unterdrückungsbehälter wird, sofern vorhanden, als erste Zeile in der CSV-Datei exportiert."
+    }
+  },
+  "FileLoadStep": {
+    "Import data to anonymize": "Daten zum Anonymisieren importieren",
+    "Import data from CSV file": "Daten aus einer CSV-Datei importieren",
+    "Click or drag file to this area to import": "Klicken oder Datei zum Importieren in diesen Bereich ziehen"
+  },
+  "SchemaLoadStep": {
+    "Loading schema": "Schema wird geladen",
+    "Loaded {{fileName}}": "{{fileName}} ist geladen",
+    "Successfully imported {{fileName}}": "Erfolgreich importiert {{fileName}}",
+    "Here is what the data looks like:": "So sehen die Daten aus:",
+    "(only the first 1000 rows are shown)": "(nur die ersten 1000 Zeilen werden angezeigt)",
+    "Schema discovery failed": "Schemaerkennung fehlgeschlagen",
+    "Something went wrong while loading the schema.": "Beim Laden des Schemas ist ein Fehler aufgetreten."
+  },
+  "AidSelectionStep": {
+    "Select the protected entity identifier column": "Wählen Sie die ID Spalte der geschützten Entität aus",
+    "CAUTION:": "VORSICHT:",
+    "When no identifier column is present in the data, you must ensure that each individual row from the input file represents a unique entity.": "Wenn die Daten keine Identifizierungsspalte enthalten, müß sichergestellt, dass jede einzelne Zeile der Eingabedatei eine eindeutige Einheit darstellt.",
+    "Select a column or 'None'": "Wählen Sie eine Spalte oder 'Keine' aus",
+    "[None]": "[Keine]"
+  },
+  "ColumnSelectionStep": {
+    "Select columns for anonymization": "Wählen Sie die Spalten für die Anonymisierung aus",
+    "Column": "Tabellenspalte",
+    "Selected": "Selected",
+    "Type:": "Typ:",
+    "type": {
+      "boolean": "boolean",
+      "integer": "integer",
+      "real": "real",
+      "text": "text"
+    },
+    "Count": "Anzahl",
+    "Rows": "Rows",
+    "Count rows": "Reihen zählen",
+    "Entities": "Entities",
+    "Count protected entities": "Geschützte Entitäten zählen",
+    "Generalization": "Generalisierung",
+    "GeneralizationControls": {
+      "Bin size": "Größe der Behälter",
+      "Substring start": "Anfang des Teilstring",
+      "Substring length": "Länge des Teilstring"
+    }
+  },
+  "AnonParamsSelectionStep": {
+    "Suppression configuration": "Konfiguration der Unterdrückung",
+    "Suppression Threshold": "Schwellenwert der Unterdrückung",
+    "Bins with fewer protected entities than this are suppressed. Bins with more may not be suppressed.": "Behälter mit weniger geschützten Einheiten als dieser Wert werden unterdrückt. Behälter mit mehr können nicht unterdrückt werden."
+  },
+  "AnonymizationStep": {
+    "Anonymization failed": "Anonymisierung ist fehlgeschlagen",
+    "Something went wrong.": "Etwas ist schief gelaufen."
+  },
+  "AnonymizationSummary": {
+    "Anonymization summary": "Zusammenfassung der Anonymisierung",
+    "Suppressed Count": "Unterdrückte Zählung",
+    "Suppressed Bins": "Unterdrückte Behälter",
+    "Median Distortion": "Median-Verzerrung",
+    "Maximum Distortion": "Maximum-Verzerrung",
+    "of": "von"
+  },
+  "AnonymizationResults": {
+    "Anonymized data": "Anonymisierte Daten",
+    "Here is what the result looks like:": "So sieht das Ergebnis aus:",
+    "AnonymizedResultsTable": {
+      "Anonymized": "Anonymisiert",
+      "Combined view": "Kombinierte Ansicht",
+      "Suppress bin": "Unterdrückter Behälter",
+      "(anonymized)": "(anonymisiert)",
+      "(original)": "(Original)",
+      "Distortion": "Verzerrung"
+    },
+    "Export anonymized data to CSV": "Anonymisierte Daten nach CSV exportieren",
+    "_anonymized.csv": "_anonymisiert.csv",
+    "Exporting anonymized data to {{filePath}}...": "Export anonymisierter Daten nach {{filePath}}...",
+    "Anonymized data exported successfully!": "Anonymisierte Daten erfolgreich exportiert!"
+  }
+}
