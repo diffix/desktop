@@ -1,5 +1,10 @@
 ## Changelog
 
+### Next Version
+
+- Added support for localization.
+- Fixed broken display of UTF8 characters in data preview on Windows.
+
 ### Version 1.0.2
 
 - Fixed input data with a "count" column resulting in incorrect suppress bin.

@@ -232,7 +232,7 @@ let mainCore consoleInput =
 
 [<EntryPoint>]
 let main _argv =
-  Console.OutputEncoding <- System.Text.Encoding.UTF8
+  Console.OutputEncoding <- Text.Encoding.UTF8
   Logger.backend <- Logger.LogMessage.toString >> eprintfn "%s"
 
   try
