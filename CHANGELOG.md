@@ -3,7 +3,8 @@
 ### Next Version
 
 - Added support for localization.
-- Fixed broken display of UTF8 characters in data preview on Windows.
+- Added German localization.
+- Fixed display of unicode characters in data preview on Windows.
 
 ### Version 1.0.2
 
