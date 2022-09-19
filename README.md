@@ -16,6 +16,7 @@ folder in this repo.
 Run `asdf install` to install `node` via `asdf`.
 Run `npm install` to install dependencies.
 Run `git submodule update --init && npm run build` to get and build the anonymizer.
+(Use `npm run build-{win|linux|osx}` if `build` doesn't work for you.)
 
 Following the setup, run `npm start` to start the development environment with hot code reloading.
 
