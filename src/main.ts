@@ -196,6 +196,7 @@ function createWindow() {
 // IPC
 
 app.on('ready', () => {
+  i18n.changeLanguage(app.getLocale());
   setupMenu();
   registerProtocols();
   createWindow();

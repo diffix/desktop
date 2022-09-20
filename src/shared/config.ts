@@ -9,4 +9,5 @@ export const i18nConfig = {
   ns: 'translation',
   nsSeparator: ':::',
   supportedLngs: ['en', 'de'],
+  nonExplicitSupportedLngs: true,
 } as const;
