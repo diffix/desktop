@@ -196,6 +196,10 @@ function createWindow() {
 // IPC
 
 app.on('ready', () => {
+  // Feeding the locale to `changeLanguage` or extracting the language cause problems.
+  if (['de', 'de-AT', 'de-CH', 'de-DE', 'de-LI', 'de-LU'].includes(app.getLocale())) {
+    i18n.changeLanguage('de');
+  }
   setupMenu();
   registerProtocols();
   createWindow();
