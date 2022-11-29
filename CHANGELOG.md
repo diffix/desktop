@@ -1,6 +1,6 @@
 ## Changelog
 
-### Next Version
+### Version 1.0.3
 
 - Added support for localization.
 - Added German localization.
@@ -23,7 +23,7 @@
 
 ### Version 1.0.0
 
-- Combine suppressed bins into a special * bin.
+- Combine suppressed bins into a special \* bin.
 - Added support for simple low-effect detection (LED).
 - Fixed decimal form inputs causing anonymization failure.
 
