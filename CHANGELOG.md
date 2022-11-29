@@ -1,6 +1,6 @@
 ## Changelog
 
-### Next version
+### Version 1.0.3
 
 - Added support for localization.
 - Added German localization.
