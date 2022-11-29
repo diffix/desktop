@@ -109,13 +109,16 @@ let handlePreview
   // We get a hold of the star bucket results reference via side effects.
   let mutable suppressedAnonCount = Null
 
-  let pullHookResultsCallback aggCtx bucket buckets =
-    suppressedAnonCount <- Bucket.finalizeAggregate 2 aggCtx bucket
-    buckets
+  let pullHookResultsCallback aggCtx starBucket buckets =
+    suppressedAnonCount <- Bucket.finalizeAggregate 2 aggCtx starBucket
+    Seq.append [ starBucket ] buckets
 
   let starBucketHook = StarBucket.hook pullHookResultsCallback
 
-  let result = runQuery [ Led.hook; starBucketHook ] query inputPath anonParams
+  let mutable result = runQuery [ Led.hook; starBucketHook ] query inputPath anonParams
+
+  if suppressedAnonCount <> Null then
+    result <- { result with Rows = List.skip 1 result.Rows }
 
   let mutable totalBuckets = 0
   let mutable suppressedBuckets = 0
