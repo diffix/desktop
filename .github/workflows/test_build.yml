@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - test_build
-  schedule:
-    - cron: '0 6 * * 1,4' # Make a fresh test build every Monday and Thursday, at 6:00 AM UTC.
+#  schedule:
+#    - cron: '0 6 * * 1,4' # Make a fresh test build every Monday and Thursday, at 6:00 AM UTC.
 
 jobs:
   build:
